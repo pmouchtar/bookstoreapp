@@ -30,4 +30,3 @@ public class BookResponse {
         return response;
     }
 }
-//Genre.valueOf(book.getGenre().name())

@@ -19,9 +19,7 @@ public class BookService {
     private BookRepository bookRepository;
 
     public BookResponse save(BookRequest request) {
-        System.out.println(request);
         Book savedBook = bookRepository.save(BookMapper.toEntity(request));
-        System.out.println(savedBook); //de ftanei pote edw
         return BookResponse.fromEntity(savedBook);
     }
 

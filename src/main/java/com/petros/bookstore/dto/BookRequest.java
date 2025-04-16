@@ -19,9 +19,4 @@ public class BookRequest {
     private float price;
     private int availability;
     private Genre genre;
-
-//    public Book toEntity() {
-//        return new Book(title, author, description, price, availability, genre);
-//    }
 }
-//Genre.valueOf(genre.toString()
