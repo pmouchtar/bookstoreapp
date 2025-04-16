@@ -20,17 +20,17 @@ public class BookService {
 
     public BookResponse save(BookRequest request) {
         Book savedBook = bookRepository.save(BookMapper.toEntity(request));
-        return BookResponse.fromEntity(savedBook);
+        return BookMapper.toResponse(savedBook);
     }
 
     public List<BookResponse> findAll() {
         return bookRepository.findAll().stream()
-                .map(BookResponse::fromEntity)
+                .map(BookMapper::toResponse)
                 .toList();
     }
 
     public Optional<BookResponse> findBookById(Long id) {
-        return bookRepository.findById(id).map(BookResponse::fromEntity);
+        return bookRepository.findById(id).map(BookMapper::toResponse);
     }
 
     public Optional<BookResponse> updateBook(Long id, BookRequest request) {
@@ -41,7 +41,7 @@ public class BookService {
             book.setPrice(request.getPrice());
             book.setAvailability(request.getAvailability());
             book.setGenre(Genre.valueOf(request.getGenre().toString()));
-            return BookResponse.fromEntity(bookRepository.save(book));
+            return BookMapper.toResponse(bookRepository.save(book));
         });
     }
 
@@ -55,13 +55,16 @@ public class BookService {
     }
 
     public List<BookResponse> searchBooks(String title, String author, String genre, Float minPrice, Float maxPrice) {
+        if ((minPrice == null && maxPrice != null) || minPrice != null && maxPrice == null) {
+            // catch exception of invalid arguments
+        }
         return bookRepository.findAll().stream()
                 .filter(book -> (title == null || book.getTitle().toLowerCase().contains(title.toLowerCase())) &&
                         (author == null || book.getAuthor().toLowerCase().contains(author.toLowerCase())) &&
                         (genre == null || book.getGenre().name().equalsIgnoreCase(genre)) &&
                         (minPrice == null || book.getPrice() >= minPrice) &&
                         (maxPrice == null || book.getPrice() <= maxPrice))
-                .map(BookResponse::fromEntity)
+                .map(BookMapper::toResponse)
                 .toList();
     }
 }
