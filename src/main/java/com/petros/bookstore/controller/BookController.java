@@ -2,16 +2,25 @@ package com.petros.bookstore.controller;
 
 import com.petros.bookstore.dto.BookRequest;
 import com.petros.bookstore.dto.BookResponse;
+import com.petros.bookstore.dto.BookUpdateRequest;
+import com.petros.bookstore.exception.InvalidPriceRangeException;
 import com.petros.bookstore.model.Book;
+import com.petros.bookstore.model.enums.Genre;
 import com.petros.bookstore.repository.BookRepository;
 import com.petros.bookstore.service.BookService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
+@Validated
 @RestController
 @RequestMapping("/books")
 public class BookController {
@@ -20,35 +29,48 @@ public class BookController {
     private BookService bookService;
 
     @PostMapping()
-    public BookResponse addBook(@RequestBody BookRequest bookRequest) {
+    public BookResponse addBook(@Valid @RequestBody BookRequest bookRequest) {
         return bookService.save(bookRequest);
     }
 
     @GetMapping()
-    public List<BookResponse> getAllBooks(
+    public Page<BookResponse> getAllBooks(
         @RequestParam (required = false) String title,
         @RequestParam (required = false) String author,
+        @RequestParam (required = false) Integer availability,
         @RequestParam (required = false) String genre,
         @RequestParam (required = false) Float minPrice,
-        @RequestParam (required = false) Float maxPrice)
+        @RequestParam (required = false) Float maxPrice,
+        Pageable pageable)
         {
-            if (title != null || author != null || (minPrice != null && maxPrice != null)) {
-                return bookService.searchBooks(title, author, genre, minPrice, maxPrice);
+            Genre genreEnum = null;
+            if (genre != null) {
+                try {
+                    genreEnum = Genre.valueOf(genre.toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    throw new IllegalArgumentException("Invalid genre: " + genre);
+                }
+            }
+            if ((minPrice == null) != (maxPrice == null)) {
+                throw new InvalidPriceRangeException("Both minPrice and maxPrice should be provided together.");
+            }
+            if (title != null || author != null || availability != null || genreEnum != null || (minPrice != null & maxPrice != null)) {
+                return bookService.searchBooks(title, author, availability, genreEnum, minPrice, maxPrice, pageable);
             } else {
-                return bookService.findAll();
+                return bookService.findAll(pageable);
                 }
         }
 
     @GetMapping("/{bookId}")
     public ResponseEntity<BookResponse> getBook(@PathVariable Long bookId) {
-        return bookService.findBookById(bookId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        BookResponse response = bookService.findBookById(bookId);
+        return ResponseEntity.ok(response);
     }
 
+
     @PutMapping("/{bookId}")
-    public ResponseEntity<BookResponse> updateBook(@PathVariable Long bookId, @RequestBody BookRequest bookRequest) {
-        Optional<BookResponse> updated = bookService.updateBook(bookId, bookRequest);
+    public ResponseEntity<BookResponse> updateBook(@PathVariable Long bookId,@Valid @RequestBody BookUpdateRequest request) {
+        Optional<BookResponse> updated = bookService.updateBook(bookId, request);
         return updated.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
