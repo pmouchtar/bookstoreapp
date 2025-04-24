@@ -7,5 +7,7 @@ public enum Genre {
     ROMANCE,
     SCIENCE_FICTION,
     HISTORY,
-    AUTOBIOGRAPHY
+    AUTOBIOGRAPHY,
+    TECH,
+    DRAMA
 }

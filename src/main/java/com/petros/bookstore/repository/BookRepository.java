@@ -12,9 +12,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
     @Query("SELECT b FROM Book b WHERE " +
-            "(:title IS NULL OR b.title LIKE %:title%) AND " +
-            "(:author IS NULL OR b.author LIKE %:author%) AND " +
-            "(:genre IS NULL OR b.genre LIKE :genre) AND " +
+            "(:title IS NULL OR b.title ILIKE %:title%) AND " +
+            "(:author IS NULL OR b.author ILIKE %:author%) AND " +
+            "(:genre IS NULL OR b.genre ILIKE :genre) AND " +
             "(:availability IS NULL OR b.availability >= :availability) AND " +
             "(:minPrice IS NULL OR b.price >= :minPrice) AND " +
             "(:maxPrice IS NULL OR b.price <= :maxPrice)")

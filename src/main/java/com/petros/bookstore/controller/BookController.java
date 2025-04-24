@@ -67,22 +67,19 @@ public class BookController {
         return ResponseEntity.ok(response);
     }
 
-
     @PutMapping("/{bookId}")
-    public ResponseEntity<BookResponse> updateBook(@PathVariable Long bookId,@Valid @RequestBody BookUpdateRequest request) {
-        Optional<BookResponse> updated = bookService.updateBook(bookId, request);
-        return updated.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<BookResponse> updateBook(
+            @PathVariable Long bookId,
+            @Valid @RequestBody BookUpdateRequest request) {
+
+        BookResponse updatedBook = bookService.updateBook(bookId, request);
+        return ResponseEntity.ok(updatedBook);
     }
 
     @DeleteMapping("/{bookId}")
-    public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
-        boolean deleted = bookService.deleteBookById(id);
-        if (deleted) {
+    public ResponseEntity<Void> deleteBook(@PathVariable Long bookId) {
+        boolean deleted = bookService.deleteBookById(bookId);
             return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
     }
 
 }
