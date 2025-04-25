@@ -9,6 +9,8 @@ import com.petros.bookstore.model.enums.Genre;
 import com.petros.bookstore.repository.BookRepository;
 import com.petros.bookstore.service.BookService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,10 +39,10 @@ public class BookController {
     public Page<BookResponse> getAllBooks(
         @RequestParam (required = false) String title,
         @RequestParam (required = false) String author,
-        @RequestParam (required = false) Integer availability,
+        @RequestParam (required = false) @Min(0) Integer availability,
         @RequestParam (required = false) String genre,
-        @RequestParam (required = false) Float minPrice,
-        @RequestParam (required = false) Float maxPrice,
+        @RequestParam (required = false) @DecimalMin("0.0") Float minPrice,
+        @RequestParam (required = false) @DecimalMin("0.0") Float maxPrice,
         Pageable pageable)
         {
             Genre genreEnum = null;
@@ -51,9 +53,15 @@ public class BookController {
                     throw new IllegalArgumentException("Invalid genre: " + genre);
                 }
             }
+
             if ((minPrice == null) != (maxPrice == null)) {
                 throw new InvalidPriceRangeException("Both minPrice and maxPrice should be provided together.");
             }
+
+            if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
+                throw new IllegalArgumentException("minPrice cannot be greater than maxPrice");
+            }
+
             if (title != null || author != null || availability != null || genreEnum != null || (minPrice != null & maxPrice != null)) {
                 return bookService.searchBooks(title, author, availability, genreEnum, minPrice, maxPrice, pageable);
             } else {
