@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,9 +37,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>("Something went wrong: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+//    @ExceptionHandler(InvalidPriceRangeException.class)
+//    public ResponseEntity<String> handleInvalidPriceRange(InvalidPriceRangeException ex) {
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+//    }
+
     @ExceptionHandler(InvalidPriceRangeException.class)
-    public ResponseEntity<String> handleInvalidPriceRange(InvalidPriceRangeException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    public ResponseEntity<Map<String, String>> handleInvalidPriceRange(InvalidPriceRangeException ex) {
+        return ResponseEntity.badRequest()
+                .body(Map.of("message", ex.getMessage()));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
@@ -57,5 +64,20 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleBadRequestBody(HttpMessageNotReadableException ex) {
         return ResponseEntity.badRequest()
                 .body(Map.of("message", "Malformed JSON request or invalid data format"));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<Map<String, String>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        String paramName = ex.getName(); // e.g., "minPrice"
+        String invalidValue = ex.getValue() != null ? ex.getValue().toString() : "null";
+        String expectedType = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown";
+
+        String message = String.format(
+                "Invalid value '%s' for parameter '%s'. Expected type: %s.",
+                invalidValue, paramName, expectedType
+        );
+
+        return ResponseEntity.badRequest()
+                .body(Map.of("message", message));
     }
 }
