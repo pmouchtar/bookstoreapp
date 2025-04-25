@@ -147,6 +147,17 @@ public class BookIntegrationTest {
     }
 
     @Test
+    void testSearchBooks_InvalidPriceType() throws Exception {
+        mockMvc.perform(get("/books")
+                        .param("minPrice", "cheap") // Invalid float value
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Invalid value 'cheap' for parameter 'minPrice'. Expected type: Float."));
+    }
+
+
+    @Test
     void testGetBookById_NotFound() throws Exception {
         mockMvc.perform(get("/books/99999"))
                 .andExpect(status().isNotFound())
@@ -171,7 +182,7 @@ public class BookIntegrationTest {
     }
 
     @Test
-    void testCreateBook_MalformedJson() throws Exception {
+    void testCreateBook_MalformedJSON() throws Exception {
         String malformedJson = "{\"price\": \"abc\" }";
 
         mockMvc.perform(post("/books")
