@@ -1,11 +1,11 @@
-package com.petros.bookstore.service;
+package com.petros.bookstore.integration;
 
 import com.petros.bookstore.dto.BookRequest;
 import com.petros.bookstore.dto.BookResponse;
 import com.petros.bookstore.dto.BookUpdateRequest;
 import com.petros.bookstore.model.enums.Genre;
 import com.petros.bookstore.repository.BookRepository;
-import org.aspectj.lang.annotation.Before;
+import com.petros.bookstore.service.BookService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

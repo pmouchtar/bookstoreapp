@@ -135,8 +135,8 @@ class BookControllerTest {
         when(bookService.findBookById(invalidBookId)).thenThrow(new ResourceNotFoundException("Book with ID " + invalidBookId + " not found"));
 
         mockMvc.perform(get("/books/{bookId}", invalidBookId))
-                .andExpect(status().isNotFound());
-                //.andExpect(jsonPath("$.message").value("Book with ID " + invalidBookId + " not found"));
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("Book with ID " + invalidBookId + " not found"));
     }
 
     @Test

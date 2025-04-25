@@ -1,7 +1,8 @@
-package com.petros.bookstore.repository;
+package com.petros.bookstore.integration;
 
 import com.petros.bookstore.model.Book;
 import com.petros.bookstore.model.enums.Genre;
+import com.petros.bookstore.repository.BookRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,7 +73,7 @@ class BookRepositoryIT {
         );
 
         assertThat(result.getContent()).hasSize(1);
-        assertThat(result.getContent().get(0).getPrice()).isGreaterThanOrEqualTo(40.0f);
+        assertThat(result.getContent().get(0).getPrice()).isEqualTo(45.0f);
     }
 
     @Test
@@ -112,6 +113,7 @@ class BookRepositoryIT {
         assertThat(result.getContent()).hasSize(2);
         assertThat(result.getContent()).allMatch(book -> book.getGenre() == Genre.TECH);
     }
+
 
     @Test
     void testSearchBooksPagination() {
