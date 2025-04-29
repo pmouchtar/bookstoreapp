@@ -1,6 +1,8 @@
 package com.petros.bookstore.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+//import com.petros.bookstore.config.AbstractPostgresContainerTest;
+import com.petros.bookstore.config.AbstractPostgresContainerTest;
 import com.petros.bookstore.dto.BookRequest;
 import com.petros.bookstore.dto.BookUpdateRequest;
 import com.petros.bookstore.model.enums.Genre;
@@ -22,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class BookIntegrationTest {
+public class BookIntegrationTest extends AbstractPostgresContainerTest {
 
     @Autowired
     private MockMvc mockMvc;
