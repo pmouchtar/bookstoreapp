@@ -1,4 +1,4 @@
-# Bookstore API
+## Bookstore API
 
 A Spring Boot RESTful API for managing books, users, shopping carts, orders, and favorites.
 
@@ -15,14 +15,14 @@ A Spring Boot RESTful API for managing books, users, shopping carts, orders, and
 - Swagger UI (API Documentation)
 - Lombok
 
----
 
 ## 1. Clone the Repository
 
-```bash
-git clone https://github.com/yourusername/bookstore.git
+bash
+git clone https://github.com/pmouchtar/bookstore.git
 cd bookstore
 
+## 2. Setup PostgreSQL
 
 Create a database named bookstore
 Configure application.properties:
