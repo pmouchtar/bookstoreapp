@@ -18,23 +18,23 @@ A Spring Boot RESTful API for managing books, users, shopping carts, orders, and
 
 ## 1. Clone the Repository
 
-bash
-git clone https://github.com/pmouchtar/bookstore.git
-cd bookstore
+- bash
+- git clone https://github.com/pmouchtar/bookstore.git
+- cd bookstore
 
 ## 2. Setup PostgreSQL
 
-Create a database named bookstore
-Configure application.properties:
+- Create a database named bookstore
+- Configure application.properties:
 
-spring.datasource.url=jdbc:postgresql://localhost:5432/bookstore
-spring.datasource.username=your_username
-spring.datasource.password=your_password
+- spring.datasource.url=jdbc:postgresql://localhost:5432/bookstore
+- spring.datasource.username=your_username
+- spring.datasource.password=your_password
 
 ## 3. Build and Run the Application
 
-mvn clean install
-mvn spring-boot:run
+- mvn clean install
+- mvn spring-boot:run
 
 ## 4. Once the app is running, access Swagger UI:
 
