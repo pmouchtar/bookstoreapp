@@ -10,6 +10,7 @@ A Spring Boot RESTful API for managing books, users, shopping carts, orders, and
 - PostgreSQL
 - Flyway (Database Migration)
 - Maven
+- Docker
 - Testcontainers (Integration Testing)
 - JUnit 5
 - Swagger UI (API Documentation)
