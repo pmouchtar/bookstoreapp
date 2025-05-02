@@ -44,3 +44,5 @@ http://localhost:8080/swagger-ui.html
 or for Postman access:
 
 http://localhost:8080
+
+## 5. For testing use the dev branch
