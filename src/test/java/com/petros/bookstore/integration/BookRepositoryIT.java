@@ -1,5 +1,6 @@
 package com.petros.bookstore.integration;
 
+import com.petros.bookstore.config.AbstractPostgresContainerTest;
 import com.petros.bookstore.model.Book;
 import com.petros.bookstore.model.enums.Genre;
 import com.petros.bookstore.repository.BookRepository;
@@ -17,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class BookRepositoryIT {
+class BookRepositoryIT extends AbstractPostgresContainerTest {
 
     @Autowired
     private BookRepository bookRepository;
