@@ -7,6 +7,8 @@ import com.petros.bookstore.dto.BookRequest;
 import com.petros.bookstore.dto.BookResponse;
 import com.petros.bookstore.dto.BookUpdateRequest;
 import com.petros.bookstore.dto.PaginatedResponse;
+import com.petros.bookstore.mapper.BookMapper;
+import com.petros.bookstore.model.Book;
 import com.petros.bookstore.model.enums.Genre;
 import com.petros.bookstore.repository.BookRepository;
 import org.apache.catalina.connector.Response;
@@ -38,8 +40,8 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
 
     int port = 8080;
 
-    @Autowired
-    private MockMvc mockMvc;
+//    @Autowired
+//    private MockMvc mockMvc;
 
 
     @Autowired
@@ -75,6 +77,8 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
         BookResponse createdBook = createResponse.getBody();
         Assertions.assertNotNull(createdBook);
         Assertions.assertNotNull(createdBook.getId());
+        Assertions.assertEquals("Integration Book", createdBook.getTitle());
+        Assertions.assertEquals(Genre.MYSTERY, createdBook.getGenre());
 
         // Get book by ID
         ResponseEntity<BookResponse> getResponse = client.getForEntity(
@@ -87,6 +91,11 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
         Assertions.assertNotNull(retrievedBook);
         Assertions.assertEquals("Integration Book", retrievedBook.getTitle());
         Assertions.assertEquals("Test Author", retrievedBook.getAuthor());
+        Assertions.assertEquals(15.99f, retrievedBook.getPrice());
+        Assertions.assertEquals(Genre.MYSTERY, retrievedBook.getGenre());
+//        Book book = BookMapper.toEntity(bookRequest);
+//        BookResponse response = BookMapper.toResponse(book);
+        Assertions.assertEquals(createResponse.getBody(), retrievedBook);
     }
 
 
@@ -100,7 +109,7 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
         );
         Assertions.assertEquals(HttpStatus.OK, postResponse.getStatusCode());
 
-        // Get all books (paginated)
+        // Get all books
         ResponseEntity<PaginatedResponse<BookResponse>> response = client.exchange(
                 "/books?page=0&size=10",
                 HttpMethod.GET,

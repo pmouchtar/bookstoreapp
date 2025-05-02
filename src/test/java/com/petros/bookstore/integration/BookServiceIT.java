@@ -1,5 +1,6 @@
 package com.petros.bookstore.integration;
 
+import com.petros.bookstore.config.AbstractPostgresContainerTest;
 import com.petros.bookstore.dto.BookRequest;
 import com.petros.bookstore.dto.BookResponse;
 import com.petros.bookstore.dto.BookUpdateRequest;
@@ -20,7 +21,7 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class BookServiceIT {
+public class BookServiceIT extends AbstractPostgresContainerTest {
 
     @Autowired
     private BookService bookService;
