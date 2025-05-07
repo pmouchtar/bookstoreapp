@@ -33,5 +33,6 @@ public class BookRequest {
     private Integer availability;
 
     @NotNull(message = "Genre is required")
+    @NotBlank(message = "Genre cannot be empty")
     private Genre genre;
 }
