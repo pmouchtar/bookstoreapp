@@ -37,11 +37,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>("Something went wrong: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-//    @ExceptionHandler(InvalidPriceRangeException.class)
-//    public ResponseEntity<String> handleInvalidPriceRange(InvalidPriceRangeException ex) {
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-//    }
-
     @ExceptionHandler(InvalidPriceRangeException.class)
     public ResponseEntity<Map<String, String>> handleInvalidPriceRange(InvalidPriceRangeException ex) {
         return ResponseEntity.badRequest()
@@ -68,7 +63,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Map<String, String>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
-        String paramName = ex.getName(); // e.g., "minPrice"
+        String paramName = ex.getName();
         String invalidValue = ex.getValue() != null ? ex.getValue().toString() : "null";
         String expectedType = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown";
 

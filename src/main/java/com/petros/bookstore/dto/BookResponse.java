@@ -14,7 +14,7 @@ public class BookResponse {
     private String title;
     private String author;
     private String description;
-    private float price;
+    private Float price;
     private int availability;
     private Genre genre;
 }

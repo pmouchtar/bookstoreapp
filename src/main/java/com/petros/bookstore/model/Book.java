@@ -28,7 +28,7 @@ public class Book {
     private String description;
 
     @Column(nullable = false)
-    private float price;
+    private Float price;
 
     @Column(nullable = false)
     private int availability;

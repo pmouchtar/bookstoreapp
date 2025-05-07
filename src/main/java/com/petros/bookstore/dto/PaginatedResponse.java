@@ -22,7 +22,6 @@ public class PaginatedResponse<T> {
     private int totalPages;
     private long totalElements;
 
-    // Optional: convert to real Page<T>
     public Page<T> toPage() {
         return new PageImpl<>(content, PageRequest.of(number, size), totalElements);
     }

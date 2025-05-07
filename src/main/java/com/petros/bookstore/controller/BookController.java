@@ -8,6 +8,7 @@ import com.petros.bookstore.model.enums.Genre;
 import com.petros.bookstore.service.BookService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.IllegalFormatCodePointException;
 
 /**
  * REST controller for managing books in the bookstore.
@@ -56,19 +59,10 @@ public class BookController {
             @RequestParam (required = false) String title,
             @RequestParam (required = false) String author,
             @RequestParam (required = false) @Min(0) Integer availability,
-            @RequestParam (required = false) String genre,
-            @RequestParam (required = false) @DecimalMin("0.0") Float minPrice,
-            @RequestParam (required = false) @DecimalMin("0.0") Float maxPrice,
+            @RequestParam (required = false) Genre genre,
+            @RequestParam (required = false) @DecimalMin("0.0") @Digits(integer = 5, fraction = 2, message = "decimals up to 2 digits") Float minPrice,
+            @RequestParam (required = false) @DecimalMin("0.0") @Digits(integer = 5, fraction = 2, message = "decimals up to 2 digits") Float maxPrice,
             Pageable pageable) {
-
-        Genre genreEnum = null;
-        if (genre != null) {
-            try {
-                genreEnum = Genre.valueOf(genre.toUpperCase());
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("Invalid genre: " + genre);
-            }
-        }
 
         if ((minPrice == null) != (maxPrice == null)) {
             throw new InvalidPriceRangeException("Both minPrice and maxPrice should be provided together.");
@@ -78,8 +72,15 @@ public class BookController {
             throw new IllegalArgumentException("minPrice cannot be greater than maxPrice");
         }
 
-        if (title != null || author != null || availability != null || genreEnum != null || (minPrice != null & maxPrice != null)) {
-            return bookService.searchBooks(title, author, availability, genreEnum, minPrice, maxPrice, pageable);
+//        if (minPrice != null && maxPrice != null){
+//            minPrice = (float) (Math.floor(minPrice * 100) / 100.0);
+//            maxPrice = (float) (Math.floor(maxPrice * 100) / 100.0);
+//            System.out.println(minPrice);
+//            System.out.println(maxPrice);
+//        }
+
+        if (title != null || author != null || availability != null || genre != null || (minPrice != null & maxPrice != null)) {
+            return bookService.searchBooks(title, author, availability, genre, minPrice, maxPrice, pageable);
         } else {
             return bookService.findAll(pageable);
         }

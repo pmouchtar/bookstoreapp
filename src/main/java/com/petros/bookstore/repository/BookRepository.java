@@ -34,8 +34,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             "(:author IS NULL OR b.author ILIKE %:author%) AND " +
             "(:genre IS NULL OR b.genre ILIKE :genre) AND " +
             "(:availability IS NULL OR b.availability >= :availability) AND " +
-            "(:minPrice IS NULL OR b.price >= :minPrice) AND " +
-            "(:maxPrice IS NULL OR b.price <= :maxPrice)")
+            "(:minPrice IS NULL OR b.price >= :minPrice - 0.00001) AND " +
+            "(:maxPrice IS NULL OR b.price <= :maxPrice + 0.00001)")
     Page<Book> searchBooks(
             @Param("title") String title,
             @Param("author") String author,
