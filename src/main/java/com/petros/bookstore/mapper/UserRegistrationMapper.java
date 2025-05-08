@@ -23,7 +23,7 @@ public class UserRegistrationMapper {
             final User user) {
 
         return new RegistrationResponseDto(
-                user.getFirstName(), user.getLastName(), user.getUsername());
+                user.getUsername(), user.getFirstName(), user.getLastName());
     }
 
 }

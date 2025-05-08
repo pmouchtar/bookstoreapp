@@ -20,6 +20,7 @@ public class BookRequest {
 
     @NotBlank(message = "Author is required")
     @Size(max = 255, message = "Author must be at most 255 characters")
+    @Pattern(regexp = "^[\\p{L} ]+$", message = "Author name must contain only letters and spaces")
     private String author;
 
     @Size(max = 500, message = "Description must be at most 500 characters")
