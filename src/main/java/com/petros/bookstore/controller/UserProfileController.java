@@ -1,10 +1,11 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.UserProfileDto;
+import com.petros.bookstore.dto.UserProfileResponseDto;
 import com.petros.bookstore.dto.UserProfileUpdateRequest;
 import com.petros.bookstore.mapper.UserMapper;
 import com.petros.bookstore.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,7 @@ public class UserProfileController {
 
     @GetMapping()
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<UserProfileDto> getUserProfile(
+    public ResponseEntity<UserProfileResponseDto> getUserProfile(
             final Authentication authentication) {
 
         final var user =
@@ -31,9 +32,9 @@ public class UserProfileController {
 
     @PutMapping
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<UserProfileDto> updateUserProfile(
+    public ResponseEntity<UserProfileResponseDto> updateUserProfile(
             final Authentication authentication,
-            @RequestBody UserProfileUpdateRequest request) {
+            @Valid  @RequestBody UserProfileUpdateRequest request) {
 
         final var updatedUser = userService.updateUserProfile(authentication.getName(), request);
         return ResponseEntity.ok(userMapper.toUserProfileDto(updatedUser));

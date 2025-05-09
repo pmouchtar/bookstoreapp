@@ -1,6 +1,6 @@
 package com.petros.bookstore.service;
 
-import com.petros.bookstore.dto.UserProfileDto;
+import com.petros.bookstore.dto.UserProfileResponseDto;
 import com.petros.bookstore.dto.UserProfileUpdateRequest;
 import com.petros.bookstore.mapper.UserMapper;
 import com.petros.bookstore.model.User;
@@ -52,12 +52,12 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public Page<UserProfileDto> searchUsers(String username, String firstName, String lastName, Pageable pageable) {
+    public Page<UserProfileResponseDto> searchUsers(String username, String firstName, String lastName, Pageable pageable) {
         return userRepository.searchUsers(username, firstName, lastName, pageable)
                 .map(UserMapper::toUserProfileDto);
     }
 
-    public Page<UserProfileDto> findAll(Pageable pageable) {
+    public Page<UserProfileResponseDto> findAll(Pageable pageable) {
         return userRepository.findAll(pageable)
                 .map(UserMapper::toUserProfileDto);
     }

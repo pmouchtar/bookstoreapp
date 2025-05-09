@@ -1,7 +1,6 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.UserProfileDto;
-import com.petros.bookstore.mapper.UserMapper;
+import com.petros.bookstore.dto.UserProfileResponseDto;
 import com.petros.bookstore.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,7 +19,7 @@ public class UserAdminController {
     private final UserService userService;
 
     @GetMapping()
-    public ResponseEntity<Page<UserProfileDto>> getAllUsers(
+    public ResponseEntity<Page<UserProfileResponseDto>> getAllUsers(
             @RequestParam(required = false) String username,
             @RequestParam(required = false) String firstName,
             @RequestParam(required = false) String lastName,
