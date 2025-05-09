@@ -24,7 +24,7 @@ public class BookUpdateRequest {
     private String description;
 
     @Min(value = 0, message = "Price must be at least 0")
-    private Float price;
+    private Double price;
 
     @Min(value = 0, message = "Availability must be at least 0")
     private Integer availability;

@@ -33,7 +33,7 @@ class BookRepositoryIT extends AbstractPostgresContainerTest {
         book1 = new Book();
         book1.setTitle("Spring in Action");
         book1.setAuthor("Craig Walls");
-        book1.setPrice(45.0f);
+        book1.setPrice(45.0);
         book1.setAvailability(5);
         book1.setGenre(Genre.TECH);
         book1.setDescription("A comprehensive Spring book");
@@ -41,7 +41,7 @@ class BookRepositoryIT extends AbstractPostgresContainerTest {
         book2 = new Book();
         book2.setTitle("Java Fundamentals");
         book2.setAuthor("John Doe");
-        book2.setPrice(35.0f);
+        book2.setPrice(35.0);
         book2.setAvailability(10);
         book2.setGenre(Genre.TECH);
         book2.setDescription("Basics of Java");
@@ -70,7 +70,7 @@ class BookRepositoryIT extends AbstractPostgresContainerTest {
     @Test
     void testSearchBooksWithPriceRange() {
         Page<Book> result = bookRepository.searchBooks(
-                null, null, null, null, 40.0f, 50.0f, PageRequest.of(0, 10)
+                null, null, null, null, 40.0, 50.0, PageRequest.of(0, 10)
         );
 
         assertThat(result.getContent()).hasSize(1);
@@ -80,7 +80,7 @@ class BookRepositoryIT extends AbstractPostgresContainerTest {
     @Test
     void testSearchBooksWithMultipleFilters() {
         Page<Book> result = bookRepository.searchBooks(
-                "Java", "John Doe", Genre.TECH, 5, 30.0f, 40.0f, PageRequest.of(0, 10)
+                "Java", "John Doe", Genre.TECH, 5, 30.0, 40.0, PageRequest.of(0, 10)
         );
 
         assertThat(result.getContent()).hasSize(1);
@@ -99,7 +99,7 @@ class BookRepositoryIT extends AbstractPostgresContainerTest {
     @Test
     void testSearchBooksWithNoMatchReturnsEmpty() {
         Page<Book> result = bookRepository.searchBooks(
-                "Nonexistent", "Nobody", Genre.HISTORY, 100, 100.0f, 200.0f, PageRequest.of(0, 10)
+                "Nonexistent", "Nobody", Genre.HISTORY, 100, 100.0, 200.0, PageRequest.of(0, 10)
         );
 
         assertThat(result.getContent()).isEmpty();

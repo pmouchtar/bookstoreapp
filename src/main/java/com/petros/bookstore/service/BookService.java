@@ -13,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 /**
  * Service class for managing books.
  * Provides methods for saving, retrieving, updating, deleting, and searching books.
@@ -108,7 +110,7 @@ public class BookService {
      * @param pageable pagination information
      * @return a page of book responses matching the filters
      */
-    public Page<BookResponse> searchBooks(String title, String author, Integer availability, Genre genre, Float minPrice, Float maxPrice, Pageable pageable) {
+    public Page<BookResponse> searchBooks(String title, String author, Integer availability, Genre genre, Double minPrice, Double maxPrice, Pageable pageable) {
         return bookRepository.searchBooks(title, author, genre, availability, minPrice, maxPrice, pageable)
                 .map(BookMapper::toResponse);
     }

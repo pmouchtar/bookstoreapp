@@ -36,9 +36,9 @@ public class BookServiceIT extends AbstractPostgresContainerTest {
     void setUp() {
         bookRepository.deleteAll();
 
-        bookRequest = new BookRequest("Simple Book", "John Doe", "simple description", 9.99f, 100, Genre.DRAMA);
+        bookRequest = new BookRequest("Simple Book", "John Doe", "simple description", 9.99, 100, Genre.DRAMA);
         bookService.save(bookRequest);
-        bookRequest2 = new BookRequest("Another Book", "Jane Doe", "another description", 19.99f, 50, Genre.SCIENCE_FICTION);
+        bookRequest2 = new BookRequest("Another Book", "Jane Doe", "another description", 19.99, 50, Genre.SCIENCE_FICTION);
         bookService.save(bookRequest2);
     }
 
@@ -89,7 +89,7 @@ public class BookServiceIT extends AbstractPostgresContainerTest {
     void testSearchBooks() {
         //bookService.save(bookRequest);
         Page<BookResponse> results = bookService.searchBooks(
-                "Simple", "John", 100, Genre.DRAMA, 5.0f, 15.0f, PageRequest.of(0, 10));
+                "Simple", "John", 100, Genre.DRAMA, 5.0, 15.0, PageRequest.of(0, 10));
 
         assertThat(results.getContent()).hasSize(1);
         assertThat(results.getContent().get(0).getTitle()).contains("Simple");

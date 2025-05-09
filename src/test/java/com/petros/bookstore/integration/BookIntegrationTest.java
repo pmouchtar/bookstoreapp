@@ -12,6 +12,7 @@ import com.petros.bookstore.model.Book;
 import com.petros.bookstore.model.enums.Genre;
 import com.petros.bookstore.repository.BookRepository;
 import org.apache.catalina.connector.Response;
+import org.junit.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,10 +41,6 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
 
     int port = 8080;
 
-//    @Autowired
-//    private MockMvc mockMvc;
-
-
     @Autowired
     TestRestTemplate client;
 
@@ -56,11 +53,12 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
     @Autowired
     private BookRepository bookRepository;
 
+
     @BeforeEach
     void setup() {
         bookRepository.deleteAll();
 
-        bookRequest = new BookRequest("Integration Book", "Test Author", "A book for testing", 15.99f, 10, Genre.MYSTERY);
+        bookRequest = new BookRequest("Integration Book", "Test Author", "A book for testing", 15.99, 10, Genre.MYSTERY);
     }
 
 
@@ -208,7 +206,7 @@ void testSearchBooks_withDeserializationToPage() {
     // Create books
     client.postForEntity("/books", bookRequest, BookResponse.class);
 
-    BookRequest secondBook = new BookRequest("Another Title", "Other Author", "Desc", 12.99f, 15, Genre.MYSTERY);
+    BookRequest secondBook = new BookRequest("Another Title", "Other Author", "Desc", 12.99, 15, Genre.MYSTERY);
     client.postForEntity("/books", secondBook, BookResponse.class);
 
     // Search params
@@ -245,7 +243,7 @@ void testSearchBooks_withDeserializationToPage() {
         Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         String responseBody = response.getBody();
         Assertions.assertNotNull(responseBody);
-        Assertions.assertTrue(responseBody.contains("Invalid value 'cheap' for parameter 'minPrice'. Expected type: Float."));
+        Assertions.assertTrue(responseBody.contains("Invalid value 'cheap' for parameter 'minPrice'. Expected type: Double."));
     }
 
 
@@ -285,7 +283,7 @@ void testSearchBooks_withDeserializationToPage() {
     @Test
     void testCreateBook_InvalidData() {
         // Create a book with invalid data
-        BookRequest invalidRequest = new BookRequest("", "", "", -1.0f, -10, null);
+        BookRequest invalidRequest = new BookRequest("", "", "", -1.0, -10, null);
 
         // Send request and expect BAD_REQUEST status
         ResponseEntity<String> response = client.postForEntity(
@@ -326,7 +324,7 @@ void testSearchBooks_withDeserializationToPage() {
                 BookResponse.class
         );
         Assertions.assertEquals(HttpStatus.OK, postResponse.getStatusCode());
-        Long id = postResponse.getBody().getId();  // Assuming getId() is available in BookResponse
+        Long id = postResponse.getBody().getId();
 
         // Malformed update request
         String malformedUpdate = "{ \"availability\": \"ten\" }";

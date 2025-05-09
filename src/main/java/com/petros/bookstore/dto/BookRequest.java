@@ -28,7 +28,7 @@ public class BookRequest {
 
     @Min(value = 0, message = "Price must be >= 0")
     @Digits(integer = 5, fraction = 2, message = "Integer part must be <=5 digits, Decimal part must be <=2 digits")
-    private Float price;
+    private Double price;
 
     @Min(value = 0, message = "Availability must be >= 0")
     private Integer availability;

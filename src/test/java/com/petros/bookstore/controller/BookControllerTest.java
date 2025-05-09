@@ -69,8 +69,8 @@ class BookControllerTest {
     @Test
     @DisplayName("GET /books - search by title and genre - books found")
     void testSearchBooksFound() throws Exception {
-        BookResponse book1 = new BookResponse(1L, "Title 1", "Author 1", "Description", 12.99f, 10, Genre.SCIENCE_FICTION);
-        BookResponse book2 = new BookResponse(2L, "Title 2", "Author 2", "Description", 15.99f, 5, Genre.FANTASY);
+        BookResponse book1 = new BookResponse(1L, "Title 1", "Author 1", "Description", 12.99, 10, Genre.SCIENCE_FICTION);
+        BookResponse book2 = new BookResponse(2L, "Title 2", "Author 2", "Description", 15.99, 5, Genre.FANTASY);
         List<BookResponse> books = Arrays.asList(book1, book2);
         Page<BookResponse> page = new PageImpl<>(books, PageRequest.of(0, 10), books.size());
 
@@ -102,8 +102,8 @@ class BookControllerTest {
     @Test
     @DisplayName("POST /books - success")
     void testAddBook() throws Exception {
-        BookRequest request = new BookRequest("Title", "Author", "Description", 12.99f, 10, Genre.SCIENCE_FICTION);
-        BookResponse response = new BookResponse(1L, "Title", "Author", "Description", 12.99f, 10, Genre.SCIENCE_FICTION);
+        BookRequest request = new BookRequest("Title", "Author", "Description", 12.99, 10, Genre.SCIENCE_FICTION);
+        BookResponse response = new BookResponse(1L, "Title", "Author", "Description", 12.99, 10, Genre.SCIENCE_FICTION);
 
         when(bookService.save(any(BookRequest.class))).thenReturn(response);
 
@@ -118,7 +118,7 @@ class BookControllerTest {
     @Test
     @DisplayName("GET /books/{id} - found")
     void testGetBookById() throws Exception {
-        BookResponse response = new BookResponse(1L, "Title", "Author", "Desc", 10.99f, 5, Genre.SCIENCE_FICTION);
+        BookResponse response = new BookResponse(1L, "Title", "Author", "Desc", 10.99, 5, Genre.SCIENCE_FICTION);
 
         when(bookService.findBookById(1L)).thenReturn(response);
 
@@ -145,7 +145,7 @@ class BookControllerTest {
         BookUpdateRequest updateRequest = new BookUpdateRequest();
         updateRequest.setTitle("Updated Title");
 
-        BookResponse updatedResponse = new BookResponse(1L, "Updated Title", "Author", "Desc", 10.99f, 5, Genre.SCIENCE_FICTION);
+        BookResponse updatedResponse = new BookResponse(1L, "Updated Title", "Author", "Desc", 10.99, 5, Genre.SCIENCE_FICTION);
 
         when(bookService.updateBook(Mockito.eq(1L), any(BookUpdateRequest.class))).thenReturn(updatedResponse);
 
