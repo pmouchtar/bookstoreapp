@@ -24,6 +24,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -32,7 +33,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -89,10 +90,8 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
         Assertions.assertNotNull(retrievedBook);
         Assertions.assertEquals("Integration Book", retrievedBook.getTitle());
         Assertions.assertEquals("Test Author", retrievedBook.getAuthor());
-        Assertions.assertEquals(15.99f, retrievedBook.getPrice());
+        Assertions.assertEquals(15.99, retrievedBook.getPrice());
         Assertions.assertEquals(Genre.MYSTERY, retrievedBook.getGenre());
-//        Book book = BookMapper.toEntity(bookRequest);
-//        BookResponse response = BookMapper.toResponse(book);
         Assertions.assertEquals(createResponse.getBody(), retrievedBook);
     }
 
