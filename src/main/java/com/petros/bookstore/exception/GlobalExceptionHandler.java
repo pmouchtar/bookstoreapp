@@ -1,12 +1,15 @@
 package com.petros.bookstore.exception;
 
 import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -61,6 +64,12 @@ public class GlobalExceptionHandler {
                 .body(Map.of("message", "Malformed JSON request or invalid data format"));
     }
 
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<Map<String, String>> handleBadRequestBody(ValidationException ex) {
+        return ResponseEntity.badRequest()
+                .body(Map.of("message", ex.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Map<String, String>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
         String paramName = ex.getName();
@@ -74,5 +83,20 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest()
                 .body(Map.of("message", message));
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Map<String, String>> handleBadCredentials(BadCredentialsException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Bad credentials");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<Map<String, String>> handleNoHandlerFound(NoHandlerFoundException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "Endpoint not found");
+        error.put("path", ex.getRequestURL());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 }

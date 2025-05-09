@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserProfileUpdateRequest {
 
-    @NotBlank(message = "First name is required")
+    //@NotBlank(message = "First name is required")
     @Size(max = 50, message = "First name must be at most 50 characters")
     @Pattern(
             regexp = "^[A-Za-zΑ-Ωα-ωΆ-Ώά-ώ]+$",
@@ -20,7 +20,7 @@ public class UserProfileUpdateRequest {
     )
     private String firstName;
 
-    @NotBlank(message = "Last name is required")
+    //@NotBlank(message = "Last name is required")
     @Size(max = 50, message = "Last name must be at most 50 characters")
     @Pattern(
             regexp = "^[A-Za-zΑ-Ωα-ωΆ-Ώά-ώ]+$",
@@ -28,7 +28,7 @@ public class UserProfileUpdateRequest {
     )
     private String lastName;
 
-    @NotBlank(message = "Username is required")
+    //@NotBlank(message = "Username is required")
     @Size(min = 4, max = 30, message = "Username must be between 4 and 30 characters")
     @Pattern(
             regexp = "^(?!\\d+$)[A-Za-z\\d._-]+$",
@@ -36,7 +36,7 @@ public class UserProfileUpdateRequest {
     )
     private String username;
 
-    @NotBlank(message = "Password is required")
+    //@NotBlank(message = "Password is required")
     @Size(min = 8, max = 100, message = "Password must be at least 8 characters long")
     @Pattern(
             regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d).*$",

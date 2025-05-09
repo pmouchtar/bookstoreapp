@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserProfileController {
 
     private final UserService userService;
-    private final UserMapper userMapper;
+    //private final UserMapper userMapper;
 
     @GetMapping()
     @SecurityRequirement(name = "bearerAuth")
@@ -27,7 +27,7 @@ public class UserProfileController {
         final var user =
                 userService.getUserByUsername(authentication.getName());
 
-        return ResponseEntity.ok(userMapper.toUserProfileDto(user));
+        return ResponseEntity.ok(UserMapper.toUserProfileDto(user));
     }
 
     @PutMapping
@@ -37,7 +37,7 @@ public class UserProfileController {
             @Valid  @RequestBody UserProfileUpdateRequest request) {
 
         final var updatedUser = userService.updateUserProfile(authentication.getName(), request);
-        return ResponseEntity.ok(userMapper.toUserProfileDto(updatedUser));
+        return ResponseEntity.ok(UserMapper.toUserProfileDto(updatedUser));
     }
 
     @DeleteMapping

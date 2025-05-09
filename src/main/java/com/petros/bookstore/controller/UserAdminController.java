@@ -1,15 +1,19 @@
 package com.petros.bookstore.controller;
 
+import com.petros.bookstore.dto.BookResponse;
+import com.petros.bookstore.dto.BookUpdateRequest;
 import com.petros.bookstore.dto.UserProfileResponseDto;
+import com.petros.bookstore.dto.UserProfileUpdateRequest;
+import com.petros.bookstore.mapper.UserMapper;
 import com.petros.bookstore.service.UserService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
@@ -30,5 +34,26 @@ public class UserAdminController {
         } else {
             return ResponseEntity.ok(userService.findAll(pageable));
         }
+    }
+
+    @GetMapping("/{userId}")
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<UserProfileResponseDto> getUser(@PathVariable Long userId) {
+        UserProfileResponseDto responseDto = userService.findUserById(userId);
+        return ResponseEntity.ok(responseDto);
+    }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserProfileResponseDto> updateUser(
+            @PathVariable Long userId,
+            @Valid @RequestBody UserProfileUpdateRequest request) {
+        UserProfileResponseDto updatedUser = userService.updateUserById(userId, request);
+        return ResponseEntity.ok(updatedUser);
+    }
+
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
+        boolean deleted = userService.deleteUserById(userId);
+        return ResponseEntity.noContent().build();
     }
 }
