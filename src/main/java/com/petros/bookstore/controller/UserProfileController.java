@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,10 +25,14 @@ public class UserProfileController {
     public ResponseEntity<UserProfileResponseDto> getUserProfile(
             final Authentication authentication) {
 
-        final var user =
-                userService.getUserByUsername(authentication.getName());
+        //to find the userId from username
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        Long userId = jwt.getClaim("userId");
 
-        return ResponseEntity.ok(UserMapper.toUserProfileDto(user));
+        final var user =
+                userService.findUserById(userId);
+
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping
@@ -36,14 +41,23 @@ public class UserProfileController {
             final Authentication authentication,
             @Valid  @RequestBody UserProfileUpdateRequest request) {
 
-        final var updatedUser = userService.updateUserProfile(authentication.getName(), request);
+        //to find the userId from username
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        Long userId = jwt.getClaim("userId");
+
+        final var updatedUser = userService.updateUserProfile(userId, request);
         return ResponseEntity.ok(UserMapper.toUserProfileDto(updatedUser));
     }
 
     @DeleteMapping
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> deleteUserProfile(final Authentication authentication) {
-        userService.deleteUserByUsername(authentication.getName());
+
+        //to find the userId from username
+        Jwt jwt = (Jwt) authentication.getPrincipal();
+        Long userId = jwt.getClaim("userId");
+
+        userService.deleteUserById(userId);
         return ResponseEntity.noContent().build();
     }
 

@@ -99,4 +99,12 @@ public class GlobalExceptionHandler {
         error.put("path", ex.getRequestURL());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
+
+    @ExceptionHandler(ResourceGoneException.class)
+    public ResponseEntity<Map<String, String>> handleGone(ResourceGoneException ex) {
+        Map<String, String> body = new HashMap<>();
+        body.put("error", "Gone");
+        body.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.GONE).body(body);
+    }
 }

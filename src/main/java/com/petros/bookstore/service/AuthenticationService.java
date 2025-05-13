@@ -12,6 +12,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import static com.petros.bookstore.model.enums.Role.USER;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -28,8 +30,8 @@ public class AuthenticationService {
         final var authToken = UsernamePasswordAuthenticationToken
                 .unauthenticated(request.username(), request.password());
 
-        final var authentication = authenticationManager
-                .authenticate(authToken);
+        //final var authentication =
+        authenticationManager.authenticate(authToken);
 
         final var token = jwtService.generateToken(request.username());
         return new AuthenticationResponseDto(token);
@@ -47,7 +49,7 @@ public class AuthenticationService {
         user.setUsername(request.getUsername());
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
-        user.setRole("USER");
+        user.setRole(USER);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
         return userRepository.save(user);
