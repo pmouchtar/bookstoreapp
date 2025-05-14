@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,6 +37,7 @@ public class BookController {
      * @param bookRequest the book details
      * @return the created book as a response DTO
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping()
     public BookResponse addBook(@Valid @RequestBody BookRequest bookRequest) {
         return bookService.save(bookRequest);
@@ -98,6 +100,7 @@ public class BookController {
      * @param request the update request DTO
      * @return the updated book
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{bookId}")
     public ResponseEntity<BookResponse> updateBook(
             @PathVariable Long bookId,
@@ -112,6 +115,7 @@ public class BookController {
      * @param bookId the ID of the book to delete
      * @return a response with no content
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{bookId}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long bookId) {
         boolean deleted = bookService.deleteBookById(bookId);

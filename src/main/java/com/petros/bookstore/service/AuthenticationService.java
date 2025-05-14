@@ -3,6 +3,7 @@ package com.petros.bookstore.service;
 import com.petros.bookstore.dto.AuthenticationRequestDto;
 import com.petros.bookstore.dto.AuthenticationResponseDto;
 import com.petros.bookstore.model.User;
+import com.petros.bookstore.model.enums.Role;
 import com.petros.bookstore.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import static com.petros.bookstore.model.enums.Role.USER;
+
 
 @Service
 @RequiredArgsConstructor
