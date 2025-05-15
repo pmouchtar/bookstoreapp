@@ -1,0 +1,4 @@
+ALTER TABLE favourite_books
+    ADD COLUMN created_at TIMESTAMPTZ
+    DEFAULT CURRENT_TIMESTAMP
+    NOT NULL;
