@@ -52,7 +52,7 @@ public class UserAdminController {
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
-        boolean deleted = userService.deleteUserById(userId);
+        userService.deleteUserById(userId);
         return ResponseEntity.noContent().build();
     }
 }

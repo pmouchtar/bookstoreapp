@@ -1,6 +1,7 @@
 package com.petros.bookstore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.petros.bookstore.config.TestSecurityConfig;
 import com.petros.bookstore.dto.BookRequest;
 import com.petros.bookstore.dto.BookResponse;
 import com.petros.bookstore.dto.BookUpdateRequest;
@@ -19,21 +20,23 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
 @WebMvcTest(BookController.class)
-@Import(BookControllerTest.Config.class)
+@Import(TestSecurityConfig.class)
+@ActiveProfiles("test")
 class BookControllerTest {
 
     @Autowired
