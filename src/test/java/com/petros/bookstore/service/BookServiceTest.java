@@ -35,8 +35,8 @@ class BookServiceTest {
 
     @BeforeEach
     void setup() {
-        book = new Book(1L, "Title", "Author", "Description", 19.99f, 10, Genre.FANTASY);
-        bookRequest = new BookRequest("Title", "Author", "Description", 19.99f, 10, Genre.FANTASY);
+        book = new Book(1L, "Title", "Author", "Description", 19.99, 10, Genre.FANTASY);
+        bookRequest = new BookRequest("Title", "Author", "Description", 19.99, 10, Genre.FANTASY);
         bookUpdateRequest = new BookUpdateRequest("New Title", null, null, null, null, null);
     }
 
@@ -79,7 +79,7 @@ class BookServiceTest {
 
         assertThatThrownBy(() -> bookService.findBookById(999L))
                 .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage("Book with ID 999 not found");
+                .hasMessage("Book with ID 999 not found.");
     }
 
     @Test

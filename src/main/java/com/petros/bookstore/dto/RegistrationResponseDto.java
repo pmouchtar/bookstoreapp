@@ -1,8 +1,11 @@
 package com.petros.bookstore.dto;
 
-    public record RegistrationResponseDto(
+import com.petros.bookstore.model.enums.Role;
+
+public record RegistrationResponseDto(
             String username,
             String firstName,
-            String lastName
+            String lastName,
+            Role role
     ){
 }

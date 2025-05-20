@@ -3,6 +3,7 @@ package com.petros.bookstore.config;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import com.petros.bookstore.service.UserService;
 import org.springframework.core.io.Resource;
 import com.petros.bookstore.service.JwtService;
 import lombok.Getter;
@@ -80,9 +81,9 @@ public class JwtConfig {
     }
 
     @Bean
-    public JwtService jwtService(@Value("${spring.application.name}") String appName,
+    public JwtService jwtService(UserService userService, @Value("${spring.application.name}") String appName,
                                  JwtEncoder jwtEncoder) {
-        return new JwtService(appName, ttl, jwtEncoder);
+        return new JwtService(userService, appName, ttl, jwtEncoder);
     }
 }
 

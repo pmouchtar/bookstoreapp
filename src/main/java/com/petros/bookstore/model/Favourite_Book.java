@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.Instant;
 
 @Entity
 @Getter
@@ -25,5 +28,8 @@ public class Favourite_Book {
     @ManyToOne
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
+
+    @CreationTimestamp
+    private Instant createdAt;
 
 }

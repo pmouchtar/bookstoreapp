@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import com.petros.bookstore.model.enums.Genre;
 
+import java.math.BigDecimal;
+
 @Entity
 @Getter
 @Setter
@@ -28,7 +30,7 @@ public class Book {
     private String description;
 
     @Column(nullable = false)
-    private Float price;
+    private Double price;
 
     @Column(nullable = false)
     private int availability;
@@ -37,7 +39,7 @@ public class Book {
     @Column(nullable = false)
     private Genre genre;
 
-    public Book(String title, String author, String description, float price, int availability, Genre genre) {
+    public Book(String title, String author, String description, Double price, int availability, Genre genre) {
         this.title = title;
         this.author = author;
         this.description = description;

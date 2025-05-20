@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+
 /**
  * Repository interface for managing {@link Book} entities.
  * Provides basic CRUD operations and a custom search method with filtering.
@@ -34,14 +36,14 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             "(:author IS NULL OR b.author ILIKE %:author%) AND " +
             "(:genre IS NULL OR b.genre ILIKE :genre) AND " +
             "(:availability IS NULL OR b.availability >= :availability) AND " +
-            "(:minPrice IS NULL OR b.price >= :minPrice - 0.00001) AND " +
-            "(:maxPrice IS NULL OR b.price <= :maxPrice + 0.00001)")
+            "(:minPrice IS NULL OR b.price >= :minPrice) AND " +
+            "(:maxPrice IS NULL OR b.price <= :maxPrice)")
     Page<Book> searchBooks(
             @Param("title") String title,
             @Param("author") String author,
             @Param("genre") Genre genre,
             @Param("availability") Integer availability,
-            @Param("minPrice") Float minPrice,
-            @Param("maxPrice") Float maxPrice,
+            @Param("minPrice") Double minPrice,
+            @Param("maxPrice") Double maxPrice,
             Pageable pageable);
 }
