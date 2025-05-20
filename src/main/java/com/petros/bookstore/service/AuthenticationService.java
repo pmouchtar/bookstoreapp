@@ -2,8 +2,9 @@ package com.petros.bookstore.service;
 
 import com.petros.bookstore.dto.AuthenticationRequestDto;
 import com.petros.bookstore.dto.AuthenticationResponseDto;
+import com.petros.bookstore.model.Shopping_Cart;
 import com.petros.bookstore.model.User;
-import com.petros.bookstore.model.enums.Role;
+import com.petros.bookstore.repository.ShoppingCartRepository;
 import com.petros.bookstore.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.ValidationException;
@@ -24,6 +25,7 @@ public class AuthenticationService {
     private final JwtService jwtService;
 
     private final UserRepository userRepository;
+    private final ShoppingCartRepository shoppingCartRepository;
     private final PasswordEncoder passwordEncoder;
 
     public AuthenticationResponseDto authenticate(
@@ -54,6 +56,12 @@ public class AuthenticationService {
         user.setRole(USER);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        Shopping_Cart shoppingCart = new Shopping_Cart();
+        shoppingCart.setUser(savedUser);
+        shoppingCartRepository.save(shoppingCart);
+
+        return savedUser;
     }
 }

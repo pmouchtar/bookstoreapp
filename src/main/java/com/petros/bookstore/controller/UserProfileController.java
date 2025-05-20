@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserProfileController {
 
     private final UserService userService;
-    //private final UserMapper userMapper;
 
     @GetMapping()
     @SecurityRequirement(name = "bearerAuth")
