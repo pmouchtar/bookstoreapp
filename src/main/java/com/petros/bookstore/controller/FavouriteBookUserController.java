@@ -25,7 +25,7 @@ public class FavouriteBookUserController {
     private FavouriteBookService favouriteService;
 
     private Long extractUserId(Authentication auth) {
-        return ((Jwt) auth.getPrincipal()).getClaim("userId");
+        return ((Jwt)auth.getPrincipal()).getClaim("userId");
     }
 
     @PostMapping("/favourite-books")

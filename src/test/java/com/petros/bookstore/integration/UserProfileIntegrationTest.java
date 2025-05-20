@@ -143,3 +143,5 @@ public class UserProfileIntegrationTest extends AbstractPostgresContainerTest{
     }
 }
 
+
+
