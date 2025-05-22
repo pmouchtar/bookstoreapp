@@ -58,6 +58,7 @@ public class AuthenticationService {
 
         User savedUser = userRepository.save(user);
 
+        //when a user registers, a new unique shopping cart is attached to him
         Shopping_Cart shoppingCart = new Shopping_Cart();
         shoppingCart.setUser(savedUser);
         shoppingCartRepository.save(shoppingCart);

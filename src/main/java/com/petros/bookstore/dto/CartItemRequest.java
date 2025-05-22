@@ -16,6 +16,6 @@ public class CartItemRequest {
     @NotNull(message = "bookId is mandatory")
     Long bookId;
 
-    @Min(value = 0, message = "Quantity must be at least 0")
+    @Min(value = 1, message = "Quantity must be at least 0")
     private int quantity;
 }

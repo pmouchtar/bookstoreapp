@@ -31,7 +31,7 @@ public class ShoppingCartService {
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
 
         Shopping_Cart cart = cartRepo.findByUser(user)
-                .orElseGet(() -> {  //if, for some reason, user's cart doesn't exist
+                .orElseGet(() -> {  //if, for some reason, user's cart doesn't exist we create it here in the first add to his cart
                     Shopping_Cart c = new Shopping_Cart();
                     c.setUser(user);
                     return cartRepo.save(c);
