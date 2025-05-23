@@ -4,9 +4,9 @@ import com.petros.bookstore.dto.CartItemRequest;
 import com.petros.bookstore.dto.CartItemResponse;
 import com.petros.bookstore.dto.CartItemUpdateRequest;
 import com.petros.bookstore.exception.ResourceNotFoundException;
+import com.petros.bookstore.mapper.CartItemMapper;
 import com.petros.bookstore.model.*;
 import com.petros.bookstore.repository.*;
-import com.petros.bookstore.mapper.CartItemMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,85 +17,100 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ShoppingCartService {
 
-    private final ShoppingCartRepository cartRepo;
-    private final CartItemRepository itemRepo;
-    private final BookRepository bookRepo;
-    private final UserRepository userRepo;
+  private final ShoppingCartRepository cartRepo;
+  private final CartItemRepository itemRepo;
+  private final BookRepository bookRepo;
+  private final UserRepository userRepo;
 
-    @Transactional
-    public CartItemResponse addToCart(Long userId, CartItemRequest request) {
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+  @Transactional
+  public CartItemResponse addToCart(Long userId, CartItemRequest request) {
+    User user =
+        userRepo
+            .findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Book book = bookRepo.findById(request.getBookId())
-                .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
+    Book book =
+        bookRepo
+            .findById(request.getBookId())
+            .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
 
-        Shopping_Cart cart = cartRepo.findByUser(user)
-                .orElseGet(() -> {  //if, for some reason, user's cart doesn't exist we create it here in the first add to his cart
-                    Shopping_Cart c = new Shopping_Cart();
-                    c.setUser(user);
-                    return cartRepo.save(c);
+    Shopping_Cart cart =
+        cartRepo
+            .findByUser(user)
+            .orElseGet(
+                () -> { // if, for some reason, user's cart doesn't exist we create it here in the
+                  // first add to his cart
+                  Shopping_Cart c = new Shopping_Cart();
+                  c.setUser(user);
+                  return cartRepo.save(c);
                 });
 
-        Cart_Item item = itemRepo.findByShoppingCartAndBook(cart, book).orElse(null);
-        if (item == null) {
-            item = new Cart_Item();
-            item.setShoppingCart(cart);
-            item.setBook(book);
-            item.setQuantity(request.getQuantity());
-        } else {
-            item.setQuantity(item.getQuantity() + request.getQuantity());
-        }
-
-        Cart_Item saved = itemRepo.save(item);
-        return CartItemMapper.toDto(saved);
+    Cart_Item item = itemRepo.findByShoppingCartAndBook(cart, book).orElse(null);
+    if (item == null) {
+      item = new Cart_Item();
+      item.setShoppingCart(cart);
+      item.setBook(book);
+      item.setQuantity(request.getQuantity());
+    } else {
+      item.setQuantity(item.getQuantity() + request.getQuantity());
     }
 
-    @Transactional
-    public Page<CartItemResponse> getCartItems(Long userId, Pageable pageable) {
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    Cart_Item saved = itemRepo.save(item);
+    return CartItemMapper.toDto(saved);
+  }
 
-        Shopping_Cart cart = cartRepo.findByUser(user)
-                .orElse(null);
+  @Transactional
+  public Page<CartItemResponse> getCartItems(Long userId, Pageable pageable) {
+    User user =
+        userRepo
+            .findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        if (cart == null) {
-            return Page.empty(pageable);
-        }
+    Shopping_Cart cart = cartRepo.findByUser(user).orElse(null);
 
-        return itemRepo.findByShoppingCart(cart, pageable).map(CartItemMapper::toDto);
+    if (cart == null) {
+      return Page.empty(pageable);
     }
 
-    @Transactional
-    public CartItemResponse findItemById(Long itemId, Long userId) {
-        Cart_Item item = itemRepo.findById(itemId)
-                .filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
-                .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
+    return itemRepo.findByShoppingCart(cart, pageable).map(CartItemMapper::toDto);
+  }
 
-        return CartItemMapper.toDto(item);
+  @Transactional
+  public CartItemResponse findItemById(Long itemId, Long userId) {
+    Cart_Item item =
+        itemRepo
+            .findById(itemId)
+            .filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
+            .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
+
+    return CartItemMapper.toDto(item);
+  }
+
+  @Transactional
+  public CartItemResponse updateCartItem(Long itemId, CartItemUpdateRequest request, Long userId) {
+    Cart_Item item =
+        itemRepo
+            .findById(itemId)
+            .filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
+            .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
+
+    int newQty = request.getQuantity();
+    if (newQty <= 0) {
+      itemRepo.delete(item);
+      return null;
     }
+    item.setQuantity(newQty);
+    Cart_Item saved = itemRepo.save(item);
+    return CartItemMapper.toDto(saved);
+  }
 
-    @Transactional
-    public CartItemResponse updateCartItem(Long itemId, CartItemUpdateRequest request, Long userId) {
-        Cart_Item item = itemRepo.findById(itemId)
-                .filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
-                .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
-
-        int newQty = request.getQuantity();
-        if (newQty <= 0) {
-            itemRepo.delete(item);
-            return null;
-        }
-        item.setQuantity(newQty);
-        Cart_Item saved = itemRepo.save(item);
-        return CartItemMapper.toDto(saved);
-    }
-
-    @Transactional
-    public void removeFromCart(Long userId, Long itemId) {
-        Cart_Item item = itemRepo.findById(itemId)
-                .filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
-                .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
-        itemRepo.delete(item);
-    }
+  @Transactional
+  public void removeFromCart(Long userId, Long itemId) {
+    Cart_Item item =
+        itemRepo
+            .findById(itemId)
+            .filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
+            .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
+    itemRepo.delete(item);
+  }
 }

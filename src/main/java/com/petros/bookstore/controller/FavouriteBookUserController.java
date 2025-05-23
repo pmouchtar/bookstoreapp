@@ -21,42 +21,36 @@ import org.springframework.web.bind.annotation.*;
 @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 public class FavouriteBookUserController {
 
-    @Autowired
-    private FavouriteBookService favouriteService;
+  @Autowired private FavouriteBookService favouriteService;
 
-    private Long extractUserId(Authentication auth) {
-        return ((Jwt)auth.getPrincipal()).getClaim("userId");
-    }
+  private Long extractUserId(Authentication auth) {
+    return ((Jwt) auth.getPrincipal()).getClaim("userId");
+  }
 
-    @PostMapping("/favourite-books")
-    @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<FavouriteBookResponse> addFavouriteBook(
-            Authentication auth,
-            @Valid @RequestBody FavouriteBookRequest request) {
+  @PostMapping("/favourite-books")
+  @SecurityRequirement(name = "bearerAuth")
+  public ResponseEntity<FavouriteBookResponse> addFavouriteBook(
+      Authentication auth, @Valid @RequestBody FavouriteBookRequest request) {
 
-        Long userId = extractUserId(auth);
-        FavouriteBookResponse response = favouriteService.addToFavourites(userId, request);
-        return ResponseEntity.ok(response);
-    }
+    Long userId = extractUserId(auth);
+    FavouriteBookResponse response = favouriteService.addToFavourites(userId, request);
+    return ResponseEntity.ok(response);
+  }
 
-    @GetMapping("/favourite-books")
-    @SecurityRequirement(name = "bearerAuth")
-    public Page<FavouriteBookResponse> getMyFavouriteBooks(
-            Authentication auth,
-            Pageable pageable) {
+  @GetMapping("/favourite-books")
+  @SecurityRequirement(name = "bearerAuth")
+  public Page<FavouriteBookResponse> getMyFavouriteBooks(Authentication auth, Pageable pageable) {
 
-        Long userId = extractUserId(auth);
-        return favouriteService.getFavourites(userId, pageable);
-    }
+    Long userId = extractUserId(auth);
+    return favouriteService.getFavourites(userId, pageable);
+  }
 
-    @DeleteMapping("/favourite-books/{bookId}")
-    @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<Void> deleteFavouriteBook(
-            Authentication auth,
-            @PathVariable Long bookId) {
+  @DeleteMapping("/favourite-books/{bookId}")
+  @SecurityRequirement(name = "bearerAuth")
+  public ResponseEntity<Void> deleteFavouriteBook(Authentication auth, @PathVariable Long bookId) {
 
-        Long userId = extractUserId(auth);
-        favouriteService.removeFromFavourites(userId, bookId);
-        return ResponseEntity.noContent().build();
-    }
+    Long userId = extractUserId(auth);
+    favouriteService.removeFromFavourites(userId, bookId);
+    return ResponseEntity.noContent().build();
+  }
 }

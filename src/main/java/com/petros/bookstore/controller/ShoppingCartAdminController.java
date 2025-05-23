@@ -21,24 +21,22 @@ import org.springframework.web.bind.annotation.RestController;
 @PreAuthorize("hasRole('ADMIN')")
 public class ShoppingCartAdminController {
 
-    @Autowired
-    ShoppingCartService shoppingCartService;
+  @Autowired ShoppingCartService shoppingCartService;
 
-    @GetMapping()
-    @SecurityRequirement(name = "bearerAuth")
-    public Page<CartItemResponse> getMyCartItems(
-            Authentication auth,
-            @PathVariable Long userId,
-            Pageable pageable) {
+  @GetMapping()
+  @SecurityRequirement(name = "bearerAuth")
+  public Page<CartItemResponse> getMyCartItems(
+      Authentication auth, @PathVariable Long userId, Pageable pageable) {
 
-        return shoppingCartService.getCartItems(userId, pageable);
-    }
+    return shoppingCartService.getCartItems(userId, pageable);
+  }
 
-    @GetMapping("{itemId}")
-    @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<CartItemResponse> getBook(Authentication auth, @PathVariable Long userId, @PathVariable Long itemId) {
+  @GetMapping("{itemId}")
+  @SecurityRequirement(name = "bearerAuth")
+  public ResponseEntity<CartItemResponse> getBook(
+      Authentication auth, @PathVariable Long userId, @PathVariable Long itemId) {
 
-        CartItemResponse response = shoppingCartService.findItemById(itemId, userId);
-        return ResponseEntity.ok(response);
-    }
+    CartItemResponse response = shoppingCartService.findItemById(itemId, userId);
+    return ResponseEntity.ok(response);
+  }
 }

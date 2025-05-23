@@ -19,27 +19,23 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthenticationService authenticationService;
+  private final AuthenticationService authenticationService;
 
-    private final UserRegistrationMapper userRegistrationMapper;
+  private final UserRegistrationMapper userRegistrationMapper;
 
-    @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponseDto> authenticate(
-            @RequestBody final AuthenticationRequestDto authenticationRequestDto
-    ) {
-        return ResponseEntity.ok(
-                authenticationService.authenticate(authenticationRequestDto));
-    }
+  @PostMapping("/login")
+  public ResponseEntity<AuthenticationResponseDto> authenticate(
+      @RequestBody final AuthenticationRequestDto authenticationRequestDto) {
+    return ResponseEntity.ok(authenticationService.authenticate(authenticationRequestDto));
+  }
 
-    @PostMapping("/register")
-    public ResponseEntity<RegistrationResponseDto> registerUser(
-            @Valid @RequestBody final RegistrationRequestDto registrationDTO) {
+  @PostMapping("/register")
+  public ResponseEntity<RegistrationResponseDto> registerUser(
+      @Valid @RequestBody final RegistrationRequestDto registrationDTO) {
 
-        final var registeredUser = authenticationService
-                .registerUser(userRegistrationMapper.toEntity(registrationDTO));
+    final var registeredUser =
+        authenticationService.registerUser(userRegistrationMapper.toEntity(registrationDTO));
 
-        return ResponseEntity.ok(
-                userRegistrationMapper.toRegistrationResponseDto(registeredUser)
-        );
-    }
+    return ResponseEntity.ok(userRegistrationMapper.toRegistrationResponseDto(registeredUser));
+  }
 }

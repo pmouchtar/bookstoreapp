@@ -1,5 +1,7 @@
 package com.petros.bookstore.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.AbstractPostgresContainerTest;
 import com.petros.bookstore.dto.UserProfileResponseDto;
@@ -16,126 +18,113 @@ import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-/**
- * Integration tests for user-only endpoints using TestRestTemplate.
- */
+/** Integration tests for user-only endpoints using TestRestTemplate. */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class UserProfileIntegrationTest extends AbstractPostgresContainerTest {
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+  @Autowired private TestRestTemplate restTemplate;
 
-    @Autowired
-    private UserRepository userRepository;
+  @Autowired private UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+  @Autowired private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+  @Autowired private ObjectMapper objectMapper;
 
-    private Long testUserId;
-    private HttpHeaders headers;
+  private Long testUserId;
+  private HttpHeaders headers;
 
-    @BeforeEach
-    void setUp() {
-        userRepository.deleteAll();
+  @BeforeEach
+  void setUp() {
+    userRepository.deleteAll();
 
-        User user = new User();
-        user.setFirstName("Petros");
-        user.setLastName("Papadopoulos");
-        user.setUsername("petrosdev");
-        user.setPassword(passwordEncoder.encode("Secure123"));
-        user.setRole(Role.USER);
+    User user = new User();
+    user.setFirstName("Petros");
+    user.setLastName("Papadopoulos");
+    user.setUsername("petrosdev");
+    user.setPassword(passwordEncoder.encode("Secure123"));
+    user.setRole(Role.USER);
 
-        testUserId = userRepository.save(user).getId();
+    testUserId = userRepository.save(user).getId();
 
-        headers = new HttpHeaders();
-        headers.add("X-USER-ID", testUserId.toString());   // magic header για το DummyJwtFilter
-    }
+    headers = new HttpHeaders();
+    headers.add("X-USER-ID", testUserId.toString()); // magic header για το DummyJwtFilter
+  }
 
-    @Test
-    void testGetUserProfile() {
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
+  @Test
+  void testGetUserProfile() {
+    HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<UserProfileResponseDto> response =
-                restTemplate.exchange("/users/me", HttpMethod.GET, entity,
-                        UserProfileResponseDto.class);
+    ResponseEntity<UserProfileResponseDto> response =
+        restTemplate.exchange("/users/me", HttpMethod.GET, entity, UserProfileResponseDto.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().username()).isEqualTo("petrosdev");
-    }
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isNotNull();
+    assertThat(response.getBody().username()).isEqualTo("petrosdev");
+  }
 
-    @Test
-    void testUpdateUserProfile() {
-        UserProfileUpdateRequest updateRequest = new UserProfileUpdateRequest();
-        updateRequest.setFirstName("Updated");
-        updateRequest.setLastName("Name");
-        updateRequest.setUsername("updateduser");
-        updateRequest.setPassword("Newpass123");
+  @Test
+  void testUpdateUserProfile() {
+    UserProfileUpdateRequest updateRequest = new UserProfileUpdateRequest();
+    updateRequest.setFirstName("Updated");
+    updateRequest.setLastName("Name");
+    updateRequest.setUsername("updateduser");
+    updateRequest.setPassword("Newpass123");
 
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<UserProfileUpdateRequest> entity =
-                new HttpEntity<>(updateRequest, headers);
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity<UserProfileUpdateRequest> entity = new HttpEntity<>(updateRequest, headers);
 
-        ResponseEntity<UserProfileResponseDto> response =
-                restTemplate.exchange("/users/me", HttpMethod.PUT, entity,
-                        UserProfileResponseDto.class);
+    ResponseEntity<UserProfileResponseDto> response =
+        restTemplate.exchange("/users/me", HttpMethod.PUT, entity, UserProfileResponseDto.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().firstName()).isEqualTo("Updated");
-        assertThat(response.getBody().username()).isEqualTo("updateduser");
-    }
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isNotNull();
+    assertThat(response.getBody().firstName()).isEqualTo("Updated");
+    assertThat(response.getBody().username()).isEqualTo("updateduser");
+  }
 
-    @Test
-    void testDeleteUserProfile() {
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
+  @Test
+  void testDeleteUserProfile() {
+    HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<Void> response =
-                restTemplate.exchange("/users/me", HttpMethod.DELETE, entity, Void.class);
+    ResponseEntity<Void> response =
+        restTemplate.exchange("/users/me", HttpMethod.DELETE, entity, Void.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        assertThat(userRepository.findById(testUserId)).isEmpty();
-    }
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    assertThat(userRepository.findById(testUserId)).isEmpty();
+  }
 
-    @Test
-    void testUpdateUserProfile_WithInvalidPassword_ShouldReturn400() {
-        UserProfileUpdateRequest updateRequest = new UserProfileUpdateRequest();
-        updateRequest.setFirstName("Petros");
-        updateRequest.setLastName("Papadopoulos");
-        updateRequest.setUsername("petrosdev");
-        updateRequest.setPassword("123"); // invalid
+  @Test
+  void testUpdateUserProfile_WithInvalidPassword_ShouldReturn400() {
+    UserProfileUpdateRequest updateRequest = new UserProfileUpdateRequest();
+    updateRequest.setFirstName("Petros");
+    updateRequest.setLastName("Papadopoulos");
+    updateRequest.setUsername("petrosdev");
+    updateRequest.setPassword("123"); // invalid
 
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<UserProfileUpdateRequest> entity =
-                new HttpEntity<>(updateRequest, headers);
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity<UserProfileUpdateRequest> entity = new HttpEntity<>(updateRequest, headers);
 
-        ResponseEntity<String> response =
-                restTemplate.exchange("/users/me", HttpMethod.PUT, entity, String.class);
+    ResponseEntity<String> response =
+        restTemplate.exchange("/users/me", HttpMethod.PUT, entity, String.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+  }
 
-    @Test
-    void testUpdateUserProfile_ShouldReturn400_WhenMissingFields() {
-        UserProfileUpdateRequest request = new UserProfileUpdateRequest();
-        request.setUsername("");  // invalid
+  @Test
+  void testUpdateUserProfile_ShouldReturn400_WhenMissingFields() {
+    UserProfileUpdateRequest request = new UserProfileUpdateRequest();
+    request.setUsername(""); // invalid
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<UserProfileUpdateRequest> entity = new HttpEntity<>(request, headers);
+    HttpEntity<UserProfileUpdateRequest> entity = new HttpEntity<>(request, headers);
 
-        var response = restTemplate.exchange("/users/me?userId=" + testUserId,
-                HttpMethod.PUT,
-                entity,
-                String.class);
+    var response =
+        restTemplate.exchange(
+            "/users/me?userId=" + testUserId, HttpMethod.PUT, entity, String.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+  }
 }

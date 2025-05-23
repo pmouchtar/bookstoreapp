@@ -1,5 +1,7 @@
 package com.petros.bookstore.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.AbstractPostgresContainerTest;
 import com.petros.bookstore.dto.UserAdminUpdateRequest;
@@ -7,6 +9,8 @@ import com.petros.bookstore.dto.UserProfileResponseDto;
 import com.petros.bookstore.model.User;
 import com.petros.bookstore.model.enums.Role;
 import com.petros.bookstore.repository.UserRepository;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,161 +21,151 @@ import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-/**
- * Integration tests for admin-only user-management endpoints using TestRestTemplate.
- */
+/** Integration tests for admin-only user-management endpoints using TestRestTemplate. */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class UserAdminIntegrationTest extends AbstractPostgresContainerTest {
 
-    @Autowired private TestRestTemplate restTemplate;
-    @Autowired private UserRepository userRepository;
-    @Autowired private PasswordEncoder passwordEncoder;
-    @Autowired private ObjectMapper objectMapper;
+  @Autowired private TestRestTemplate restTemplate;
+  @Autowired private UserRepository userRepository;
+  @Autowired private PasswordEncoder passwordEncoder;
+  @Autowired private ObjectMapper objectMapper;
 
-    private Long adminId;
-    private Long normalUserId;
-    private HttpHeaders adminHeaders;
+  private Long adminId;
+  private Long normalUserId;
+  private HttpHeaders adminHeaders;
 
-    @BeforeEach
-    void setUp() {
-        userRepository.deleteAll();
+  @BeforeEach
+  void setUp() {
+    userRepository.deleteAll();
 
-        // admin
-        User admin = new User();
-        admin.setFirstName("Admin");
-        admin.setLastName("Boss");
-        admin.setUsername("adminboss");
-        admin.setPassword(passwordEncoder.encode("Admin123"));
-        admin.setRole(Role.ADMIN);
-        adminId = userRepository.save(admin).getId();
+    // admin
+    User admin = new User();
+    admin.setFirstName("Admin");
+    admin.setLastName("Boss");
+    admin.setUsername("adminboss");
+    admin.setPassword(passwordEncoder.encode("Admin123"));
+    admin.setRole(Role.ADMIN);
+    adminId = userRepository.save(admin).getId();
 
-        // normal user
-        User user = new User();
-        user.setFirstName("Petros");
-        user.setLastName("Papadopoulos");
-        user.setUsername("petrosdev");
-        user.setPassword(passwordEncoder.encode("Secure123"));
-        user.setRole(Role.USER);
-        normalUserId = userRepository.save(user).getId();
+    // normal user
+    User user = new User();
+    user.setFirstName("Petros");
+    user.setLastName("Papadopoulos");
+    user.setUsername("petrosdev");
+    user.setPassword(passwordEncoder.encode("Secure123"));
+    user.setRole(Role.USER);
+    normalUserId = userRepository.save(user).getId();
 
-        adminHeaders = new HttpHeaders();
-        adminHeaders.add("X-USER-ID", adminId.toString());   // handled by DummyJwtFilter
-    }
+    adminHeaders = new HttpHeaders();
+    adminHeaders.add("X-USER-ID", adminId.toString()); // handled by DummyJwtFilter
+  }
 
+  @Test
+  void getAllUsers_AsAdmin_ShouldReturnPage() {
+    HttpEntity<Void> entity = new HttpEntity<>(adminHeaders);
 
-    @Test
-    void getAllUsers_AsAdmin_ShouldReturnPage() {
-        HttpEntity<Void> entity = new HttpEntity<>(adminHeaders);
+    ResponseEntity<Map<String, Object>> response =
+        restTemplate.exchange(
+            "/users", HttpMethod.GET, entity, new ParameterizedTypeReference<>() {});
 
-        ResponseEntity<Map<String, Object>> response =
-                restTemplate.exchange("/users", HttpMethod.GET, entity,
-                        new ParameterizedTypeReference<>() {});
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    List<?> content = (List<?>) response.getBody().get("content");
+    assertThat(content).hasSize(2);
+  }
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        List<?> content = (List<?>) response.getBody().get("content");
-        assertThat(content).hasSize(2);
-    }
+  @Test
+  void getAllUsers_WithUsernameFilter_ShouldReturnOneUser() {
+    HttpEntity<Void> entity = new HttpEntity<>(adminHeaders);
 
-    @Test
-    void getAllUsers_WithUsernameFilter_ShouldReturnOneUser() {
-        HttpEntity<Void> entity = new HttpEntity<>(adminHeaders);
+    ResponseEntity<Map<String, Object>> response =
+        restTemplate.exchange(
+            "/users?username=petrosdev",
+            HttpMethod.GET,
+            entity,
+            new ParameterizedTypeReference<>() {});
 
-        ResponseEntity<Map<String, Object>> response =
-                restTemplate.exchange("/users?username=petrosdev", HttpMethod.GET, entity,
-                        new ParameterizedTypeReference<>() {});
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    List<?> content = (List<?>) response.getBody().get("content");
+    assertThat(content).hasSize(1);
+  }
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        List<?> content = (List<?>) response.getBody().get("content");
-        assertThat(content).hasSize(1);
-    }
+  @Test
+  void updateUser_AsAdmin_ShouldPromoteUser() {
+    UserAdminUpdateRequest req = new UserAdminUpdateRequest();
+    req.setFirstName("Updated");
+    req.setLastName("User");
+    req.setRole(Role.ADMIN); // promote
 
+    adminHeaders.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity<UserAdminUpdateRequest> entity = new HttpEntity<>(req, adminHeaders);
 
-    @Test
-    void updateUser_AsAdmin_ShouldPromoteUser() {
-        UserAdminUpdateRequest req = new UserAdminUpdateRequest();
-        req.setFirstName("Updated");
-        req.setLastName("User");
-        req.setRole(Role.ADMIN);          // promote
+    ResponseEntity<UserProfileResponseDto> response =
+        restTemplate.exchange(
+            "/users/{id}", HttpMethod.PUT, entity, UserProfileResponseDto.class, normalUserId);
 
-        adminHeaders.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<UserAdminUpdateRequest> entity = new HttpEntity<>(req, adminHeaders);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isNotNull();
+    assertThat(response.getBody().role()).isEqualTo(Role.ADMIN);
+    assertThat(response.getBody().firstName()).isEqualTo("Updated");
+  }
 
-        ResponseEntity<UserProfileResponseDto> response =
-                restTemplate.exchange("/users/{id}", HttpMethod.PUT, entity,
-                        UserProfileResponseDto.class, normalUserId);
+  @Test
+  void updateUser_NonExisting_ShouldReturn404() {
+    long nonexistentId = 9_999L;
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().role()).isEqualTo(Role.ADMIN);
-        assertThat(response.getBody().firstName()).isEqualTo("Updated");
-    }
+    UserAdminUpdateRequest req = new UserAdminUpdateRequest();
+    req.setFirstName("Foo");
+    req.setLastName("Bar");
+    req.setRole(Role.USER);
 
-    @Test
-    void updateUser_NonExisting_ShouldReturn404() {
-        long nonexistentId = 9_999L;
+    adminHeaders.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity<UserAdminUpdateRequest> entity = new HttpEntity<>(req, adminHeaders);
 
-        UserAdminUpdateRequest req = new UserAdminUpdateRequest();
-        req.setFirstName("Foo");
-        req.setLastName("Bar");
-        req.setRole(Role.USER);
+    ResponseEntity<String> response =
+        restTemplate.exchange("/users/{id}", HttpMethod.PUT, entity, String.class, nonexistentId);
 
-        adminHeaders.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<UserAdminUpdateRequest> entity = new HttpEntity<>(req, adminHeaders);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
 
-        ResponseEntity<String> response =
-                restTemplate.exchange("/users/{id}", HttpMethod.PUT, entity,
-                        String.class, nonexistentId);
+  @Test
+  void updateUser_InvalidPayload_ShouldReturn400() throws Exception {
+    // empty first / last name → @NotBlank should fail
+    UserAdminUpdateRequest req = new UserAdminUpdateRequest();
+    req.setFirstName("");
+    req.setLastName("");
+    req.setRole(Role.USER);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-    }
+    adminHeaders.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity<String> entity =
+        new HttpEntity<>(objectMapper.writeValueAsString(req), adminHeaders);
 
-    @Test
-    void updateUser_InvalidPayload_ShouldReturn400() throws Exception {
-        // empty first / last name → @NotBlank should fail
-        UserAdminUpdateRequest req = new UserAdminUpdateRequest();
-        req.setFirstName("");
-        req.setLastName("");
-        req.setRole(Role.USER);
+    ResponseEntity<String> response =
+        restTemplate.exchange("/users/{id}", HttpMethod.PUT, entity, String.class, normalUserId);
 
-        adminHeaders.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(req), adminHeaders);
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+  }
 
-        ResponseEntity<String> response =
-                restTemplate.exchange("/users/{id}", HttpMethod.PUT, entity,
-                        String.class, normalUserId);
+  @Test
+  void deleteUser_AsAdmin_ShouldRemoveUser() {
+    HttpEntity<Void> entity = new HttpEntity<>(adminHeaders);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
+    ResponseEntity<Void> response =
+        restTemplate.exchange("/users/{id}", HttpMethod.DELETE, entity, Void.class, normalUserId);
 
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    assertThat(userRepository.findById(normalUserId)).isEmpty();
+  }
 
-    @Test
-    void deleteUser_AsAdmin_ShouldRemoveUser() {
-        HttpEntity<Void> entity = new HttpEntity<>(adminHeaders);
+  @Test
+  void deleteUser_NonExisting_ShouldReturn404() {
+    HttpEntity<Void> entity = new HttpEntity<>(adminHeaders);
+    long nonexistentId = 8_888L;
 
-        ResponseEntity<Void> response =
-                restTemplate.exchange("/users/{id}", HttpMethod.DELETE, entity,
-                        Void.class, normalUserId);
+    ResponseEntity<String> response =
+        restTemplate.exchange(
+            "/users/{id}", HttpMethod.DELETE, entity, String.class, nonexistentId);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        assertThat(userRepository.findById(normalUserId)).isEmpty();
-    }
-
-    @Test
-    void deleteUser_NonExisting_ShouldReturn404() {
-        HttpEntity<Void> entity = new HttpEntity<>(adminHeaders);
-        long nonexistentId = 8_888L;
-
-        ResponseEntity<String> response =
-                restTemplate.exchange("/users/{id}", HttpMethod.DELETE, entity,
-                        String.class, nonexistentId);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-    }
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
 }
-

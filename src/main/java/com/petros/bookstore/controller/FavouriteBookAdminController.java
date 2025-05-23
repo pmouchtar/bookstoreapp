@@ -21,19 +21,17 @@ import org.springframework.web.bind.annotation.RestController;
 @PreAuthorize("hasAnyRole('ADMIN')")
 public class FavouriteBookAdminController {
 
-    @Autowired
-    private FavouriteBookService favouriteService;
+  @Autowired private FavouriteBookService favouriteService;
 
-    private Long extractUserId(Authentication auth) {
-        return ((Jwt) auth.getPrincipal()).getClaim("userId");
-    }
+  private Long extractUserId(Authentication auth) {
+    return ((Jwt) auth.getPrincipal()).getClaim("userId");
+  }
 
-    @SecurityRequirement(name = "bearerAuth")
-    @GetMapping()
-    public Page<FavouriteBookResponse> getUserFavouriteBooks(
-            @PathVariable Long userId,
-            Pageable pageable) {
+  @SecurityRequirement(name = "bearerAuth")
+  @GetMapping()
+  public Page<FavouriteBookResponse> getUserFavouriteBooks(
+      @PathVariable Long userId, Pageable pageable) {
 
-        return favouriteService.getFavourites(userId, pageable);
-    }
+    return favouriteService.getFavourites(userId, pageable);
+  }
 }

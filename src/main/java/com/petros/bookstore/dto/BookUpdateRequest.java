@@ -13,21 +13,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BookUpdateRequest {
 
-    @Size(min = 1, max = 255, message = "Title cannot be empty or more than 255 letters")
-    private String title;
+  @Size(min = 1, max = 255, message = "Title cannot be empty or more than 255 letters")
+  private String title;
 
-    @Size(min = 1, max = 255, message = "Author cannot be empty or  more than 255 letters")
-    @Pattern(regexp = "^[\\p{L} ]+$", message = "Author name must contain only letters and spaces")
-    private String author;
+  @Size(min = 1, max = 255, message = "Author cannot be empty or  more than 255 letters")
+  @Pattern(regexp = "^[\\p{L} ]+$", message = "Author name must contain only letters and spaces")
+  private String author;
 
-    @Size(min = 1, message = "Description cannot be empty")
-    private String description;
+  @Size(min = 1, message = "Description cannot be empty")
+  private String description;
 
-    @Min(value = 0, message = "Price must be at least 0")
-    private Double price;
+  @Min(value = 0, message = "Price must be at least 0")
+  private Double price;
 
-    @Min(value = 0, message = "Availability must be at least 0")
-    private Integer availability;
+  @Min(value = 0, message = "Availability must be at least 0")
+  private Integer availability;
 
-    private Genre genre;
+  private Genre genre;
 }

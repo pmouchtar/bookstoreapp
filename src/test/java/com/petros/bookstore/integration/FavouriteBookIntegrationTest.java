@@ -1,42 +1,42 @@
-//package com.petros.bookstore.integration;
+// package com.petros.bookstore.integration;
 //
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.petros.bookstore.config.AbstractPostgresContainerTest;
-//import com.petros.bookstore.dto.FavouriteBookRequest;
-//import com.petros.bookstore.model.Book;
-//import com.petros.bookstore.model.User;
-//import com.petros.bookstore.model.enums.Role;
-//import com.petros.bookstore.repository.BookRepository;
-//import com.petros.bookstore.repository.FavouriteBookRepository;
-//import com.petros.bookstore.repository.UserRepository;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.http.MediaType;
-//import org.springframework.security.core.GrantedAuthority;
-//import org.springframework.security.core.context.SecurityContext;
-//import org.springframework.security.core.context.SecurityContextHolder;
-//import org.springframework.security.crypto.password.PasswordEncoder;
-//import org.springframework.security.oauth2.jwt.Jwt;
-//import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-//import org.springframework.test.context.ActiveProfiles;
-//import org.springframework.test.web.servlet.MockMvc;
+// import com.fasterxml.jackson.databind.ObjectMapper;
+// import com.petros.bookstore.config.AbstractPostgresContainerTest;
+// import com.petros.bookstore.dto.FavouriteBookRequest;
+// import com.petros.bookstore.model.Book;
+// import com.petros.bookstore.model.User;
+// import com.petros.bookstore.model.enums.Role;
+// import com.petros.bookstore.repository.BookRepository;
+// import com.petros.bookstore.repository.FavouriteBookRepository;
+// import com.petros.bookstore.repository.UserRepository;
+// import org.junit.jupiter.api.BeforeEach;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+// import org.springframework.boot.test.context.SpringBootTest;
+// import org.springframework.http.MediaType;
+// import org.springframework.security.core.GrantedAuthority;
+// import org.springframework.security.core.context.SecurityContext;
+// import org.springframework.security.core.context.SecurityContextHolder;
+// import org.springframework.security.crypto.password.PasswordEncoder;
+// import org.springframework.security.oauth2.jwt.Jwt;
+// import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
+// import org.springframework.test.context.ActiveProfiles;
+// import org.springframework.test.web.servlet.MockMvc;
 //
-//import java.time.Instant;
-//import java.util.HashMap;
-//import java.util.List;
-//import java.util.Map;
+// import java.time.Instant;
+// import java.util.HashMap;
+// import java.util.List;
+// import java.util.Map;
 //
-//import static org.assertj.core.api.Assertions.assertThat;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+// import static org.assertj.core.api.Assertions.assertThat;
+// import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 //        import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 //
-//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-//@AutoConfigureMockMvc
-//@ActiveProfiles("test")
-//class FavouriteBookIntegrationTest extends AbstractPostgresContainerTest {
+// @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+// @AutoConfigureMockMvc
+// @ActiveProfiles("test")
+// class FavouriteBookIntegrationTest extends AbstractPostgresContainerTest {
 //
 //    @Autowired private MockMvc mockMvc;
 //    @Autowired private ObjectMapper objectMapper;
@@ -62,7 +62,8 @@
 //        );
 //
 //        List<GrantedAuthority> authorities = List.of(() -> "ROLE_" + role);
-//        JwtAuthenticationToken auth = new JwtAuthenticationToken(jwt, authorities, "user-" + userId);
+//        JwtAuthenticationToken auth = new JwtAuthenticationToken(jwt, authorities, "user-" +
+// userId);
 //        auth.setAuthenticated(true);
 //
 //        SecurityContext ctx = SecurityContextHolder.createEmptyContext();
@@ -217,9 +218,11 @@
 //        mockMvc.perform(delete("/users/me/favourite-books/{bookId}", 9999L))
 //                .andExpect(status().isNotFound());
 //    }
-//}
+// }
 
 package com.petros.bookstore.integration;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.AbstractPostgresContainerTest;
@@ -232,6 +235,8 @@ import com.petros.bookstore.model.enums.Role;
 import com.petros.bookstore.repository.BookRepository;
 import com.petros.bookstore.repository.FavouriteBookRepository;
 import com.petros.bookstore.repository.UserRepository;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -242,215 +247,217 @@ import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
 /**
- * Integration tests for favourite-book endpoints using TestRestTemplate.
- * Relies on DummyJwtFilter + TestSecurityConfig that injects auth from header X-USER-ID.
+ * Integration tests for favourite-book endpoints using TestRestTemplate. Relies on DummyJwtFilter +
+ * TestSecurityConfig that injects auth from header X-USER-ID.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 class FavouriteBookIntegrationTest extends AbstractPostgresContainerTest {
 
-    @Autowired private TestRestTemplate restTemplate;
-    @Autowired private ObjectMapper objectMapper;
-    @Autowired private UserRepository userRepository;
-    @Autowired private BookRepository bookRepository;
-    @Autowired private FavouriteBookRepository favouriteBookRepository;
-    @Autowired private PasswordEncoder passwordEncoder;
+  @Autowired private TestRestTemplate restTemplate;
+  @Autowired private ObjectMapper objectMapper;
+  @Autowired private UserRepository userRepository;
+  @Autowired private BookRepository bookRepository;
+  @Autowired private FavouriteBookRepository favouriteBookRepository;
+  @Autowired private PasswordEncoder passwordEncoder;
 
-    private Long userId;
-    private Long adminId;
-    private Long bookId;
+  private Long userId;
+  private Long adminId;
+  private Long bookId;
 
-    private HttpHeaders userHeaders;
-    private HttpHeaders adminHeaders;
+  private HttpHeaders userHeaders;
+  private HttpHeaders adminHeaders;
 
-    @BeforeEach
-    void setUp() {
-        favouriteBookRepository.deleteAll();
-        userRepository.deleteAll();
-        bookRepository.deleteAll();
+  @BeforeEach
+  void setUp() {
+    favouriteBookRepository.deleteAll();
+    userRepository.deleteAll();
+    bookRepository.deleteAll();
 
-        // normal USER
-        User user = new User();
-        user.setFirstName("Petros");
-        user.setLastName("Papadopoulos");
-        user.setUsername("petrosdev");
-        user.setPassword(passwordEncoder.encode("Secure123"));
-        user.setRole(Role.USER);
-        userId = userRepository.save(user).getId();
+    // normal USER
+    User user = new User();
+    user.setFirstName("Petros");
+    user.setLastName("Papadopoulos");
+    user.setUsername("petrosdev");
+    user.setPassword(passwordEncoder.encode("Secure123"));
+    user.setRole(Role.USER);
+    userId = userRepository.save(user).getId();
 
-        // ADMIN
-        User admin = new User();
-        admin.setFirstName("Admin");
-        admin.setLastName("Boss");
-        admin.setUsername("adminboss");
-        admin.setPassword(passwordEncoder.encode("Admin123"));
-        admin.setRole(Role.ADMIN);
-        adminId = userRepository.save(admin).getId();
+    // ADMIN
+    User admin = new User();
+    admin.setFirstName("Admin");
+    admin.setLastName("Boss");
+    admin.setUsername("adminboss");
+    admin.setPassword(passwordEncoder.encode("Admin123"));
+    admin.setRole(Role.ADMIN);
+    adminId = userRepository.save(admin).getId();
 
-        // a book
-        Book book = new Book();
-        book.setTitle("Integration Testing 101");
-        book.setAuthor("Captain Stub");
-        book.setDescription("desc");
-        book.setPrice(9.99);
-        book.setAvailability(10);
-        book.setGenre(Genre.SCIENCE_FICTION);
-        bookId = bookRepository.save(book).getId();
+    // a book
+    Book book = new Book();
+    book.setTitle("Integration Testing 101");
+    book.setAuthor("Captain Stub");
+    book.setDescription("desc");
+    book.setPrice(9.99);
+    book.setAvailability(10);
+    book.setGenre(Genre.SCIENCE_FICTION);
+    bookId = bookRepository.save(book).getId();
 
-        userHeaders = new HttpHeaders();
-        userHeaders.add("X-USER-ID", userId.toString());
+    userHeaders = new HttpHeaders();
+    userHeaders.add("X-USER-ID", userId.toString());
 
-        adminHeaders = new HttpHeaders();
-        adminHeaders.add("X-USER-ID", adminId.toString());
-    }
+    adminHeaders = new HttpHeaders();
+    adminHeaders.add("X-USER-ID", adminId.toString());
+  }
 
+  @Test
+  void addFavouriteBook_ShouldPersistAndReturn200() {
+    FavouriteBookRequest req = new FavouriteBookRequest(bookId);
 
-    @Test
-    void addFavouriteBook_ShouldPersistAndReturn200() {
-        FavouriteBookRequest req = new FavouriteBookRequest(bookId);
+    userHeaders.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity<FavouriteBookRequest> entity = new HttpEntity<>(req, userHeaders);
 
-        userHeaders.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<FavouriteBookRequest> entity = new HttpEntity<>(req, userHeaders);
+    ResponseEntity<FavouriteBookResponse> res =
+        restTemplate.postForEntity(
+            "/users/me/favourite-books", entity, FavouriteBookResponse.class);
 
-        ResponseEntity<FavouriteBookResponse> res =
-                restTemplate.postForEntity("/users/me/favourite-books", entity,
-                        FavouriteBookResponse.class);
+    assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(res.getBody()).isNotNull();
+    assertThat(res.getBody().bookId()).isEqualTo(bookId);
+    assertThat(favouriteBookRepository.findAll()).hasSize(1);
+  }
 
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(res.getBody()).isNotNull();
-        assertThat(res.getBody().bookId()).isEqualTo(bookId);
-        assertThat(favouriteBookRepository.findAll()).hasSize(1);
-    }
+  @Test
+  void addFavouriteBook_Duplicate_ShouldReturn409() {
+    // first add
+    addFavDirect();
 
-    @Test
-    void addFavouriteBook_Duplicate_ShouldReturn409() {
-        // first add
-        addFavDirect();
+    FavouriteBookRequest req = new FavouriteBookRequest(bookId);
+    userHeaders.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity<FavouriteBookRequest> entity = new HttpEntity<>(req, userHeaders);
 
-        FavouriteBookRequest req = new FavouriteBookRequest(bookId);
-        userHeaders.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<FavouriteBookRequest> entity = new HttpEntity<>(req, userHeaders);
+    ResponseEntity<String> res =
+        restTemplate.postForEntity("/users/me/favourite-books", entity, String.class);
 
-        ResponseEntity<String> res = restTemplate.postForEntity("/users/me/favourite-books",
-                entity, String.class);
+    assertThat(res.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+  }
 
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-    }
+  @Test
+  void addFavouriteBook_BookDoesNotExist_ShouldReturn404() {
+    FavouriteBookRequest req = new FavouriteBookRequest(9_999L);
 
-    @Test
-    void addFavouriteBook_BookDoesNotExist_ShouldReturn404() {
-        FavouriteBookRequest req = new FavouriteBookRequest(9_999L);
+    userHeaders.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity<FavouriteBookRequest> entity = new HttpEntity<>(req, userHeaders);
 
-        userHeaders.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<FavouriteBookRequest> entity = new HttpEntity<>(req, userHeaders);
+    ResponseEntity<String> res =
+        restTemplate.postForEntity("/users/me/favourite-books", entity, String.class);
 
-        ResponseEntity<String> res = restTemplate.postForEntity("/users/me/favourite-books",
-                entity, String.class);
+    assertThat(res.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
 
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-    }
+  @Test
+  void addFavouriteBook_NullBookId_ShouldReturn400() throws Exception {
+    FavouriteBookRequest req = new FavouriteBookRequest(null);
 
-    @Test
-    void addFavouriteBook_NullBookId_ShouldReturn400() throws Exception {
-        FavouriteBookRequest req = new FavouriteBookRequest(null);
+    userHeaders.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(req), userHeaders);
 
-        userHeaders.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> entity =
-                new HttpEntity<>(objectMapper.writeValueAsString(req), userHeaders);
+    ResponseEntity<String> res =
+        restTemplate.postForEntity("/users/me/favourite-books", entity, String.class);
 
-        ResponseEntity<String> res = restTemplate.postForEntity("/users/me/favourite-books",
-                entity, String.class);
+    assertThat(res.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+  }
 
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
+  // USER
+  @Test
+  void getMyFavouriteBooks_ShouldReturnOneEntry() {
+    addFavDirect();
 
-    //USER
-    @Test
-    void getMyFavouriteBooks_ShouldReturnOneEntry() {
-        addFavDirect();
+    HttpEntity<Void> entity = new HttpEntity<>(userHeaders);
 
-        HttpEntity<Void> entity = new HttpEntity<>(userHeaders);
+    ResponseEntity<Map<String, Object>> res =
+        restTemplate.exchange(
+            "/users/me/favourite-books",
+            HttpMethod.GET,
+            entity,
+            new ParameterizedTypeReference<>() {});
 
-        ResponseEntity<Map<String, Object>> res =
-                restTemplate.exchange("/users/me/favourite-books", HttpMethod.GET, entity,
-                        new ParameterizedTypeReference<>() {});
+    assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
+    List<?> content = (List<?>) res.getBody().get("content");
+    assertThat(content).hasSize(1);
+    Map<?, ?> item = (Map<?, ?>) content.get(0);
+    assertThat(item.get("bookId")).isEqualTo(bookId.intValue());
+  }
 
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
-        List<?> content = (List<?>) res.getBody().get("content");
-        assertThat(content).hasSize(1);
-        Map<?, ?> item = (Map<?, ?>) content.get(0);
-        assertThat(item.get("bookId")).isEqualTo(bookId.intValue());
-    }
+  @Test
+  void deleteFavouriteBook_ShouldReturn204AndRemove() {
+    addFavDirect();
 
-    @Test
-    void deleteFavouriteBook_ShouldReturn204AndRemove() {
-        addFavDirect();
+    HttpEntity<Void> entity = new HttpEntity<>(userHeaders);
 
-        HttpEntity<Void> entity = new HttpEntity<>(userHeaders);
+    ResponseEntity<Void> del =
+        restTemplate.exchange(
+            "/users/me/favourite-books/{id}", HttpMethod.DELETE, entity, Void.class, bookId);
 
-        ResponseEntity<Void> del =
-                restTemplate.exchange("/users/me/favourite-books/{id}", HttpMethod.DELETE, entity,
-                        Void.class, bookId);
+    assertThat(del.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+    assertThat(favouriteBookRepository.findAll()).isEmpty();
+  }
 
-        assertThat(del.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        assertThat(favouriteBookRepository.findAll()).isEmpty();
-    }
+  @Test
+  void deleteFavouriteBook_NotExists_ShouldReturn404() {
+    HttpEntity<Void> entity = new HttpEntity<>(userHeaders);
 
-    @Test
-    void deleteFavouriteBook_NotExists_ShouldReturn404() {
-        HttpEntity<Void> entity = new HttpEntity<>(userHeaders);
+    ResponseEntity<String> res =
+        restTemplate.exchange(
+            "/users/me/favourite-books/{id}", HttpMethod.DELETE, entity, String.class, 8_888L);
 
-        ResponseEntity<String> res =
-                restTemplate.exchange("/users/me/favourite-books/{id}", HttpMethod.DELETE, entity,
-                        String.class, 8_888L);
+    assertThat(res.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+  }
 
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-    }
+  // ADMIN
+  @Test
+  void adminGetUserFavouriteBooks_ShouldReturnPage() {
+    addFavDirect();
 
-    //ADMIN
-    @Test
-    void adminGetUserFavouriteBooks_ShouldReturnPage() {
-        addFavDirect();
+    HttpEntity<Void> entity = new HttpEntity<>(adminHeaders);
 
-        HttpEntity<Void> entity = new HttpEntity<>(adminHeaders);
+    ResponseEntity<Map<String, Object>> res =
+        restTemplate.exchange(
+            "/users/{userId}/favourite-books",
+            HttpMethod.GET,
+            entity,
+            new ParameterizedTypeReference<>() {},
+            userId);
 
-        ResponseEntity<Map<String, Object>> res =
-                restTemplate.exchange("/users/{userId}/favourite-books", HttpMethod.GET, entity,
-                        new ParameterizedTypeReference<>() {}, userId);
+    assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
+    List<?> content = (List<?>) res.getBody().get("content");
+    assertThat(content).hasSize(1);
+    Map<?, ?> item = (Map<?, ?>) content.get(0);
+    assertThat(item.get("bookId")).isEqualTo(bookId.intValue());
+  }
 
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
-        List<?> content = (List<?>) res.getBody().get("content");
-        assertThat(content).hasSize(1);
-        Map<?, ?> item = (Map<?, ?>) content.get(0);
-        assertThat(item.get("bookId")).isEqualTo(bookId.intValue());
-    }
+  @Test
+  void adminGetUserFavouriteBooks_NoFavourites_ShouldReturnEmptyPage() {
+    HttpEntity<Void> entity = new HttpEntity<>(adminHeaders);
 
-    @Test
-    void adminGetUserFavouriteBooks_NoFavourites_ShouldReturnEmptyPage() {
-        HttpEntity<Void> entity = new HttpEntity<>(adminHeaders);
+    ResponseEntity<Map<String, Object>> res =
+        restTemplate.exchange(
+            "/users/{userId}/favourite-books",
+            HttpMethod.GET,
+            entity,
+            new ParameterizedTypeReference<>() {},
+            userId);
 
-        ResponseEntity<Map<String, Object>> res =
-                restTemplate.exchange("/users/{userId}/favourite-books", HttpMethod.GET, entity,
-                        new ParameterizedTypeReference<>() {}, userId);
+    assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
+    List<?> content = (List<?>) res.getBody().get("content");
+    assertThat(content).isEmpty();
+  }
 
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
-        List<?> content = (List<?>) res.getBody().get("content");
-        assertThat(content).isEmpty();
-    }
+  private void addFavDirect() {
+    FavouriteBookRequest req = new FavouriteBookRequest(bookId);
+    userHeaders.setContentType(MediaType.APPLICATION_JSON);
+    HttpEntity<FavouriteBookRequest> entity = new HttpEntity<>(req, userHeaders);
 
-
-    private void addFavDirect() {
-        FavouriteBookRequest req = new FavouriteBookRequest(bookId);
-        userHeaders.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<FavouriteBookRequest> entity = new HttpEntity<>(req, userHeaders);
-
-        restTemplate.postForEntity("/users/me/favourite-books", entity, FavouriteBookResponse.class);
-    }
+    restTemplate.postForEntity("/users/me/favourite-books", entity, FavouriteBookResponse.class);
+  }
 }
-

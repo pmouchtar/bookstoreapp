@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class CartItemUpdateRequest {
 
-    @Min(value = 0, message = "Quantity must be at least 0")
-    private int quantity;
+  @Min(value = 0, message = "Quantity must be at least 0")
+  private int quantity;
 }

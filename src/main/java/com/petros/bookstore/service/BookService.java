@@ -14,102 +14,112 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
- * Service class for managing books.
- * Provides methods for saving, retrieving, updating, deleting, and searching books.
+ * Service class for managing books. Provides methods for saving, retrieving, updating, deleting,
+ * and searching books.
  */
 @Service
 public class BookService {
 
-    @Autowired
-    private BookRepository bookRepository;
+  @Autowired private BookRepository bookRepository;
 
-    /**
-     * Saves a new book to the repository.
-     *
-     * @param request the book creation request
-     * @return the saved book as a response DTO
-     */
-    public BookResponse save(BookRequest request) {
-        Book savedBook = bookRepository.save(BookMapper.toEntity(request));
-        return BookMapper.toResponse(savedBook);
+  /**
+   * Saves a new book to the repository.
+   *
+   * @param request the book creation request
+   * @return the saved book as a response DTO
+   */
+  public BookResponse save(BookRequest request) {
+    Book savedBook = bookRepository.save(BookMapper.toEntity(request));
+    return BookMapper.toResponse(savedBook);
+  }
+
+  /**
+   * Retrieves all books in a paginated format.
+   *
+   * @param pageable pagination information
+   * @return a page of book responses
+   */
+  public Page<BookResponse> findAll(Pageable pageable) {
+    return bookRepository.findAll(pageable).map(BookMapper::toResponse);
+  }
+
+  /**
+   * Retrieves a book by its ID.
+   *
+   * @param id the ID of the book
+   * @return the book response
+   * @throws ResourceNotFoundException if the book is not found
+   */
+  public BookResponse findBookById(Long id) {
+    Book book =
+        bookRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Book with ID " + id + " not found."));
+    return BookMapper.toResponse(book);
+  }
+
+  /**
+   * Updates an existing book with the provided data.
+   *
+   * @param id the ID of the book to update
+   * @param request the book update request
+   * @return the updated book response
+   * @throws ResourceNotFoundException if the book is not found
+   */
+  public BookResponse updateBook(Long id, BookUpdateRequest request) {
+    Book book =
+        bookRepository
+            .findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("Book with ID " + id + " not found."));
+
+    if (request.getTitle() != null) book.setTitle(request.getTitle());
+    if (request.getAuthor() != null) book.setAuthor(request.getAuthor());
+    if (request.getDescription() != null) book.setDescription(request.getDescription());
+    if (request.getPrice() != null) book.setPrice(request.getPrice());
+    if (request.getAvailability() != null) book.setAvailability(request.getAvailability());
+    if (request.getGenre() != null) book.setGenre(Genre.valueOf(request.getGenre().toString()));
+
+    return BookMapper.toResponse(bookRepository.save(book));
+  }
+
+  /**
+   * Deletes a book by its ID.
+   *
+   * @param id the ID of the book to delete
+   * @return true if the book was deleted
+   * @throws ResourceNotFoundException if the book is not found
+   */
+  public boolean deleteBookById(Long id) {
+    if (bookRepository.existsById(id)) {
+      bookRepository.deleteById(id);
+      return true;
+    } else {
+      throw new ResourceNotFoundException("Book with ID " + id + " not found.");
     }
+  }
 
-    /**
-     * Retrieves all books in a paginated format.
-     *
-     * @param pageable pagination information
-     * @return a page of book responses
-     */
-    public Page<BookResponse> findAll(Pageable pageable) {
-        return bookRepository.findAll(pageable)
-                .map(BookMapper::toResponse);
-    }
-
-    /**
-     * Retrieves a book by its ID.
-     *
-     * @param id the ID of the book
-     * @return the book response
-     * @throws ResourceNotFoundException if the book is not found
-     */
-    public BookResponse findBookById(Long id) {
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Book with ID " + id + " not found."));
-        return BookMapper.toResponse(book);
-    }
-
-    /**
-     * Updates an existing book with the provided data.
-     *
-     * @param id the ID of the book to update
-     * @param request the book update request
-     * @return the updated book response
-     * @throws ResourceNotFoundException if the book is not found
-     */
-    public BookResponse updateBook(Long id, BookUpdateRequest request) {
-        Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Book with ID " + id + " not found."));
-
-        if (request.getTitle() != null) book.setTitle(request.getTitle());
-        if (request.getAuthor() != null) book.setAuthor(request.getAuthor());
-        if (request.getDescription() != null) book.setDescription(request.getDescription());
-        if (request.getPrice() != null) book.setPrice(request.getPrice());
-        if (request.getAvailability() != null) book.setAvailability(request.getAvailability());
-        if (request.getGenre() != null) book.setGenre(Genre.valueOf(request.getGenre().toString()));
-
-        return BookMapper.toResponse(bookRepository.save(book));
-    }
-
-    /**
-     * Deletes a book by its ID.
-     *
-     * @param id the ID of the book to delete
-     * @return true if the book was deleted
-     * @throws ResourceNotFoundException if the book is not found
-     */
-    public boolean deleteBookById(Long id) {
-        if (bookRepository.existsById(id)) {
-            bookRepository.deleteById(id);
-            return true;
-        } else {
-            throw new ResourceNotFoundException("Book with ID " + id + " not found.");
-        }
-    }
-
-    /**
-     * Searches for books by various optional filters and pagination.
-     *
-     * @param title optional title filter
-     * @param author optional author filter
-     * @param availability optional availability filter
-     * @param genre optional genre filter
-     * @param minPrice optional minimum price
-     * @param maxPrice optional maximum price
-     * @param pageable pagination information
-     * @return a page of book responses matching the filters
-     */
-    public Page<BookResponse> searchBooks(String title, String author, Integer availability, Genre genre, Double minPrice, Double maxPrice, Pageable pageable) {
-        return bookRepository.searchBooks(title, author, genre, availability, minPrice, maxPrice, pageable)
-                .map(BookMapper::toResponse);
-    }
+  /**
+   * Searches for books by various optional filters and pagination.
+   *
+   * @param title optional title filter
+   * @param author optional author filter
+   * @param availability optional availability filter
+   * @param genre optional genre filter
+   * @param minPrice optional minimum price
+   * @param maxPrice optional maximum price
+   * @param pageable pagination information
+   * @return a page of book responses matching the filters
+   */
+  public Page<BookResponse> searchBooks(
+      String title,
+      String author,
+      Integer availability,
+      Genre genre,
+      Double minPrice,
+      Double maxPrice,
+      Pageable pageable) {
+    return bookRepository
+        .searchBooks(title, author, genre, availability, minPrice, maxPrice, pageable)
+        .map(BookMapper::toResponse);
+  }
 }

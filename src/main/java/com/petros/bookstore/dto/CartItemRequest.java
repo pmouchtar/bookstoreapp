@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @Data
 public class CartItemRequest {
 
-    @NotNull(message = "bookId is mandatory")
-    Long bookId;
+  @NotNull(message = "bookId is mandatory")
+  Long bookId;
 
-    @Min(value = 1, message = "Quantity must be at least 0")
-    private int quantity;
+  @Min(value = 1, message = "Quantity must be at least 0")
+  private int quantity;
 }
