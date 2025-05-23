@@ -1,4 +1,3 @@
-// src/test/java/com/petros/bookstore/config/TestDummyJwtFilter.java
 package com.petros.bookstore.config;
 
 import jakarta.servlet.FilterChain;
@@ -18,7 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-@Component // φορτώνει μόνο στο profile "test" γιατί το ζητάει η TestSecurityConfig
+@Component //loaded only in tests
 public class TestDummyJwtFilter extends OncePerRequestFilter {
 
   @Override

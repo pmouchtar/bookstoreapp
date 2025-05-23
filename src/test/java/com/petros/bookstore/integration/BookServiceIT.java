@@ -88,7 +88,6 @@ public class BookServiceIT extends AbstractPostgresContainerTest {
 
   @Test
   void testSearchBooks() {
-    // bookService.save(bookRequest);
     Page<BookResponse> results =
         bookService.searchBooks(
             "Simple", "John", 100, Genre.DRAMA, 5.0, 15.0, PageRequest.of(0, 10));

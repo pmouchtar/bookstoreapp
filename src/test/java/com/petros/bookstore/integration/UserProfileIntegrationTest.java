@@ -48,7 +48,7 @@ class UserProfileIntegrationTest extends AbstractPostgresContainerTest {
     testUserId = userRepository.save(user).getId();
 
     headers = new HttpHeaders();
-    headers.add("X-USER-ID", testUserId.toString()); // magic header για το DummyJwtFilter
+    headers.add("X-USER-ID", testUserId.toString()); // magic header for the DummyJwtFilter
   }
 
   @Test

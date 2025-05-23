@@ -1,10 +1,6 @@
 package com.petros.bookstore.integration;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-// import com.petros.bookstore.config.AbstractPostgresContainerTest;
 import com.petros.bookstore.config.AbstractPostgresContainerTest;
 import com.petros.bookstore.dto.BookRequest;
 import com.petros.bookstore.dto.BookResponse;

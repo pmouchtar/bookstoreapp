@@ -1,0 +1,13 @@
+package com.petros.bookstore.dto;
+
+import com.petros.bookstore.model.enums.Status;
+import java.sql.Timestamp;
+import java.util.List;
+
+public record OrderResponse(
+        Long id,
+        Long userId,
+        Status status,
+        Double totalPrice,
+        Timestamp orderDate,
+        List<OrderItemResponse> items) {}
