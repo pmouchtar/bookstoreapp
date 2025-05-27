@@ -4,6 +4,7 @@ import com.petros.bookstore.dto.UserProfileResponseDto;
 import com.petros.bookstore.dto.UserProfileUpdateRequestDto;
 import com.petros.bookstore.mapper.UserMapper;
 import com.petros.bookstore.service.UserService;
+import com.petros.bookstore.utils.AuthUtils;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,15 +22,15 @@ public class UserProfileController {
 
   private final UserService userService;
 
+  private final AuthUtils authUtils = new AuthUtils();
+
+  private Long userId;
+
   @GetMapping()
   @SecurityRequirement(name = "bearerAuth")
-  public ResponseEntity<UserProfileResponseDto> getUserProfile(
-      final Authentication authentication) {
+  public ResponseEntity<UserProfileResponseDto> getUserProfile() {
 
-    // to find the userId from username
-    Jwt jwt = (Jwt) authentication.getPrincipal();
-    Long userId = jwt.getClaim("userId");
-
+    userId = authUtils.extractUserId();
     final var user = userService.findUserById(userId);
 
     return ResponseEntity.ok(user);
@@ -38,24 +39,18 @@ public class UserProfileController {
   @PutMapping
   @SecurityRequirement(name = "bearerAuth")
   public ResponseEntity<UserProfileResponseDto> updateUserProfile(
-      final Authentication authentication, @Valid @RequestBody UserProfileUpdateRequestDto request) {
+      @Valid @RequestBody UserProfileUpdateRequestDto request) {
 
-    // to find the userId from username
-    Jwt jwt = (Jwt) authentication.getPrincipal();
-    Long userId = jwt.getClaim("userId");
-
+    userId = authUtils.extractUserId();
     final var updatedUser = userService.updateUserProfile(userId, request);
     return ResponseEntity.ok(UserMapper.toUserProfileDto(updatedUser));
   }
 
   @DeleteMapping
   @SecurityRequirement(name = "bearerAuth")
-  public ResponseEntity<Void> deleteUserProfile(final Authentication authentication) {
+  public ResponseEntity<Void> deleteUserProfile() {
 
-    // to find the userId from username
-    Jwt jwt = (Jwt) authentication.getPrincipal();
-    Long userId = jwt.getClaim("userId");
-
+    userId = authUtils.extractUserId();
     userService.deleteUserById(userId);
     return ResponseEntity.noContent().build();
   }

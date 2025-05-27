@@ -237,6 +237,8 @@ import com.petros.bookstore.repository.FavouriteBookRepository;
 import com.petros.bookstore.repository.UserRepository;
 import java.util.List;
 import java.util.Map;
+
+import com.petros.bookstore.utils.AuthUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -268,6 +270,7 @@ class FavouriteBookIntegrationTest extends AbstractPostgresContainerTest {
 
   private HttpHeaders userHeaders;
   private HttpHeaders adminHeaders;
+
 
   @BeforeEach
   void setUp() {

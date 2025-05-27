@@ -23,10 +23,6 @@ public class FavouriteBookAdminController {
 
   @Autowired private FavouriteBookService favouriteService;
 
-  private Long extractUserId(Authentication auth) {
-    return ((Jwt) auth.getPrincipal()).getClaim("userId");
-  }
-
   @SecurityRequirement(name = "bearerAuth")
   @GetMapping()
   public Page<FavouriteBookResponseDto> getUserFavouriteBooks(
