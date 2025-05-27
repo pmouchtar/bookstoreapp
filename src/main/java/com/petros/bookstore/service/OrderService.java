@@ -1,7 +1,7 @@
 package com.petros.bookstore.service;
 
-import com.petros.bookstore.dto.OrderResponse;
-import com.petros.bookstore.dto.OrderStatusUpdateRequest;
+import com.petros.bookstore.dto.OrderResponseDto;
+import com.petros.bookstore.dto.OrderStatusUpdateRequestDto;
 import com.petros.bookstore.exception.ResourceNotFoundException;
 import com.petros.bookstore.mapper.OrderMapper;
 import com.petros.bookstore.model.*;
@@ -30,7 +30,7 @@ public class OrderService {
     private final OrderItemRepository orderItemRepo;
 
     @Transactional
-    public OrderResponse placeOrder(Long userId, Pageable pageable) throws BadRequestException {
+    public OrderResponseDto placeOrder(Long userId, Pageable pageable) throws BadRequestException {
         User user =
                 userRepo
                         .findById(userId)
@@ -39,7 +39,7 @@ public class OrderService {
         Shopping_Cart cart =
                 cartRepo
                         .findByUser(user)
-                        .orElseThrow(() -> new BadRequestException("Cart is empty")); // custom 400
+                        .orElseThrow(() -> new BadRequestException("No cart"));
 
         Page<Cart_Item> cartItems = cartItemRepo.findByShoppingCart(cart, pageable);
         if (cartItems.isEmpty()) {
@@ -77,7 +77,7 @@ public class OrderService {
     }
 
     @Transactional
-    public Page<OrderResponse> getOrdersForUser(Long userId, Pageable pageable) {
+    public Page<OrderResponseDto> getOrdersForUser(Long userId, Pageable pageable) {
         User user =
                 userRepo
                         .findById(userId)
@@ -86,7 +86,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse getOrderForUser(Long orderId, Long userId) {
+    public OrderResponseDto getOrderForUser(Long orderId, Long userId) {
         User user =
                 userRepo
                         .findById(userId)
@@ -99,7 +99,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderResponse updateOrderStatus(Long orderId, OrderStatusUpdateRequest request) {
+    public OrderResponseDto updateOrderStatus(Long orderId, OrderStatusUpdateRequestDto request) {
         Order order =
                 orderRepo
                         .findById(orderId)
@@ -109,7 +109,7 @@ public class OrderService {
         return OrderMapper.toDto(saved);
     }
 
-    public Page<OrderResponse> getAllOrders(Pageable pageable) {
+    public Page<OrderResponseDto> getAllOrders(Pageable pageable) {
         return orderRepo.findAll(pageable).map(OrderMapper::toDto);
     }
 }

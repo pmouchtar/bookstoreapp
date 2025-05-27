@@ -1,12 +1,12 @@
 package com.petros.bookstore.mapper;
 
-import com.petros.bookstore.dto.BookRequest;
-import com.petros.bookstore.dto.BookResponse;
+import com.petros.bookstore.dto.BookRequestDto;
+import com.petros.bookstore.dto.BookResponseDto;
 import com.petros.bookstore.model.Book;
 
 public class BookMapper {
 
-  public static Book toEntity(BookRequest request) {
+  public static Book toEntity(BookRequestDto request) {
     return new Book(
         request.getTitle(),
         request.getAuthor(),
@@ -16,8 +16,8 @@ public class BookMapper {
         request.getGenre());
   }
 
-  public static BookResponse toResponse(Book book) {
-    return new BookResponse(
+  public static BookResponseDto toResponse(Book book) {
+    return new BookResponseDto(
         book.getId(),
         book.getTitle(),
         book.getAuthor(),

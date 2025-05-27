@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserAdminUpdateRequest {
+public class UserAdminUpdateRequestDto {
 
   // @NotBlank(message = "First name is required")
   @Size(max = 50, message = "First name must be at most 50 characters")

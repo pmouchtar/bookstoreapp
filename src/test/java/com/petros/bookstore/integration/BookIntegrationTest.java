@@ -2,10 +2,10 @@ package com.petros.bookstore.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.AbstractPostgresContainerTest;
-import com.petros.bookstore.dto.BookRequest;
-import com.petros.bookstore.dto.BookResponse;
-import com.petros.bookstore.dto.BookUpdateRequest;
-import com.petros.bookstore.dto.PaginatedResponse;
+import com.petros.bookstore.dto.BookRequestDto;
+import com.petros.bookstore.dto.BookResponseDto;
+import com.petros.bookstore.dto.BookUpdateRequestDto;
+import com.petros.bookstore.dto.PaginatedResponseDto;
 import com.petros.bookstore.model.enums.Genre;
 import com.petros.bookstore.repository.BookRepository;
 import org.junit.jupiter.api.Assertions;
@@ -33,7 +33,7 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
 
   @Autowired private ObjectMapper objectMapper;
 
-  private BookRequest bookRequest;
+  private BookRequestDto bookRequestDto;
 
   @Autowired private BookRepository bookRepository;
 
@@ -41,30 +41,30 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
   void setup() {
     bookRepository.deleteAll();
 
-    bookRequest =
-        new BookRequest(
+    bookRequestDto =
+        new BookRequestDto(
             "Integration Book", "Test Author", "A book for testing", 15.99, 10, Genre.MYSTERY);
   }
 
   @Test
   void testCreateAndGetBook() throws Exception {
     // Create book
-    ResponseEntity<BookResponse> createResponse =
-        client.postForEntity("/books", bookRequest, BookResponse.class);
+    ResponseEntity<BookResponseDto> createResponse =
+        client.postForEntity("/books", bookRequestDto, BookResponseDto.class);
 
     Assertions.assertEquals(HttpStatus.OK, createResponse.getStatusCode());
-    BookResponse createdBook = createResponse.getBody();
+    BookResponseDto createdBook = createResponse.getBody();
     Assertions.assertNotNull(createdBook);
     Assertions.assertNotNull(createdBook.getId());
     Assertions.assertEquals("Integration Book", createdBook.getTitle());
     Assertions.assertEquals(Genre.MYSTERY, createdBook.getGenre());
 
     // Get book by ID
-    ResponseEntity<BookResponse> getResponse =
-        client.getForEntity("/books/" + createdBook.getId(), BookResponse.class);
+    ResponseEntity<BookResponseDto> getResponse =
+        client.getForEntity("/books/" + createdBook.getId(), BookResponseDto.class);
 
     Assertions.assertEquals(HttpStatus.OK, getResponse.getStatusCode());
-    BookResponse retrievedBook = getResponse.getBody();
+    BookResponseDto retrievedBook = getResponse.getBody();
     Assertions.assertNotNull(retrievedBook);
     Assertions.assertEquals("Integration Book", retrievedBook.getTitle());
     Assertions.assertEquals("Test Author", retrievedBook.getAuthor());
@@ -76,21 +76,21 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
   @Test
   void testGetAllBooks() {
     // Create a book
-    ResponseEntity<BookResponse> postResponse =
-        client.postForEntity("/books", bookRequest, BookResponse.class);
+    ResponseEntity<BookResponseDto> postResponse =
+        client.postForEntity("/books", bookRequestDto, BookResponseDto.class);
     Assertions.assertEquals(HttpStatus.OK, postResponse.getStatusCode());
 
     // Get all books
-    ResponseEntity<PaginatedResponse<BookResponse>> response =
+    ResponseEntity<PaginatedResponseDto<BookResponseDto>> response =
         client.exchange(
             "/books?page=0&size=10",
             HttpMethod.GET,
             null,
-            new ParameterizedTypeReference<PaginatedResponse<BookResponse>>() {});
+            new ParameterizedTypeReference<PaginatedResponseDto<BookResponseDto>>() {});
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 
-    PaginatedResponse<BookResponse> page = response.getBody();
+    PaginatedResponseDto<BookResponseDto> page = response.getBody();
     Assertions.assertNotNull(page);
     Assertions.assertNotNull(page.getContent());
     Assertions.assertEquals(1, page.getContent().size());
@@ -99,17 +99,17 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
   @Test
   void testUpdateBook() throws Exception {
     // Create book
-    ResponseEntity<BookResponse> createResponse =
-        client.postForEntity("/books", bookRequest, BookResponse.class);
+    ResponseEntity<BookResponseDto> createResponse =
+        client.postForEntity("/books", bookRequestDto, BookResponseDto.class);
 
     Assertions.assertEquals(HttpStatus.OK, createResponse.getStatusCode());
-    BookResponse createdBook = createResponse.getBody();
+    BookResponseDto createdBook = createResponse.getBody();
     Assertions.assertNotNull(createdBook);
     Long id = createdBook.getId();
     Assertions.assertNotNull(id);
 
     // Update book
-    BookUpdateRequest updateRequest = new BookUpdateRequest();
+    BookUpdateRequestDto updateRequest = new BookUpdateRequestDto();
     updateRequest.setTitle("Updated Book");
     updateRequest.setAvailability(5);
 
@@ -119,11 +119,11 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
     HttpEntity<String> updateEntity =
         new HttpEntity<>(objectMapper.writeValueAsString(updateRequest), headers);
 
-    ResponseEntity<BookResponse> updateResponse =
-        client.exchange("/books/" + id, HttpMethod.PUT, updateEntity, BookResponse.class);
+    ResponseEntity<BookResponseDto> updateResponse =
+        client.exchange("/books/" + id, HttpMethod.PUT, updateEntity, BookResponseDto.class);
 
     Assertions.assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
-    BookResponse updatedBook = updateResponse.getBody();
+    BookResponseDto updatedBook = updateResponse.getBody();
     Assertions.assertNotNull(updatedBook);
     Assertions.assertEquals("Updated Book", updatedBook.getTitle());
     Assertions.assertEquals(5, updatedBook.getAvailability());
@@ -132,11 +132,11 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
   @Test
   void testDeleteBook() throws Exception {
     // Create book
-    ResponseEntity<BookResponse> createResponse =
-        client.postForEntity("/books", bookRequest, BookResponse.class);
+    ResponseEntity<BookResponseDto> createResponse =
+        client.postForEntity("/books", bookRequestDto, BookResponseDto.class);
 
     Assertions.assertEquals(HttpStatus.OK, createResponse.getStatusCode());
-    BookResponse createdBook = createResponse.getBody();
+    BookResponseDto createdBook = createResponse.getBody();
     Assertions.assertNotNull(createdBook);
     Long id = createdBook.getId();
     Assertions.assertNotNull(id);
@@ -156,26 +156,26 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
   @Test
   void testSearchBooks_withDeserializationToPage() {
     // Create books
-    client.postForEntity("/books", bookRequest, BookResponse.class);
+    client.postForEntity("/books", bookRequestDto, BookResponseDto.class);
 
-    BookRequest secondBook =
-        new BookRequest("Another Title", "Other Author", "Desc", 12.99, 15, Genre.MYSTERY);
-    client.postForEntity("/books", secondBook, BookResponse.class);
+    BookRequestDto secondBook =
+        new BookRequestDto("Another Title", "Other Author", "Desc", 12.99, 15, Genre.MYSTERY);
+    client.postForEntity("/books", secondBook, BookResponseDto.class);
 
     // Search params
     String url =
         "/books?title=Integration&author=Test&availability=5&genre=MYSTERY&minPrice=10.0&maxPrice=20.0&page=0&size=10";
 
-    ResponseEntity<PaginatedResponse<BookResponse>> response =
+    ResponseEntity<PaginatedResponseDto<BookResponseDto>> response =
         client.exchange(
             url,
             HttpMethod.GET,
             null,
-            new ParameterizedTypeReference<PaginatedResponse<BookResponse>>() {});
+            new ParameterizedTypeReference<PaginatedResponseDto<BookResponseDto>>() {});
 
     Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
 
-    PaginatedResponse<BookResponse> page = response.getBody();
+    PaginatedResponseDto<BookResponseDto> page = response.getBody();
     Assertions.assertNotNull(page);
     Assertions.assertEquals(1, page.getContent().size());
     Assertions.assertEquals("Integration Book", page.getContent().get(0).getTitle());
@@ -222,7 +222,7 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
   @Test
   void testCreateBook_InvalidData() {
     // Create a book with invalid data
-    BookRequest invalidRequest = new BookRequest("", "", "", -1.0, -10, null);
+    BookRequestDto invalidRequest = new BookRequestDto("", "", "", -1.0, -10, null);
 
     // Send request and expect BAD_REQUEST status
     ResponseEntity<String> response = client.postForEntity("/books", invalidRequest, String.class);
@@ -251,8 +251,8 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
   @Test
   void testUpdateBook_MalformedJson() {
     // Create book
-    ResponseEntity<BookResponse> postResponse =
-        client.postForEntity("/books", bookRequest, BookResponse.class);
+    ResponseEntity<BookResponseDto> postResponse =
+        client.postForEntity("/books", bookRequestDto, BookResponseDto.class);
     Assertions.assertEquals(HttpStatus.OK, postResponse.getStatusCode());
     Long id = postResponse.getBody().getId();
 

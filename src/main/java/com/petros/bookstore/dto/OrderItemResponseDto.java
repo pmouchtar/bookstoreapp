@@ -1,6 +1,6 @@
 package com.petros.bookstore.dto;
 
-public record OrderItemResponse(
+public record OrderItemResponseDto(
         Long id,
         Long bookId,
         String title,

@@ -1,7 +1,7 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.FavouriteBookRequest;
-import com.petros.bookstore.dto.FavouriteBookResponse;
+import com.petros.bookstore.dto.FavouriteBookRequestDto;
+import com.petros.bookstore.dto.FavouriteBookResponseDto;
 import com.petros.bookstore.service.FavouriteBookService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -29,17 +29,17 @@ public class FavouriteBookUserController {
 
   @PostMapping("/favourite-books")
   @SecurityRequirement(name = "bearerAuth")
-  public ResponseEntity<FavouriteBookResponse> addFavouriteBook(
-      Authentication auth, @Valid @RequestBody FavouriteBookRequest request) {
+  public ResponseEntity<FavouriteBookResponseDto> addFavouriteBook(
+      Authentication auth, @Valid @RequestBody FavouriteBookRequestDto request) {
 
     Long userId = extractUserId(auth);
-    FavouriteBookResponse response = favouriteService.addToFavourites(userId, request);
+    FavouriteBookResponseDto response = favouriteService.addToFavourites(userId, request);
     return ResponseEntity.ok(response);
   }
 
   @GetMapping("/favourite-books")
   @SecurityRequirement(name = "bearerAuth")
-  public Page<FavouriteBookResponse> getMyFavouriteBooks(Authentication auth, Pageable pageable) {
+  public Page<FavouriteBookResponseDto> getMyFavouriteBooks(Authentication auth, Pageable pageable) {
 
     Long userId = extractUserId(auth);
     return favouriteService.getFavourites(userId, pageable);

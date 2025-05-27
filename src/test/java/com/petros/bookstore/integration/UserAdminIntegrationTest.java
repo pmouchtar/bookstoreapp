@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.AbstractPostgresContainerTest;
-import com.petros.bookstore.dto.UserAdminUpdateRequest;
+import com.petros.bookstore.dto.UserAdminUpdateRequestDto;
 import com.petros.bookstore.dto.UserProfileResponseDto;
 import com.petros.bookstore.model.User;
 import com.petros.bookstore.model.enums.Role;
@@ -92,13 +92,13 @@ class UserAdminIntegrationTest extends AbstractPostgresContainerTest {
 
   @Test
   void updateUser_AsAdmin_ShouldPromoteUser() {
-    UserAdminUpdateRequest req = new UserAdminUpdateRequest();
+    UserAdminUpdateRequestDto req = new UserAdminUpdateRequestDto();
     req.setFirstName("Updated");
     req.setLastName("User");
     req.setRole(Role.ADMIN); // promote
 
     adminHeaders.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<UserAdminUpdateRequest> entity = new HttpEntity<>(req, adminHeaders);
+    HttpEntity<UserAdminUpdateRequestDto> entity = new HttpEntity<>(req, adminHeaders);
 
     ResponseEntity<UserProfileResponseDto> response =
         restTemplate.exchange(
@@ -114,13 +114,13 @@ class UserAdminIntegrationTest extends AbstractPostgresContainerTest {
   void updateUser_NonExisting_ShouldReturn404() {
     long nonexistentId = 9_999L;
 
-    UserAdminUpdateRequest req = new UserAdminUpdateRequest();
+    UserAdminUpdateRequestDto req = new UserAdminUpdateRequestDto();
     req.setFirstName("Foo");
     req.setLastName("Bar");
     req.setRole(Role.USER);
 
     adminHeaders.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<UserAdminUpdateRequest> entity = new HttpEntity<>(req, adminHeaders);
+    HttpEntity<UserAdminUpdateRequestDto> entity = new HttpEntity<>(req, adminHeaders);
 
     ResponseEntity<String> response =
         restTemplate.exchange("/users/{id}", HttpMethod.PUT, entity, String.class, nonexistentId);
@@ -131,7 +131,7 @@ class UserAdminIntegrationTest extends AbstractPostgresContainerTest {
   @Test
   void updateUser_InvalidPayload_ShouldReturn400() throws Exception {
     // empty first / last name → @NotBlank should fail
-    UserAdminUpdateRequest req = new UserAdminUpdateRequest();
+    UserAdminUpdateRequestDto req = new UserAdminUpdateRequestDto();
     req.setFirstName("");
     req.setLastName("");
     req.setRole(Role.USER);

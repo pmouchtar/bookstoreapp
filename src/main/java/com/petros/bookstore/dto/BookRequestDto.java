@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Data
-public class BookRequest {
+public class BookRequestDto {
 
   @NotBlank(message = "Title is required")
   @Size(max = 255, message = "Title must be at most 255 characters")

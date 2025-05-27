@@ -3,9 +3,9 @@ package com.petros.bookstore.integration;
 import static org.assertj.core.api.Assertions.*;
 
 import com.petros.bookstore.config.AbstractPostgresContainerTest;
-import com.petros.bookstore.dto.BookRequest;
-import com.petros.bookstore.dto.BookResponse;
-import com.petros.bookstore.dto.BookUpdateRequest;
+import com.petros.bookstore.dto.BookRequestDto;
+import com.petros.bookstore.dto.BookResponseDto;
+import com.petros.bookstore.dto.BookUpdateRequestDto;
 import com.petros.bookstore.model.enums.Genre;
 import com.petros.bookstore.repository.BookRepository;
 import com.petros.bookstore.service.BookService;
@@ -27,26 +27,26 @@ public class BookServiceIT extends AbstractPostgresContainerTest {
 
   @Autowired private BookRepository bookRepository;
 
-  private BookRequest bookRequest;
-  private BookRequest bookRequest2;
+  private BookRequestDto bookRequestDto;
+  private BookRequestDto bookRequestDto2;
 
   @BeforeEach
   void setUp() {
     bookRepository.deleteAll();
 
-    bookRequest =
-        new BookRequest("Simple Book", "John Doe", "simple description", 9.99, 100, Genre.DRAMA);
-    bookService.save(bookRequest);
-    bookRequest2 =
-        new BookRequest(
+    bookRequestDto =
+        new BookRequestDto("Simple Book", "John Doe", "simple description", 9.99, 100, Genre.DRAMA);
+    bookService.save(bookRequestDto);
+    bookRequestDto2 =
+        new BookRequestDto(
             "Another Book", "Jane Doe", "another description", 19.99, 50, Genre.SCIENCE_FICTION);
-    bookService.save(bookRequest2);
+    bookService.save(bookRequestDto2);
   }
 
   @Test
   void testSaveAndFindById() {
-    BookResponse saved = bookService.save(bookRequest);
-    BookResponse found = bookService.findBookById(saved.getId());
+    BookResponseDto saved = bookService.save(bookRequestDto);
+    BookResponseDto found = bookService.findBookById(saved.getId());
 
     assertThat(found.getTitle()).isEqualTo("Simple Book");
     assertThat(found.getAuthor()).isEqualTo("John Doe");
@@ -55,8 +55,8 @@ public class BookServiceIT extends AbstractPostgresContainerTest {
 
   @Test
   void testFindAll() {
-    bookService.save(bookRequest);
-    Page<BookResponse> page = bookService.findAll(PageRequest.of(0, 10));
+    bookService.save(bookRequestDto);
+    Page<BookResponseDto> page = bookService.findAll(PageRequest.of(0, 10));
 
     assertThat(page.getContent()).isNotEmpty();
     assertThat(page.getContent().get(0).getTitle()).isEqualTo("Simple Book");
@@ -65,12 +65,12 @@ public class BookServiceIT extends AbstractPostgresContainerTest {
 
   @Test
   void testUpdateBook() {
-    BookResponse saved = bookService.save(bookRequest);
-    BookUpdateRequest update = new BookUpdateRequest();
+    BookResponseDto saved = bookService.save(bookRequestDto);
+    BookUpdateRequestDto update = new BookUpdateRequestDto();
     update.setTitle("Updated Simple Book");
     update.setAvailability(50);
 
-    BookResponse updated = bookService.updateBook(saved.getId(), update);
+    BookResponseDto updated = bookService.updateBook(saved.getId(), update);
 
     assertThat(updated.getTitle()).isEqualTo("Updated Simple Book");
     assertThat(updated.getAvailability()).isEqualTo(50);
@@ -78,7 +78,7 @@ public class BookServiceIT extends AbstractPostgresContainerTest {
 
   @Test
   void testDeleteBook() {
-    BookResponse saved = bookService.save(bookRequest);
+    BookResponseDto saved = bookService.save(bookRequestDto);
     boolean deleted = bookService.deleteBookById(saved.getId());
 
     assertThat(deleted).isTrue();
@@ -88,7 +88,7 @@ public class BookServiceIT extends AbstractPostgresContainerTest {
 
   @Test
   void testSearchBooks() {
-    Page<BookResponse> results =
+    Page<BookResponseDto> results =
         bookService.searchBooks(
             "Simple", "John", 100, Genre.DRAMA, 5.0, 15.0, PageRequest.of(0, 10));
 

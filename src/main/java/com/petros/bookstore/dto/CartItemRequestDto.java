@@ -1,6 +1,7 @@
 package com.petros.bookstore.dto;
 
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,8 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Data
-public class CartItemUpdateRequest {
+public class CartItemRequestDto {
 
-  @Min(value = 0, message = "Quantity must be at least 0")
+  @NotNull(message = "bookId is mandatory")
+  Long bookId;
+
+  @Min(value = 1, message = "Quantity must be at least 0")
   private int quantity;
 }

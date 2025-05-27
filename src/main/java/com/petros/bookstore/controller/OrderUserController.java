@@ -1,12 +1,13 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.OrderResponse;
+import com.petros.bookstore.dto.OrderResponseDto;
 import com.petros.bookstore.service.OrderService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.core.Authentication;
@@ -28,19 +29,20 @@ public class OrderUserController {
 
     @PostMapping
     @SecurityRequirement(name = "bearerAuth")
-    public OrderResponse placeOrder(Authentication auth, Pageable pageable) throws BadRequestException {
-        return orderService.placeOrder(extractUserId(auth), pageable);
+    public ResponseEntity<OrderResponseDto> placeOrder(Authentication auth, Pageable pageable) throws BadRequestException {
+        OrderResponseDto response = orderService.placeOrder(extractUserId(auth), pageable);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping
     @SecurityRequirement(name = "bearerAuth")
-    public Page<OrderResponse> myOrders(Authentication auth, Pageable pageable) {
+    public Page<OrderResponseDto> myOrders(Authentication auth, Pageable pageable) {
         return orderService.getOrdersForUser(extractUserId(auth), pageable);
     }
 
     @GetMapping("/{orderId}")
     @SecurityRequirement(name = "bearerAuth")
-    public OrderResponse myOrder(Authentication auth, @PathVariable Long orderId) {
+    public OrderResponseDto myOrder(Authentication auth, @PathVariable Long orderId) {
         return orderService.getOrderForUser(orderId, extractUserId(auth));
     }
 }

@@ -1,8 +1,8 @@
 package com.petros.bookstore.service;
 
-import com.petros.bookstore.dto.UserAdminUpdateRequest;
+import com.petros.bookstore.dto.UserAdminUpdateRequestDto;
 import com.petros.bookstore.dto.UserProfileResponseDto;
-import com.petros.bookstore.dto.UserProfileUpdateRequest;
+import com.petros.bookstore.dto.UserProfileUpdateRequestDto;
 import com.petros.bookstore.exception.ResourceGoneException;
 import com.petros.bookstore.exception.ResourceNotFoundException;
 import com.petros.bookstore.mapper.UserMapper;
@@ -29,7 +29,7 @@ public class UserService {
             () -> new ResourceGoneException("The user account has been deleted or inactivated"));
   }
 
-  public User updateUserProfile(final Long userId, UserProfileUpdateRequest updateRequest) {
+  public User updateUserProfile(final Long userId, UserProfileUpdateRequestDto updateRequest) {
     User user =
         userRepository
             .findById(userId)
@@ -79,7 +79,7 @@ public class UserService {
     return UserMapper.toUserProfileDto(user);
   }
 
-  public UserProfileResponseDto updateUserById(Long id, UserAdminUpdateRequest request) {
+  public UserProfileResponseDto updateUserById(Long id, UserAdminUpdateRequestDto request) {
     User user =
         userRepository
             .findById(id)

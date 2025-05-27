@@ -1,7 +1,7 @@
 package com.petros.bookstore.controller;
 
 import com.petros.bookstore.dto.UserProfileResponseDto;
-import com.petros.bookstore.dto.UserProfileUpdateRequest;
+import com.petros.bookstore.dto.UserProfileUpdateRequestDto;
 import com.petros.bookstore.mapper.UserMapper;
 import com.petros.bookstore.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -38,7 +38,7 @@ public class UserProfileController {
   @PutMapping
   @SecurityRequirement(name = "bearerAuth")
   public ResponseEntity<UserProfileResponseDto> updateUserProfile(
-      final Authentication authentication, @Valid @RequestBody UserProfileUpdateRequest request) {
+      final Authentication authentication, @Valid @RequestBody UserProfileUpdateRequestDto request) {
 
     // to find the userId from username
     Jwt jwt = (Jwt) authentication.getPrincipal();

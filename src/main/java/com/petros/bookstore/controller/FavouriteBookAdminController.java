@@ -1,6 +1,6 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.FavouriteBookResponse;
+import com.petros.bookstore.dto.FavouriteBookResponseDto;
 import com.petros.bookstore.service.FavouriteBookService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class FavouriteBookAdminController {
 
   @SecurityRequirement(name = "bearerAuth")
   @GetMapping()
-  public Page<FavouriteBookResponse> getUserFavouriteBooks(
+  public Page<FavouriteBookResponseDto> getUserFavouriteBooks(
       @PathVariable Long userId, Pageable pageable) {
 
     return favouriteService.getFavourites(userId, pageable);

@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.AbstractPostgresContainerTest;
-import com.petros.bookstore.dto.CartItemRequest;
-import com.petros.bookstore.dto.CartItemResponse;
-import com.petros.bookstore.dto.CartItemUpdateRequest;
+import com.petros.bookstore.dto.CartItemRequestDto;
+import com.petros.bookstore.dto.CartItemResponseDto;
+import com.petros.bookstore.dto.CartItemUpdateRequestDto;
 import com.petros.bookstore.model.Book;
 import com.petros.bookstore.model.User;
 import com.petros.bookstore.model.enums.Genre;
@@ -88,13 +88,13 @@ class ShoppingCartIntegrationTest extends AbstractPostgresContainerTest {
 
   @Test
   void addItemToCart_ShouldReturn200_AndPersist() {
-    CartItemRequest req = new CartItemRequest(bookId, 2);
+    CartItemRequestDto req = new CartItemRequestDto(bookId, 2);
     userHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-    HttpEntity<CartItemRequest> entity = new HttpEntity<>(req, userHeaders);
+    HttpEntity<CartItemRequestDto> entity = new HttpEntity<>(req, userHeaders);
 
-    ResponseEntity<CartItemResponse> res =
-        restTemplate.postForEntity("/users/me/shopping-cart/items", entity, CartItemResponse.class);
+    ResponseEntity<CartItemResponseDto> res =
+        restTemplate.postForEntity("/users/me/shopping-cart/items", entity, CartItemResponseDto.class);
 
     assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(res.getBody()).isNotNull();
@@ -106,9 +106,9 @@ class ShoppingCartIntegrationTest extends AbstractPostgresContainerTest {
 
   @Test
   void addItemToCart_BookDoesNotExist_ShouldReturn404() {
-    CartItemRequest req = new CartItemRequest(9_999L, 1);
+    CartItemRequestDto req = new CartItemRequestDto(9_999L, 1);
     userHeaders.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<CartItemRequest> entity = new HttpEntity<>(req, userHeaders);
+    HttpEntity<CartItemRequestDto> entity = new HttpEntity<>(req, userHeaders);
 
     ResponseEntity<String> res =
         restTemplate.postForEntity("/users/me/shopping-cart/items", entity, String.class);
@@ -118,7 +118,7 @@ class ShoppingCartIntegrationTest extends AbstractPostgresContainerTest {
 
   @Test
   void addItemToCart_InvalidQuantity_ShouldReturn400() throws Exception {
-    CartItemRequest req = new CartItemRequest(bookId, 0); // invalid
+    CartItemRequestDto req = new CartItemRequestDto(bookId, 0); // invalid
     userHeaders.setContentType(MediaType.APPLICATION_JSON);
 
     HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(req), userHeaders);
@@ -147,12 +147,12 @@ class ShoppingCartIntegrationTest extends AbstractPostgresContainerTest {
 
     HttpEntity<Void> entity = new HttpEntity<>(userHeaders);
 
-    ResponseEntity<CartItemResponse> res =
+    ResponseEntity<CartItemResponseDto> res =
         restTemplate.exchange(
             "/users/me/shopping-cart/items/{itemId}",
             HttpMethod.GET,
             entity,
-            CartItemResponse.class,
+            CartItemResponseDto.class,
             itemId);
 
     assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -164,16 +164,16 @@ class ShoppingCartIntegrationTest extends AbstractPostgresContainerTest {
   void updateCartItem_ShouldModifyQuantity() {
     Long itemId = addItemDirect(2);
 
-    CartItemUpdateRequest updateReq = new CartItemUpdateRequest(5);
+    CartItemUpdateRequestDto updateReq = new CartItemUpdateRequestDto(5);
     userHeaders.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<CartItemUpdateRequest> entity = new HttpEntity<>(updateReq, userHeaders);
+    HttpEntity<CartItemUpdateRequestDto> entity = new HttpEntity<>(updateReq, userHeaders);
 
-    ResponseEntity<CartItemResponse> res =
+    ResponseEntity<CartItemResponseDto> res =
         restTemplate.exchange(
             "/users/me/shopping-cart/items/{id}",
             HttpMethod.PUT,
             entity,
-            CartItemResponse.class,
+            CartItemResponseDto.class,
             itemId);
 
     assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -183,9 +183,9 @@ class ShoppingCartIntegrationTest extends AbstractPostgresContainerTest {
 
   @Test
   void updateCartItem_NotFound_ShouldReturn404() {
-    CartItemUpdateRequest upd = new CartItemUpdateRequest(2);
+    CartItemUpdateRequestDto upd = new CartItemUpdateRequestDto(2);
     userHeaders.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<CartItemUpdateRequest> entity = new HttpEntity<>(upd, userHeaders);
+    HttpEntity<CartItemUpdateRequestDto> entity = new HttpEntity<>(upd, userHeaders);
 
     ResponseEntity<String> res =
         restTemplate.exchange(
@@ -242,12 +242,12 @@ class ShoppingCartIntegrationTest extends AbstractPostgresContainerTest {
   }
 
   private Long addItemDirect(int qty) {
-    CartItemRequest req = new CartItemRequest(bookId, qty);
+    CartItemRequestDto req = new CartItemRequestDto(bookId, qty);
     userHeaders.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<CartItemRequest> entity = new HttpEntity<>(req, userHeaders);
+    HttpEntity<CartItemRequestDto> entity = new HttpEntity<>(req, userHeaders);
 
-    ResponseEntity<CartItemResponse> res =
-        restTemplate.postForEntity("/users/me/shopping-cart/items", entity, CartItemResponse.class);
+    ResponseEntity<CartItemResponseDto> res =
+        restTemplate.postForEntity("/users/me/shopping-cart/items", entity, CartItemResponseDto.class);
 
     return res.getBody().getId();
   }

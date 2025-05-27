@@ -226,8 +226,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.AbstractPostgresContainerTest;
-import com.petros.bookstore.dto.FavouriteBookRequest;
-import com.petros.bookstore.dto.FavouriteBookResponse;
+import com.petros.bookstore.dto.FavouriteBookRequestDto;
+import com.petros.bookstore.dto.FavouriteBookResponseDto;
 import com.petros.bookstore.model.Book;
 import com.petros.bookstore.model.User;
 import com.petros.bookstore.model.enums.Genre;
@@ -312,14 +312,14 @@ class FavouriteBookIntegrationTest extends AbstractPostgresContainerTest {
 
   @Test
   void addFavouriteBook_ShouldPersistAndReturn200() {
-    FavouriteBookRequest req = new FavouriteBookRequest(bookId);
+    FavouriteBookRequestDto req = new FavouriteBookRequestDto(bookId);
 
     userHeaders.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<FavouriteBookRequest> entity = new HttpEntity<>(req, userHeaders);
+    HttpEntity<FavouriteBookRequestDto> entity = new HttpEntity<>(req, userHeaders);
 
-    ResponseEntity<FavouriteBookResponse> res =
+    ResponseEntity<FavouriteBookResponseDto> res =
         restTemplate.postForEntity(
-            "/users/me/favourite-books", entity, FavouriteBookResponse.class);
+            "/users/me/favourite-books", entity, FavouriteBookResponseDto.class);
 
     assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(res.getBody()).isNotNull();
@@ -332,9 +332,9 @@ class FavouriteBookIntegrationTest extends AbstractPostgresContainerTest {
     // first add
     addFavDirect();
 
-    FavouriteBookRequest req = new FavouriteBookRequest(bookId);
+    FavouriteBookRequestDto req = new FavouriteBookRequestDto(bookId);
     userHeaders.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<FavouriteBookRequest> entity = new HttpEntity<>(req, userHeaders);
+    HttpEntity<FavouriteBookRequestDto> entity = new HttpEntity<>(req, userHeaders);
 
     ResponseEntity<String> res =
         restTemplate.postForEntity("/users/me/favourite-books", entity, String.class);
@@ -344,10 +344,10 @@ class FavouriteBookIntegrationTest extends AbstractPostgresContainerTest {
 
   @Test
   void addFavouriteBook_BookDoesNotExist_ShouldReturn404() {
-    FavouriteBookRequest req = new FavouriteBookRequest(9_999L);
+    FavouriteBookRequestDto req = new FavouriteBookRequestDto(9_999L);
 
     userHeaders.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<FavouriteBookRequest> entity = new HttpEntity<>(req, userHeaders);
+    HttpEntity<FavouriteBookRequestDto> entity = new HttpEntity<>(req, userHeaders);
 
     ResponseEntity<String> res =
         restTemplate.postForEntity("/users/me/favourite-books", entity, String.class);
@@ -357,7 +357,7 @@ class FavouriteBookIntegrationTest extends AbstractPostgresContainerTest {
 
   @Test
   void addFavouriteBook_NullBookId_ShouldReturn400() throws Exception {
-    FavouriteBookRequest req = new FavouriteBookRequest(null);
+    FavouriteBookRequestDto req = new FavouriteBookRequestDto(null);
 
     userHeaders.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(req), userHeaders);
@@ -454,10 +454,10 @@ class FavouriteBookIntegrationTest extends AbstractPostgresContainerTest {
   }
 
   private void addFavDirect() {
-    FavouriteBookRequest req = new FavouriteBookRequest(bookId);
+    FavouriteBookRequestDto req = new FavouriteBookRequestDto(bookId);
     userHeaders.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<FavouriteBookRequest> entity = new HttpEntity<>(req, userHeaders);
+    HttpEntity<FavouriteBookRequestDto> entity = new HttpEntity<>(req, userHeaders);
 
-    restTemplate.postForEntity("/users/me/favourite-books", entity, FavouriteBookResponse.class);
+    restTemplate.postForEntity("/users/me/favourite-books", entity, FavouriteBookResponseDto.class);
   }
 }

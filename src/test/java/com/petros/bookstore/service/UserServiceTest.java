@@ -4,9 +4,9 @@ import static com.petros.bookstore.model.enums.Role.USER;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.petros.bookstore.dto.UserAdminUpdateRequest;
+import com.petros.bookstore.dto.UserAdminUpdateRequestDto;
 import com.petros.bookstore.dto.UserProfileResponseDto;
-import com.petros.bookstore.dto.UserProfileUpdateRequest;
+import com.petros.bookstore.dto.UserProfileUpdateRequestDto;
 import com.petros.bookstore.exception.ResourceGoneException;
 import com.petros.bookstore.exception.ResourceNotFoundException;
 import com.petros.bookstore.model.User;
@@ -60,8 +60,8 @@ class UserServiceTest {
 
   @Test
   void testUpdateUserProfile() {
-    UserProfileUpdateRequest updateRequest =
-        new UserProfileUpdateRequest("Jane", null, null, "newpass");
+    UserProfileUpdateRequestDto updateRequest =
+        new UserProfileUpdateRequestDto("Jane", null, null, "newpass");
 
     when(userRepository.findById(1L)).thenReturn(Optional.of(user));
     when(passwordEncoder.encode("newpass")).thenReturn("encoded_pass");
@@ -80,7 +80,7 @@ class UserServiceTest {
   void testUpdateUserProfileUserNotFound() {
     when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> userService.updateUserProfile(1L, new UserProfileUpdateRequest()))
+    assertThatThrownBy(() -> userService.updateUserProfile(1L, new UserProfileUpdateRequestDto()))
         .isInstanceOf(ResourceNotFoundException.class)
         .hasMessage("User with ID 1 not found.");
   }
@@ -131,7 +131,7 @@ class UserServiceTest {
 
   @Test
   void testUpdateUserById() {
-    UserAdminUpdateRequest updateRequest = new UserAdminUpdateRequest("Updated", null, Role.ADMIN);
+    UserAdminUpdateRequestDto updateRequest = new UserAdminUpdateRequestDto("Updated", null, Role.ADMIN);
 
     when(userRepository.findById(1L)).thenReturn(Optional.of(user));
     when(userRepository.save(any(User.class))).thenReturn(user);
@@ -148,7 +148,7 @@ class UserServiceTest {
   void testUpdateUserByIdNotFound() {
     when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> userService.updateUserById(1L, new UserAdminUpdateRequest()))
+    assertThatThrownBy(() -> userService.updateUserById(1L, new UserAdminUpdateRequestDto()))
         .isInstanceOf(ResourceNotFoundException.class)
         .hasMessage("User with ID 1 not found.");
   }

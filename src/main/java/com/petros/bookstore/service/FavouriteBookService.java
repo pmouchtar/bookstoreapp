@@ -1,7 +1,7 @@
 package com.petros.bookstore.service;
 
-import com.petros.bookstore.dto.FavouriteBookRequest;
-import com.petros.bookstore.dto.FavouriteBookResponse;
+import com.petros.bookstore.dto.FavouriteBookRequestDto;
+import com.petros.bookstore.dto.FavouriteBookResponseDto;
 import com.petros.bookstore.exception.ResourceAlreadyExistsException;
 import com.petros.bookstore.exception.ResourceNotFoundException;
 import com.petros.bookstore.mapper.FavouriteBookMapper;
@@ -26,7 +26,7 @@ public class FavouriteBookService {
   private final BookRepository bookRepository;
 
   @Transactional
-  public FavouriteBookResponse addToFavourites(Long userId, FavouriteBookRequest request) {
+  public FavouriteBookResponseDto addToFavourites(Long userId, FavouriteBookRequestDto request) {
 
     User user =
         userRepo
@@ -54,7 +54,7 @@ public class FavouriteBookService {
   }
 
   @Transactional()
-  public Page<FavouriteBookResponse> getFavourites(Long userId, Pageable pageable) {
+  public Page<FavouriteBookResponseDto> getFavourites(Long userId, Pageable pageable) {
 
     User user =
         userRepo

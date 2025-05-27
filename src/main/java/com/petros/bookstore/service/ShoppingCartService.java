@@ -1,8 +1,8 @@
 package com.petros.bookstore.service;
 
-import com.petros.bookstore.dto.CartItemRequest;
-import com.petros.bookstore.dto.CartItemResponse;
-import com.petros.bookstore.dto.CartItemUpdateRequest;
+import com.petros.bookstore.dto.CartItemRequestDto;
+import com.petros.bookstore.dto.CartItemResponseDto;
+import com.petros.bookstore.dto.CartItemUpdateRequestDto;
 import com.petros.bookstore.exception.ResourceNotFoundException;
 import com.petros.bookstore.mapper.CartItemMapper;
 import com.petros.bookstore.model.*;
@@ -23,7 +23,7 @@ public class ShoppingCartService {
   private final UserRepository userRepo;
 
   @Transactional
-  public CartItemResponse addToCart(Long userId, CartItemRequest request) {
+  public CartItemResponseDto addToCart(Long userId, CartItemRequestDto request) {
     User user =
         userRepo
             .findById(userId)
@@ -60,7 +60,7 @@ public class ShoppingCartService {
   }
 
   @Transactional
-  public Page<CartItemResponse> getCartItems(Long userId, Pageable pageable) {
+  public Page<CartItemResponseDto> getCartItems(Long userId, Pageable pageable) {
     User user =
         userRepo
             .findById(userId)
@@ -76,7 +76,7 @@ public class ShoppingCartService {
   }
 
   @Transactional
-  public CartItemResponse findItemById(Long itemId, Long userId) {
+  public CartItemResponseDto findItemById(Long itemId, Long userId) {
     Cart_Item item =
         itemRepo
             .findById(itemId)
@@ -87,7 +87,7 @@ public class ShoppingCartService {
   }
 
   @Transactional
-  public CartItemResponse updateCartItem(Long itemId, CartItemUpdateRequest request, Long userId) {
+  public CartItemResponseDto updateCartItem(Long itemId, CartItemUpdateRequestDto request, Long userId) {
     Cart_Item item =
         itemRepo
             .findById(itemId)

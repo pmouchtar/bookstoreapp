@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookUpdateRequest {
+public class BookUpdateRequestDto {
 
   @Size(min = 1, max = 255, message = "Title cannot be empty or more than 255 letters")
   private String title;

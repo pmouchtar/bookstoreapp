@@ -1,8 +1,8 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.BookRequest;
-import com.petros.bookstore.dto.BookResponse;
-import com.petros.bookstore.dto.BookUpdateRequest;
+import com.petros.bookstore.dto.BookRequestDto;
+import com.petros.bookstore.dto.BookResponseDto;
+import com.petros.bookstore.dto.BookUpdateRequestDto;
 import com.petros.bookstore.exception.InvalidPriceRangeException;
 import com.petros.bookstore.model.enums.Genre;
 import com.petros.bookstore.service.BookService;
@@ -32,13 +32,13 @@ public class BookController {
   /**
    * Creates a new book.
    *
-   * @param bookRequest the book details
+   * @param bookRequestDto the book details
    * @return the created book as a response DTO
    */
   @PreAuthorize("hasRole('ADMIN')")
   @PostMapping()
-  public BookResponse addBook(@Valid @RequestBody BookRequest bookRequest) {
-    return bookService.save(bookRequest);
+  public BookResponseDto addBook(@Valid @RequestBody BookRequestDto bookRequestDto) {
+    return bookService.save(bookRequestDto);
   }
 
   /**
@@ -54,7 +54,7 @@ public class BookController {
    * @return a page of books matching the filters
    */
   @GetMapping()
-  public Page<BookResponse> getAllBooks(
+  public Page<BookResponseDto> getAllBooks(
       @RequestParam(required = false) String title,
       @RequestParam(required = false) String author,
       @RequestParam(required = false) @Min(0) Integer availability,
@@ -97,8 +97,8 @@ public class BookController {
    * @return the book response
    */
   @GetMapping("/{bookId}")
-  public ResponseEntity<BookResponse> getBook(@PathVariable Long bookId) {
-    BookResponse response = bookService.findBookById(bookId);
+  public ResponseEntity<BookResponseDto> getBook(@PathVariable Long bookId) {
+    BookResponseDto response = bookService.findBookById(bookId);
     return ResponseEntity.ok(response);
   }
 
@@ -111,9 +111,9 @@ public class BookController {
    */
   @PreAuthorize("hasRole('ADMIN')")
   @PutMapping("/{bookId}")
-  public ResponseEntity<BookResponse> updateBook(
-      @PathVariable Long bookId, @Valid @RequestBody BookUpdateRequest request) {
-    BookResponse updatedBook = bookService.updateBook(bookId, request);
+  public ResponseEntity<BookResponseDto> updateBook(
+      @PathVariable Long bookId, @Valid @RequestBody BookUpdateRequestDto request) {
+    BookResponseDto updatedBook = bookService.updateBook(bookId, request);
     return ResponseEntity.ok(updatedBook);
   }
 

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserProfileUpdateRequest {
+public class UserProfileUpdateRequestDto {
 
   // @NotBlank(message = "First name is required")
   @Size(max = 50, message = "First name must be at most 50 characters")

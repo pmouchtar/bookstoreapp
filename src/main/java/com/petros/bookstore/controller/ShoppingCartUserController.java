@@ -28,38 +28,38 @@ public class ShoppingCartUserController {
 
   @PostMapping()
   @SecurityRequirement(name = "bearerAuth")
-  public ResponseEntity<CartItemResponse> addItemToCart(
-      Authentication auth, @Valid @RequestBody CartItemRequest request) {
+  public ResponseEntity<CartItemResponseDto> addItemToCart(
+      Authentication auth, @Valid @RequestBody CartItemRequestDto request) {
 
     Long userId = extractUserId(auth);
-    CartItemResponse response = shoppingCartService.addToCart(userId, request);
+    CartItemResponseDto response = shoppingCartService.addToCart(userId, request);
     return ResponseEntity.ok(response);
   }
 
   @GetMapping()
   @SecurityRequirement(name = "bearerAuth")
-  public Page<CartItemResponse> getMyCartItems(Authentication auth, Pageable pageable) {
+  public Page<CartItemResponseDto> getMyCartItems(Authentication auth, Pageable pageable) {
 
     Long userId = extractUserId(auth);
     return shoppingCartService.getCartItems(userId, pageable);
   }
 
   @GetMapping("/{itemId}")
-  public ResponseEntity<CartItemResponse> getBook(Authentication auth, @PathVariable Long itemId) {
+  public ResponseEntity<CartItemResponseDto> getBook(Authentication auth, @PathVariable Long itemId) {
 
     Long userId = extractUserId(auth);
-    CartItemResponse response = shoppingCartService.findItemById(itemId, userId);
+    CartItemResponseDto response = shoppingCartService.findItemById(itemId, userId);
     return ResponseEntity.ok(response);
   }
 
   @PutMapping("/{itemId}")
-  public ResponseEntity<CartItemResponse> updateCartItem(
+  public ResponseEntity<CartItemResponseDto> updateCartItem(
       Authentication auth,
       @PathVariable Long itemId,
-      @Valid @RequestBody CartItemUpdateRequest request) {
+      @Valid @RequestBody CartItemUpdateRequestDto request) {
 
     Long userId = extractUserId(auth);
-    CartItemResponse response = shoppingCartService.updateCartItem(itemId, request, userId);
+    CartItemResponseDto response = shoppingCartService.updateCartItem(itemId, request, userId);
     return ResponseEntity.ok(response);
   }
 

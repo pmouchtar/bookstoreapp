@@ -1,8 +1,8 @@
 package com.petros.bookstore.service;
 
-import com.petros.bookstore.dto.BookRequest;
-import com.petros.bookstore.dto.BookResponse;
-import com.petros.bookstore.dto.BookUpdateRequest;
+import com.petros.bookstore.dto.BookRequestDto;
+import com.petros.bookstore.dto.BookResponseDto;
+import com.petros.bookstore.dto.BookUpdateRequestDto;
 import com.petros.bookstore.exception.ResourceNotFoundException;
 import com.petros.bookstore.mapper.BookMapper;
 import com.petros.bookstore.model.Book;
@@ -28,7 +28,7 @@ public class BookService {
    * @param request the book creation request
    * @return the saved book as a response DTO
    */
-  public BookResponse save(BookRequest request) {
+  public BookResponseDto save(BookRequestDto request) {
     Book savedBook = bookRepository.save(BookMapper.toEntity(request));
     return BookMapper.toResponse(savedBook);
   }
@@ -39,7 +39,7 @@ public class BookService {
    * @param pageable pagination information
    * @return a page of book responses
    */
-  public Page<BookResponse> findAll(Pageable pageable) {
+  public Page<BookResponseDto> findAll(Pageable pageable) {
     return bookRepository.findAll(pageable).map(BookMapper::toResponse);
   }
 
@@ -50,7 +50,7 @@ public class BookService {
    * @return the book response
    * @throws ResourceNotFoundException if the book is not found
    */
-  public BookResponse findBookById(Long id) {
+  public BookResponseDto findBookById(Long id) {
     Book book =
         bookRepository
             .findById(id)
@@ -66,7 +66,7 @@ public class BookService {
    * @return the updated book response
    * @throws ResourceNotFoundException if the book is not found
    */
-  public BookResponse updateBook(Long id, BookUpdateRequest request) {
+  public BookResponseDto updateBook(Long id, BookUpdateRequestDto request) {
     Book book =
         bookRepository
             .findById(id)
@@ -110,7 +110,7 @@ public class BookService {
    * @param pageable pagination information
    * @return a page of book responses matching the filters
    */
-  public Page<BookResponse> searchBooks(
+  public Page<BookResponseDto> searchBooks(
       String title,
       String author,
       Integer availability,

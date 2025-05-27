@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.AbstractPostgresContainerTest;
 import com.petros.bookstore.dto.UserProfileResponseDto;
-import com.petros.bookstore.dto.UserProfileUpdateRequest;
+import com.petros.bookstore.dto.UserProfileUpdateRequestDto;
 import com.petros.bookstore.model.User;
 import com.petros.bookstore.model.enums.Role;
 import com.petros.bookstore.repository.UserRepository;
@@ -65,14 +65,14 @@ class UserProfileIntegrationTest extends AbstractPostgresContainerTest {
 
   @Test
   void testUpdateUserProfile() {
-    UserProfileUpdateRequest updateRequest = new UserProfileUpdateRequest();
+    UserProfileUpdateRequestDto updateRequest = new UserProfileUpdateRequestDto();
     updateRequest.setFirstName("Updated");
     updateRequest.setLastName("Name");
     updateRequest.setUsername("updateduser");
     updateRequest.setPassword("Newpass123");
 
     headers.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<UserProfileUpdateRequest> entity = new HttpEntity<>(updateRequest, headers);
+    HttpEntity<UserProfileUpdateRequestDto> entity = new HttpEntity<>(updateRequest, headers);
 
     ResponseEntity<UserProfileResponseDto> response =
         restTemplate.exchange("/users/me", HttpMethod.PUT, entity, UserProfileResponseDto.class);
@@ -96,14 +96,14 @@ class UserProfileIntegrationTest extends AbstractPostgresContainerTest {
 
   @Test
   void testUpdateUserProfile_WithInvalidPassword_ShouldReturn400() {
-    UserProfileUpdateRequest updateRequest = new UserProfileUpdateRequest();
+    UserProfileUpdateRequestDto updateRequest = new UserProfileUpdateRequestDto();
     updateRequest.setFirstName("Petros");
     updateRequest.setLastName("Papadopoulos");
     updateRequest.setUsername("petrosdev");
     updateRequest.setPassword("123"); // invalid
 
     headers.setContentType(MediaType.APPLICATION_JSON);
-    HttpEntity<UserProfileUpdateRequest> entity = new HttpEntity<>(updateRequest, headers);
+    HttpEntity<UserProfileUpdateRequestDto> entity = new HttpEntity<>(updateRequest, headers);
 
     ResponseEntity<String> response =
         restTemplate.exchange("/users/me", HttpMethod.PUT, entity, String.class);
@@ -113,13 +113,13 @@ class UserProfileIntegrationTest extends AbstractPostgresContainerTest {
 
   @Test
   void testUpdateUserProfile_ShouldReturn400_WhenMissingFields() {
-    UserProfileUpdateRequest request = new UserProfileUpdateRequest();
+    UserProfileUpdateRequestDto request = new UserProfileUpdateRequestDto();
     request.setUsername(""); // invalid
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
 
-    HttpEntity<UserProfileUpdateRequest> entity = new HttpEntity<>(request, headers);
+    HttpEntity<UserProfileUpdateRequestDto> entity = new HttpEntity<>(request, headers);
 
     var response =
         restTemplate.exchange(

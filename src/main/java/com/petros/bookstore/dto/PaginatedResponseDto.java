@@ -13,7 +13,7 @@ import org.springframework.data.domain.PageRequest;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PaginatedResponse<T> {
+public class PaginatedResponseDto<T> {
 
   private List<T> content;
   private int number;

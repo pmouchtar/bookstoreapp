@@ -7,9 +7,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.TestSecurityConfig;
-import com.petros.bookstore.dto.BookRequest;
-import com.petros.bookstore.dto.BookResponse;
-import com.petros.bookstore.dto.BookUpdateRequest;
+import com.petros.bookstore.dto.BookRequestDto;
+import com.petros.bookstore.dto.BookResponseDto;
+import com.petros.bookstore.dto.BookUpdateRequestDto;
 import com.petros.bookstore.exception.ResourceNotFoundException;
 import com.petros.bookstore.model.enums.Genre;
 import com.petros.bookstore.repository.BookRepository;
@@ -67,13 +67,13 @@ class BookControllerTest {
   @Test
   @DisplayName("GET /books - search by title and genre - books found")
   void testSearchBooksFound() throws Exception {
-    BookResponse book1 =
-        new BookResponse(
+    BookResponseDto book1 =
+        new BookResponseDto(
             1L, "Title 1", "Author 1", "Description", 12.99, 10, Genre.SCIENCE_FICTION);
-    BookResponse book2 =
-        new BookResponse(2L, "Title 2", "Author 2", "Description", 15.99, 5, Genre.FANTASY);
-    List<BookResponse> books = Arrays.asList(book1, book2);
-    Page<BookResponse> page = new PageImpl<>(books, PageRequest.of(0, 10), books.size());
+    BookResponseDto book2 =
+        new BookResponseDto(2L, "Title 2", "Author 2", "Description", 15.99, 5, Genre.FANTASY);
+    List<BookResponseDto> books = Arrays.asList(book1, book2);
+    Page<BookResponseDto> page = new PageImpl<>(books, PageRequest.of(0, 10), books.size());
 
     when(bookService.searchBooks(any(), any(), any(), any(), any(), any(), any())).thenReturn(page);
 
@@ -91,7 +91,7 @@ class BookControllerTest {
   @Test
   @DisplayName("GET /books - search by title and genre - no books found")
   void testSearchBooksNotFound() throws Exception {
-    Page<BookResponse> page = new PageImpl<>(List.of(), PageRequest.of(0, 10), 0);
+    Page<BookResponseDto> page = new PageImpl<>(List.of(), PageRequest.of(0, 10), 0);
     when(bookService.searchBooks(any(), any(), any(), any(), any(), any(), any())).thenReturn(page);
 
     mockMvc
@@ -107,12 +107,12 @@ class BookControllerTest {
   @Test
   @DisplayName("POST /books - success")
   void testAddBook() throws Exception {
-    BookRequest request =
-        new BookRequest("Title", "Author", "Description", 12.99, 10, Genre.SCIENCE_FICTION);
-    BookResponse response =
-        new BookResponse(1L, "Title", "Author", "Description", 12.99, 10, Genre.SCIENCE_FICTION);
+    BookRequestDto request =
+        new BookRequestDto("Title", "Author", "Description", 12.99, 10, Genre.SCIENCE_FICTION);
+    BookResponseDto response =
+        new BookResponseDto(1L, "Title", "Author", "Description", 12.99, 10, Genre.SCIENCE_FICTION);
 
-    when(bookService.save(any(BookRequest.class))).thenReturn(response);
+    when(bookService.save(any(BookRequestDto.class))).thenReturn(response);
 
     mockMvc
         .perform(
@@ -125,8 +125,8 @@ class BookControllerTest {
   @Test
   @DisplayName("GET /books/{id} - found")
   void testGetBookById() throws Exception {
-    BookResponse response =
-        new BookResponse(1L, "Title", "Author", "Desc", 10.99, 5, Genre.SCIENCE_FICTION);
+    BookResponseDto response =
+        new BookResponseDto(1L, "Title", "Author", "Desc", 10.99, 5, Genre.SCIENCE_FICTION);
 
     when(bookService.findBookById(1L)).thenReturn(response);
 
@@ -153,13 +153,13 @@ class BookControllerTest {
   @Test
   @DisplayName("PUT /books/{id} - update")
   void testUpdateBook() throws Exception {
-    BookUpdateRequest updateRequest = new BookUpdateRequest();
+    BookUpdateRequestDto updateRequest = new BookUpdateRequestDto();
     updateRequest.setTitle("Updated Title");
 
-    BookResponse updatedResponse =
-        new BookResponse(1L, "Updated Title", "Author", "Desc", 10.99, 5, Genre.SCIENCE_FICTION);
+    BookResponseDto updatedResponse =
+        new BookResponseDto(1L, "Updated Title", "Author", "Desc", 10.99, 5, Genre.SCIENCE_FICTION);
 
-    when(bookService.updateBook(Mockito.eq(1L), any(BookUpdateRequest.class)))
+    when(bookService.updateBook(Mockito.eq(1L), any(BookUpdateRequestDto.class)))
         .thenReturn(updatedResponse);
 
     mockMvc

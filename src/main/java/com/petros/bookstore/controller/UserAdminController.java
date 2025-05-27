@@ -41,7 +41,7 @@ public class UserAdminController {
 
   @PutMapping("/{userId}")
   public ResponseEntity<UserProfileResponseDto> updateUser(
-      @PathVariable Long userId, @Valid @RequestBody UserAdminUpdateRequest request) {
+      @PathVariable Long userId, @Valid @RequestBody UserAdminUpdateRequestDto request) {
     UserProfileResponseDto updatedUser = userService.updateUserById(userId, request);
     return ResponseEntity.ok(updatedUser);
   }
