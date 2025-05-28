@@ -55,21 +55,21 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
     Assertions.assertEquals(HttpStatus.OK, createResponse.getStatusCode());
     BookResponseDto createdBook = createResponse.getBody();
     Assertions.assertNotNull(createdBook);
-    Assertions.assertNotNull(createdBook.getId());
-    Assertions.assertEquals("Integration Book", createdBook.getTitle());
-    Assertions.assertEquals(Genre.MYSTERY, createdBook.getGenre());
+    Assertions.assertNotNull(createdBook.id());
+    Assertions.assertEquals("Integration Book", createdBook.title());
+    Assertions.assertEquals(Genre.MYSTERY, createdBook.genre());
 
     // Get book by ID
     ResponseEntity<BookResponseDto> getResponse =
-        client.getForEntity("/books/" + createdBook.getId(), BookResponseDto.class);
+        client.getForEntity("/books/" + createdBook.id(), BookResponseDto.class);
 
     Assertions.assertEquals(HttpStatus.OK, getResponse.getStatusCode());
     BookResponseDto retrievedBook = getResponse.getBody();
     Assertions.assertNotNull(retrievedBook);
-    Assertions.assertEquals("Integration Book", retrievedBook.getTitle());
-    Assertions.assertEquals("Test Author", retrievedBook.getAuthor());
-    Assertions.assertEquals(15.99, retrievedBook.getPrice());
-    Assertions.assertEquals(Genre.MYSTERY, retrievedBook.getGenre());
+    Assertions.assertEquals("Integration Book", retrievedBook.title());
+    Assertions.assertEquals("Test Author", retrievedBook.author());
+    Assertions.assertEquals(15.99, retrievedBook.price());
+    Assertions.assertEquals(Genre.MYSTERY, retrievedBook.genre());
     Assertions.assertEquals(createResponse.getBody(), retrievedBook);
   }
 
@@ -105,13 +105,11 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
     Assertions.assertEquals(HttpStatus.OK, createResponse.getStatusCode());
     BookResponseDto createdBook = createResponse.getBody();
     Assertions.assertNotNull(createdBook);
-    Long id = createdBook.getId();
+    Long id = createdBook.id();
     Assertions.assertNotNull(id);
 
     // Update book
-    BookUpdateRequestDto updateRequest = new BookUpdateRequestDto();
-    updateRequest.setTitle("Updated Book");
-    updateRequest.setAvailability(5);
+    BookUpdateRequestDto updateRequest = new BookUpdateRequestDto("Updated Book", null, null, null, 5, null);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
@@ -125,8 +123,8 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
     Assertions.assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
     BookResponseDto updatedBook = updateResponse.getBody();
     Assertions.assertNotNull(updatedBook);
-    Assertions.assertEquals("Updated Book", updatedBook.getTitle());
-    Assertions.assertEquals(5, updatedBook.getAvailability());
+    Assertions.assertEquals("Updated Book", updatedBook.title());
+    Assertions.assertEquals(5, updatedBook.availability());
   }
 
   @Test
@@ -138,7 +136,7 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
     Assertions.assertEquals(HttpStatus.OK, createResponse.getStatusCode());
     BookResponseDto createdBook = createResponse.getBody();
     Assertions.assertNotNull(createdBook);
-    Long id = createdBook.getId();
+    Long id = createdBook.id();
     Assertions.assertNotNull(id);
 
     // Delete book
@@ -178,7 +176,7 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
     PaginatedResponseDto<BookResponseDto> page = response.getBody();
     Assertions.assertNotNull(page);
     Assertions.assertEquals(1, page.getContent().size());
-    Assertions.assertEquals("Integration Book", page.getContent().get(0).getTitle());
+    Assertions.assertEquals("Integration Book", page.getContent().get(0).title());
   }
 
   @Test
@@ -254,7 +252,7 @@ public class BookIntegrationTest extends AbstractPostgresContainerTest {
     ResponseEntity<BookResponseDto> postResponse =
         client.postForEntity("/books", bookRequestDto, BookResponseDto.class);
     Assertions.assertEquals(HttpStatus.OK, postResponse.getStatusCode());
-    Long id = postResponse.getBody().getId();
+    Long id = postResponse.getBody().id();
 
     // Malformed update request
     String malformedUpdate = "{ \"availability\": \"ten\" }";

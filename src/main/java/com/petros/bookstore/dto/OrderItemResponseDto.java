@@ -6,4 +6,4 @@ public record OrderItemResponseDto(
         String title,
         Double price,
         int quantity,
-        Double subTotal) {}
+        String subTotal) {}

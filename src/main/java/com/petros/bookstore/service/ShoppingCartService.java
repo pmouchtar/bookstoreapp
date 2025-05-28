@@ -31,7 +31,8 @@ public class ShoppingCartService {
 
     Book book =
         bookRepo
-            .findById(request.getBookId())
+            .findById(request
+                    .bookId())
             .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
 
     Shopping_Cart cart =
@@ -50,9 +51,9 @@ public class ShoppingCartService {
       item = new Cart_Item();
       item.setShoppingCart(cart);
       item.setBook(book);
-      item.setQuantity(request.getQuantity());
+      item.setQuantity(request.quantity());
     } else {
-      item.setQuantity(item.getQuantity() + request.getQuantity());
+      item.setQuantity(item.getQuantity() + request.quantity());
     }
 
     Cart_Item saved = itemRepo.save(item);
@@ -94,7 +95,7 @@ public class ShoppingCartService {
             .filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
             .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
 
-    int newQty = request.getQuantity();
+    int newQty = request.quantity();
     if (newQty <= 0) {
       itemRepo.delete(item);
       return null;

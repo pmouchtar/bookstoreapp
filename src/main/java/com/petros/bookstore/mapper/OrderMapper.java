@@ -5,7 +5,7 @@ import com.petros.bookstore.dto.OrderResponseDto;
 import com.petros.bookstore.model.Order;
 import java.util.List;
 
-public class OrderMapper {
+public final class OrderMapper {
     public static OrderResponseDto toDto(Order order) {
         List<OrderItemResponseDto> items =
                 order.getOrderItems().stream().map(OrderItemMapper::toDto).toList();

@@ -72,12 +72,12 @@ public class BookService {
             .findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Book with ID " + id + " not found."));
 
-    if (request.getTitle() != null) book.setTitle(request.getTitle());
-    if (request.getAuthor() != null) book.setAuthor(request.getAuthor());
-    if (request.getDescription() != null) book.setDescription(request.getDescription());
-    if (request.getPrice() != null) book.setPrice(request.getPrice());
-    if (request.getAvailability() != null) book.setAvailability(request.getAvailability());
-    if (request.getGenre() != null) book.setGenre(Genre.valueOf(request.getGenre().toString()));
+    if (request.title() != null) book.setTitle(request.title());
+    if (request.author() != null) book.setAuthor(request.author());
+    if (request.description() != null) book.setDescription(request.description());
+    if (request.price() != null) book.setPrice(request.price());
+    if (request.availability() != null) book.setAvailability(request.availability());
+    if (request.genre() != null) book.setGenre(Genre.valueOf(request.genre().toString()));
 
     return BookMapper.toResponse(bookRepository.save(book));
   }

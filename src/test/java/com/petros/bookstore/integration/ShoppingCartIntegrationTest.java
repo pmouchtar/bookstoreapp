@@ -157,7 +157,7 @@ class ShoppingCartIntegrationTest extends AbstractPostgresContainerTest {
 
     assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(res.getBody()).isNotNull();
-    assertThat(res.getBody().getQuantity()).isEqualTo(3);
+    assertThat(res.getBody().quantity()).isEqualTo(3);
   }
 
   @Test
@@ -178,7 +178,7 @@ class ShoppingCartIntegrationTest extends AbstractPostgresContainerTest {
 
     assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
     assertThat(res.getBody()).isNotNull();
-    assertThat(res.getBody().getQuantity()).isEqualTo(5);
+    assertThat(res.getBody().quantity()).isEqualTo(5);
   }
 
   @Test
@@ -249,7 +249,7 @@ class ShoppingCartIntegrationTest extends AbstractPostgresContainerTest {
     ResponseEntity<CartItemResponseDto> res =
         restTemplate.postForEntity("/users/me/shopping-cart/items", entity, CartItemResponseDto.class);
 
-    return res.getBody().getId();
+    return res.getBody().id();
   }
 
   @SuppressWarnings("unchecked")

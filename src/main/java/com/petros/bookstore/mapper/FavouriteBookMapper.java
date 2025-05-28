@@ -9,6 +9,8 @@ public final class FavouriteBookMapper {
 
   public static FavouriteBookResponseDto toDto(Favourite_Book entity) {
     return new FavouriteBookResponseDto(
-        entity.getId(), entity.getBook().getId(), entity.getCreatedAt());
+            entity.getId(),
+            entity.getBook().getId(),
+            entity.getCreatedAt());
   }
 }

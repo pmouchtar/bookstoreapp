@@ -153,8 +153,7 @@ class BookControllerTest {
   @Test
   @DisplayName("PUT /books/{id} - update")
   void testUpdateBook() throws Exception {
-    BookUpdateRequestDto updateRequest = new BookUpdateRequestDto();
-    updateRequest.setTitle("Updated Title");
+    BookUpdateRequestDto updateRequest = new BookUpdateRequestDto("Updated Title", null, null, null, null, null);
 
     BookResponseDto updatedResponse =
         new BookResponseDto(1L, "Updated Title", "Author", "Desc", 10.99, 5, Genre.SCIENCE_FICTION);

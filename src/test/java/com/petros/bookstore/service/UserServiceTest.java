@@ -80,7 +80,8 @@ class UserServiceTest {
   void testUpdateUserProfileUserNotFound() {
     when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> userService.updateUserProfile(1L, new UserProfileUpdateRequestDto()))
+    assertThatThrownBy(() -> userService.updateUserProfile(1L, new UserProfileUpdateRequestDto(null, null, null, null
+    )))
         .isInstanceOf(ResourceNotFoundException.class)
         .hasMessage("User with ID 1 not found.");
   }
@@ -148,7 +149,7 @@ class UserServiceTest {
   void testUpdateUserByIdNotFound() {
     when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-    assertThatThrownBy(() -> userService.updateUserById(1L, new UserAdminUpdateRequestDto()))
+    assertThatThrownBy(() -> userService.updateUserById(1L, new UserAdminUpdateRequestDto(null, null, null)))
         .isInstanceOf(ResourceNotFoundException.class)
         .hasMessage("User with ID 1 not found.");
   }

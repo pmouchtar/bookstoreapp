@@ -65,12 +65,7 @@ class UserProfileIntegrationTest extends AbstractPostgresContainerTest {
 
   @Test
   void testUpdateUserProfile() {
-    UserProfileUpdateRequestDto updateRequest = new UserProfileUpdateRequestDto();
-    updateRequest.setFirstName("Updated");
-    updateRequest.setLastName("Name");
-    updateRequest.setUsername("updateduser");
-    updateRequest.setPassword("Newpass123");
-
+    UserProfileUpdateRequestDto updateRequest = new UserProfileUpdateRequestDto("Updated", "Name", "updateduser", "Newpass123");
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<UserProfileUpdateRequestDto> entity = new HttpEntity<>(updateRequest, headers);
 
@@ -96,11 +91,7 @@ class UserProfileIntegrationTest extends AbstractPostgresContainerTest {
 
   @Test
   void testUpdateUserProfile_WithInvalidPassword_ShouldReturn400() {
-    UserProfileUpdateRequestDto updateRequest = new UserProfileUpdateRequestDto();
-    updateRequest.setFirstName("Petros");
-    updateRequest.setLastName("Papadopoulos");
-    updateRequest.setUsername("petrosdev");
-    updateRequest.setPassword("123"); // invalid
+    UserProfileUpdateRequestDto updateRequest = new UserProfileUpdateRequestDto("Petros", "Papadopoulos", "petrosdev", "123");
 
     headers.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<UserProfileUpdateRequestDto> entity = new HttpEntity<>(updateRequest, headers);
@@ -113,8 +104,7 @@ class UserProfileIntegrationTest extends AbstractPostgresContainerTest {
 
   @Test
   void testUpdateUserProfile_ShouldReturn400_WhenMissingFields() {
-    UserProfileUpdateRequestDto request = new UserProfileUpdateRequestDto();
-    request.setUsername(""); // invalid
+    UserProfileUpdateRequestDto request = new UserProfileUpdateRequestDto("", null, null, null);
 
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);

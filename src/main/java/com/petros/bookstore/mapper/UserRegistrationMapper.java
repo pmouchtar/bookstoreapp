@@ -6,7 +6,7 @@ import com.petros.bookstore.model.User;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserRegistrationMapper {
+public final class UserRegistrationMapper {
 
   public User toEntity(RegistrationRequestDto registrationRequestDto) {
     final var user = new User();
@@ -22,6 +22,9 @@ public class UserRegistrationMapper {
   public RegistrationResponseDto toRegistrationResponseDto(final User user) {
 
     return new RegistrationResponseDto(
-        user.getUsername(), user.getFirstName(), user.getLastName(), user.getRole());
+            user.getUsername(),
+            user.getFirstName(),
+            user.getLastName(),
+            user.getRole());
   }
 }

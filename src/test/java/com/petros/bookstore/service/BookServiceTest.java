@@ -43,7 +43,7 @@ class BookServiceTest {
     BookResponseDto response = bookService.save(bookRequestDto);
 
     assertThat(response).isNotNull();
-    assertThat(response.getTitle()).isEqualTo("Title");
+    assertThat(response.title()).isEqualTo("Title");
 
     verify(bookRepository).save(any(Book.class));
   }
@@ -65,8 +65,8 @@ class BookServiceTest {
 
     BookResponseDto response = bookService.findBookById(1L);
 
-    assertThat(response.getId()).isEqualTo(1L);
-    assertThat(response.getTitle()).isEqualTo("Title");
+    assertThat(response.id()).isEqualTo(1L);
+    assertThat(response.title()).isEqualTo("Title");
   }
 
   @Test
@@ -85,7 +85,7 @@ class BookServiceTest {
 
     BookResponseDto response = bookService.updateBook(1L, bookUpdateRequestDto);
 
-    assertThat(response.getTitle()).isEqualTo("New Title");
+    assertThat(response.title()).isEqualTo("New Title");
     verify(bookRepository).save(any(Book.class));
   }
 

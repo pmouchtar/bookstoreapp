@@ -92,10 +92,7 @@ class UserAdminIntegrationTest extends AbstractPostgresContainerTest {
 
   @Test
   void updateUser_AsAdmin_ShouldPromoteUser() {
-    UserAdminUpdateRequestDto req = new UserAdminUpdateRequestDto();
-    req.setFirstName("Updated");
-    req.setLastName("User");
-    req.setRole(Role.ADMIN); // promote
+    UserAdminUpdateRequestDto req = new UserAdminUpdateRequestDto("Updated", "User", Role.ADMIN);
 
     adminHeaders.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<UserAdminUpdateRequestDto> entity = new HttpEntity<>(req, adminHeaders);
@@ -114,10 +111,7 @@ class UserAdminIntegrationTest extends AbstractPostgresContainerTest {
   void updateUser_NonExisting_ShouldReturn404() {
     long nonexistentId = 9_999L;
 
-    UserAdminUpdateRequestDto req = new UserAdminUpdateRequestDto();
-    req.setFirstName("Foo");
-    req.setLastName("Bar");
-    req.setRole(Role.USER);
+    UserAdminUpdateRequestDto req = new UserAdminUpdateRequestDto("Foo", "Bar", Role.USER);
 
     adminHeaders.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<UserAdminUpdateRequestDto> entity = new HttpEntity<>(req, adminHeaders);
@@ -130,11 +124,7 @@ class UserAdminIntegrationTest extends AbstractPostgresContainerTest {
 
   @Test
   void updateUser_InvalidPayload_ShouldReturn400() throws Exception {
-    // empty first / last name → @NotBlank should fail
-    UserAdminUpdateRequestDto req = new UserAdminUpdateRequestDto();
-    req.setFirstName("");
-    req.setLastName("");
-    req.setRole(Role.USER);
+    UserAdminUpdateRequestDto req = new UserAdminUpdateRequestDto("", "", Role.USER);
 
     adminHeaders.setContentType(MediaType.APPLICATION_JSON);
     HttpEntity<String> entity =

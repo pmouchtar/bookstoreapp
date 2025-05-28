@@ -36,29 +36,21 @@ public class UserService {
             .orElseThrow(
                 () -> new ResourceNotFoundException("User with ID " + userId + " not found."));
 
-    if (updateRequest.getFirstName() != null) {
-      user.setFirstName(updateRequest.getFirstName());
+    if (updateRequest.firstName() != null) {
+      user.setFirstName(updateRequest.firstName());
     }
-    if (updateRequest.getLastName() != null) {
-      user.setLastName(updateRequest.getLastName());
+    if (updateRequest.lastName() != null) {
+      user.setLastName(updateRequest.lastName());
     }
-    if (updateRequest.getUsername() != null) {
-      user.setUsername(updateRequest.getUsername());
+    if (updateRequest.username() != null) {
+      user.setUsername(updateRequest.username());
     }
-    if (updateRequest.getPassword() != null) {
-      user.setPassword(passwordEncoder.encode(updateRequest.getPassword()));
+    if (updateRequest.password() != null) {
+      user.setPassword(passwordEncoder.encode(updateRequest.password()));
     }
 
     return userRepository.save(user);
   }
-
-  //    public void deleteUserProfile(final Long userId) {
-  //        User user = userRepository.findById(userId)
-  //                .orElseThrow(() -> new ResourceNotFoundException("User with ID " + userId + "
-  // not found."));
-  //
-  //        userRepository.delete(user);
-  //    }
 
   public Page<UserProfileResponseDto> searchUsers(
       String username, String firstName, String lastName, Pageable pageable) {
@@ -85,9 +77,9 @@ public class UserService {
             .findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("User with ID " + id + " not found."));
 
-    if (request.getFirstName() != null) user.setFirstName(request.getFirstName());
-    if (request.getLastName() != null) user.setLastName(request.getLastName());
-    if (request.getRole() != null) user.setRole(Role.valueOf(request.getRole().toString()));
+    if (request.firstName() != null) user.setFirstName(request.firstName());
+    if (request.lastName() != null) user.setLastName(request.lastName());
+    if (request.role() != null) user.setRole(Role.valueOf(request.role().toString()));
 
     return UserMapper.toUserProfileDto(userRepository.save(user));
   }

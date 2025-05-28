@@ -46,11 +46,11 @@ public class BookServiceIT extends AbstractPostgresContainerTest {
   @Test
   void testSaveAndFindById() {
     BookResponseDto saved = bookService.save(bookRequestDto);
-    BookResponseDto found = bookService.findBookById(saved.getId());
+    BookResponseDto found = bookService.findBookById(saved.id());
 
-    assertThat(found.getTitle()).isEqualTo("Simple Book");
-    assertThat(found.getAuthor()).isEqualTo("John Doe");
-    assertThat(found.getAvailability()).isEqualTo(100);
+    assertThat(found.title()).isEqualTo("Simple Book");
+    assertThat(found.author()).isEqualTo("John Doe");
+    assertThat(found.availability()).isEqualTo(100);
   }
 
   @Test
@@ -59,30 +59,28 @@ public class BookServiceIT extends AbstractPostgresContainerTest {
     Page<BookResponseDto> page = bookService.findAll(PageRequest.of(0, 10));
 
     assertThat(page.getContent()).isNotEmpty();
-    assertThat(page.getContent().get(0).getTitle()).isEqualTo("Simple Book");
+    assertThat(page.getContent().get(0).title()).isEqualTo("Simple Book");
     assertThat(page.getContent()).hasSize(3);
   }
 
   @Test
   void testUpdateBook() {
     BookResponseDto saved = bookService.save(bookRequestDto);
-    BookUpdateRequestDto update = new BookUpdateRequestDto();
-    update.setTitle("Updated Simple Book");
-    update.setAvailability(50);
+    BookUpdateRequestDto update = new BookUpdateRequestDto("Updated Simple Book", null, null, null, 50 , null);
 
-    BookResponseDto updated = bookService.updateBook(saved.getId(), update);
+    BookResponseDto updated = bookService.updateBook(saved.id(), update);
 
-    assertThat(updated.getTitle()).isEqualTo("Updated Simple Book");
-    assertThat(updated.getAvailability()).isEqualTo(50);
+    assertThat(updated.title()).isEqualTo("Updated Simple Book");
+    assertThat(updated.availability()).isEqualTo(50);
   }
 
   @Test
   void testDeleteBook() {
     BookResponseDto saved = bookService.save(bookRequestDto);
-    boolean deleted = bookService.deleteBookById(saved.getId());
+    boolean deleted = bookService.deleteBookById(saved.id());
 
     assertThat(deleted).isTrue();
-    assertThatThrownBy(() -> bookService.findBookById(saved.getId()))
+    assertThatThrownBy(() -> bookService.findBookById(saved.id()))
         .isInstanceOf(RuntimeException.class);
   }
 
@@ -93,6 +91,6 @@ public class BookServiceIT extends AbstractPostgresContainerTest {
             "Simple", "John", 100, Genre.DRAMA, 5.0, 15.0, PageRequest.of(0, 10));
 
     assertThat(results.getContent()).hasSize(1);
-    assertThat(results.getContent().get(0).getTitle()).contains("Simple");
+    assertThat(results.getContent().get(0).title()).contains("Simple");
   }
 }

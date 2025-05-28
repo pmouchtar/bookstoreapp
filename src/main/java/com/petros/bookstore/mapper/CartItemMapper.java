@@ -5,16 +5,10 @@ import com.petros.bookstore.model.Cart_Item;
 
 public final class CartItemMapper {
 
-  private CartItemMapper() {}
-
   public static CartItemResponseDto toDto(Cart_Item item) {
-    if (item == null) {
-      return null;
-    }
-    CartItemResponseDto dto = new CartItemResponseDto();
-    dto.setId(item.getId());
-    dto.setBook(item.getBook());
-    dto.setQuantity(item.getQuantity());
-    return dto;
+    return new CartItemResponseDto(
+            item.getId(),
+            item.getBook(),
+            item.getQuantity());
   }
 }

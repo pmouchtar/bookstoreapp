@@ -4,16 +4,16 @@ import com.petros.bookstore.dto.BookRequestDto;
 import com.petros.bookstore.dto.BookResponseDto;
 import com.petros.bookstore.model.Book;
 
-public class BookMapper {
+public final class BookMapper {
 
   public static Book toEntity(BookRequestDto request) {
     return new Book(
-        request.getTitle(),
-        request.getAuthor(),
-        request.getDescription(),
-        request.getPrice(),
-        request.getAvailability(),
-        request.getGenre());
+        request.title(),
+        request.author(),
+        request.description(),
+        request.price(),
+        request.availability(),
+        request.genre());
   }
 
   public static BookResponseDto toResponse(Book book) {
