@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -15,28 +16,39 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/orders")
 @PreAuthorize("hasRole('ADMIN')")
 public class OrderAdminController {
 
     private final OrderService orderService;
 
-    @GetMapping
+    @GetMapping("/orders")
     @SecurityRequirement(name = "bearerAuth")
     public Page<OrderResponseDto> allOrders(Pageable pageable) {
         return orderService.getAllOrders(pageable);
     }
 
-    @GetMapping("/users/{userId}")
+    @PutMapping("/orders/{orderId}")
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<OrderResponseDto> updateStatus(
+            @PathVariable Long orderId, @Valid @RequestBody OrderStatusUpdateRequestDto request) {
+
+        OrderResponseDto response = orderService.updateOrderStatus(orderId, request);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/orders/{orderId}")
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<OrderResponseDto> getOrderById(
+            @PathVariable Long orderId) {
+
+        OrderResponseDto response = orderService.getOrderById(orderId);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/users/{userId}/orders")
     @SecurityRequirement(name = "bearerAuth")
     public Page<OrderResponseDto> userOrders(@PathVariable Long userId, Pageable pageable) {
         return orderService.getOrdersForUser(userId, pageable);
     }
 
-    @PutMapping("/{orderId}/status")
-    @SecurityRequirement(name = "bearerAuth")
-    public OrderResponseDto updateStatus(
-            @PathVariable Long orderId, @Valid @RequestBody OrderStatusUpdateRequestDto request) {
-        return orderService.updateOrderStatus(orderId, request);
-    }
 }

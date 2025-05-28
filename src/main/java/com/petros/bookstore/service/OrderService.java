@@ -112,4 +112,12 @@ public class OrderService {
     public Page<OrderResponseDto> getAllOrders(Pageable pageable) {
         return orderRepo.findAll(pageable).map(OrderMapper::toDto);
     }
+
+    public OrderResponseDto getOrderById(Long orderId){
+        Order order = orderRepo
+                .findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+
+        return OrderMapper.toDto(order);
+    }
 }
