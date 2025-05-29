@@ -10,19 +10,16 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @TestPropertySource(properties = {"spring.datasource.driver-class-name=org.postgresql.Driver"})
 public abstract class AbstractPostgresContainerTest {
 
-  @Container
-  static PostgreSQLContainer<?> postgresContainer =
-      new PostgreSQLContainer<>("postgres:16")
-          .withDatabaseName("testdb")
-          .withUsername("test")
-          .withPassword("test");
+    @Container
+    static PostgreSQLContainer<?> postgresContainer = new PostgreSQLContainer<>("postgres:16")
+            .withDatabaseName("testdb").withUsername("test").withPassword("test");
 
-  @BeforeAll
-  static void init() {
-    postgresContainer.start();
+    @BeforeAll
+    static void init() {
+        postgresContainer.start();
 
-    System.setProperty("spring.datasource.url", postgresContainer.getJdbcUrl());
-    System.setProperty("spring.datasource.username", postgresContainer.getUsername());
-    System.setProperty("spring.datasource.password", postgresContainer.getPassword());
-  }
+        System.setProperty("spring.datasource.url", postgresContainer.getJdbcUrl());
+        System.setProperty("spring.datasource.username", postgresContainer.getUsername());
+        System.setProperty("spring.datasource.password", postgresContainer.getPassword());
+    }
 }

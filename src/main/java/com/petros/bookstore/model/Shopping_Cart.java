@@ -13,11 +13,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @Table(name = "shopping_cart")
 public class Shopping_Cart {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @OneToOne
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

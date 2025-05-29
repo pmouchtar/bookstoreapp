@@ -14,24 +14,15 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class JpaUserDetailsService implements UserDetailsService {
 
-  private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-  @Override
-  public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+    @Override
+    public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
 
-    return userRepository
-        .findByUsername(username)
-        .map(
-            user ->
-                User.builder()
-                    .username(username)
-                    .password(user.getPassword())
-                    .authorities(
-                        List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name())))
-                    .build())
-        .orElseThrow(
-            () ->
-                new UsernameNotFoundException(
-                    "User with username [%s] not found".formatted(username)));
-  }
+        return userRepository.findByUsername(username)
+                .map(user -> User.builder().username(username).password(user.getPassword())
+                        .authorities(List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))).build())
+                .orElseThrow(
+                        () -> new UsernameNotFoundException("User with username [%s] not found".formatted(username)));
+    }
 }

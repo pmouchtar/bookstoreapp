@@ -1,9 +1,9 @@
 package com.petros.bookstore.service;
 
-import com.petros.bookstore.dto.FavouriteBookRequestDto;
-import com.petros.bookstore.dto.FavouriteBookResponseDto;
-import com.petros.bookstore.exception.ResourceAlreadyExistsException;
-import com.petros.bookstore.exception.ResourceNotFoundException;
+import com.petros.bookstore.dto.FavouriteBookDTO.FavouriteBookRequestDto;
+import com.petros.bookstore.dto.FavouriteBookDTO.FavouriteBookResponseDto;
+import com.petros.bookstore.exception.customException.ResourceAlreadyExistsException;
+import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.mapper.FavouriteBookMapper;
 import com.petros.bookstore.model.Book;
 import com.petros.bookstore.model.Favourite_Book;
@@ -21,60 +21,47 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FavouriteBookService {
 
-  private final FavouriteBookRepository favouriteRepo;
-  private final UserRepository userRepo;
-  private final BookRepository bookRepository;
+    private final FavouriteBookRepository favouriteRepo;
+    private final UserRepository userRepo;
+    private final BookRepository bookRepository;
 
-  @Transactional
-  public FavouriteBookResponseDto addToFavourites(Long userId, FavouriteBookRequestDto request) {
+    @Transactional
+    public FavouriteBookResponseDto addToFavourites(Long userId, FavouriteBookRequestDto request) {
 
-    User user =
-        userRepo
-            .findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-    Book book =
-        bookRepository
-            .findById(request.bookId())
-            .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
+        Book book = bookRepository.findById(request.bookId())
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
 
-    favouriteRepo
-        .findByUserAndBook_Id(user, book.getId())
-        .ifPresent(
-            f -> {
-              throw new ResourceAlreadyExistsException("Book already in favourites");
-            });
+        favouriteRepo.findByUserAndBook_Id(user, book.getId()).ifPresent(f -> {
+            throw new ResourceAlreadyExistsException("Book already in favourites");
+        });
 
-    Favourite_Book favourite = new Favourite_Book();
-    favourite.setUser(user);
-    favourite.setBook(book);
+        Favourite_Book favourite = new Favourite_Book();
+        favourite.setUser(user);
+        favourite.setBook(book);
 
-    Favourite_Book saved = favouriteRepo.save(favourite);
-    return FavouriteBookMapper.toDto(saved);
-  }
+        Favourite_Book saved = favouriteRepo.save(favourite);
+        return FavouriteBookMapper.toDto(saved);
+    }
 
-  @Transactional()
-  public Page<FavouriteBookResponseDto> getFavourites(Long userId, Pageable pageable) {
+    @Transactional()
+    public Page<FavouriteBookResponseDto> getFavourites(Long userId, Pageable pageable) {
 
-    User user =
-        userRepo
-            .findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-    return favouriteRepo.findByUser(user, pageable).map(FavouriteBookMapper::toDto);
-  }
+        return favouriteRepo.findByUser(user, pageable).map(FavouriteBookMapper::toDto);
+    }
 
-  @Transactional
-  public void removeFromFavourites(Long userId, Long bookId) {
+    @Transactional
+    public void removeFromFavourites(Long userId, Long bookId) {
 
-    User user =
-        userRepo
-            .findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-    boolean exists = favouriteRepo.findByUserAndBook_Id(user, bookId).isPresent();
-    if (!exists) throw new ResourceNotFoundException("Favourite not found");
+        boolean exists = favouriteRepo.findByUserAndBook_Id(user, bookId).isPresent();
+        if (!exists)
+            throw new ResourceNotFoundException("Favourite not found");
 
-    favouriteRepo.deleteByUserAndBook_Id(user, bookId);
-  }
+        favouriteRepo.deleteByUserAndBook_Id(user, bookId);
+    }
 }

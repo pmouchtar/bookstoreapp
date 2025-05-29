@@ -1,7 +1,7 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.UserProfileResponseDto;
-import com.petros.bookstore.dto.UserProfileUpdateRequestDto;
+import com.petros.bookstore.dto.UserDTO.UserProfileResponseDto;
+import com.petros.bookstore.dto.UserDTO.UserProfileUpdateRequestDto;
 import com.petros.bookstore.mapper.UserMapper;
 import com.petros.bookstore.service.UserService;
 import com.petros.bookstore.utils.AuthUtils;
@@ -10,8 +10,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,38 +18,38 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class UserProfileController {
 
-  private final UserService userService;
+    private final UserService userService;
 
-  private final AuthUtils authUtils = new AuthUtils();
+    private final AuthUtils authUtils = new AuthUtils();
 
-  private Long userId;
+    private Long userId;
 
-  @GetMapping()
-  @SecurityRequirement(name = "bearerAuth")
-  public ResponseEntity<UserProfileResponseDto> getUserProfile() {
+    @GetMapping()
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<UserProfileResponseDto> getUserProfile() {
 
-    userId = authUtils.extractUserId();
-    final var user = userService.findUserById(userId);
+        userId = authUtils.extractUserId();
+        final var user = userService.findUserById(userId);
 
-    return ResponseEntity.ok(user);
-  }
+        return ResponseEntity.ok(user);
+    }
 
-  @PutMapping
-  @SecurityRequirement(name = "bearerAuth")
-  public ResponseEntity<UserProfileResponseDto> updateUserProfile(
-      @Valid @RequestBody UserProfileUpdateRequestDto request) {
+    @PutMapping
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<UserProfileResponseDto> updateUserProfile(
+            @Valid @RequestBody UserProfileUpdateRequestDto request) {
 
-    userId = authUtils.extractUserId();
-    final var updatedUser = userService.updateUserProfile(userId, request);
-    return ResponseEntity.ok(UserMapper.toUserProfileDto(updatedUser));
-  }
+        userId = authUtils.extractUserId();
+        final var updatedUser = userService.updateUserProfile(userId, request);
+        return ResponseEntity.ok(UserMapper.toUserProfileDto(updatedUser));
+    }
 
-  @DeleteMapping
-  @SecurityRequirement(name = "bearerAuth")
-  public ResponseEntity<Void> deleteUserProfile() {
+    @DeleteMapping
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<Void> deleteUserProfile() {
 
-    userId = authUtils.extractUserId();
-    userService.deleteUserById(userId);
-    return ResponseEntity.noContent().build();
-  }
+        userId = authUtils.extractUserId();
+        userService.deleteUserById(userId);
+        return ResponseEntity.noContent().build();
+    }
 }

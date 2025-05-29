@@ -12,28 +12,22 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 @RequiredArgsConstructor
 public class JwtService {
 
-  private final UserService userService;
+    private final UserService userService;
 
-  private final String issuer;
+    private final String issuer;
 
-  private final Duration ttl;
+    private final Duration ttl;
 
-  private final JwtEncoder jwtEncoder;
+    private final JwtEncoder jwtEncoder;
 
-  public String generateToken(final String username) {
+    public String generateToken(final String username) {
 
-    User user = userService.getUserByUsername(username);
-    Long userId = user.getId();
+        User user = userService.getUserByUsername(username);
+        Long userId = user.getId();
 
-    final var claimsSet =
-        JwtClaimsSet.builder()
-            .subject(username)
-            .issuer(issuer)
-            .expiresAt(Instant.now().plus(ttl))
-            .claim("userId", userId)
-            .claim("roles", List.of("ROLE_" + user.getRole().name()))
-            .build();
+        final var claimsSet = JwtClaimsSet.builder().subject(username).issuer(issuer).expiresAt(Instant.now().plus(ttl))
+                .claim("userId", userId).claim("roles", List.of("ROLE_" + user.getRole().name())).build();
 
-    return jwtEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
-  }
+        return jwtEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
+    }
 }

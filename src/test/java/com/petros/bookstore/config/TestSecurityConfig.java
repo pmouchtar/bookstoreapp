@@ -14,25 +14,22 @@ import org.springframework.security.web.SecurityFilterChain;
 @Profile("test")
 public class TestSecurityConfig {
 
-  @Bean
-  public SecurityFilterChain securityFilterChain(
-      HttpSecurity http, TestDummyJwtFilter dummyJwtFilter) throws Exception {
-    http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-        .csrf(csrf -> csrf.disable())
-        .addFilterBefore(
-            dummyJwtFilter,
-            org.springframework.security.web.context.SecurityContextPersistenceFilter.class);
-    return http.build();
-  }
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, TestDummyJwtFilter dummyJwtFilter)
+            throws Exception {
+        http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll()).csrf(csrf -> csrf.disable()).addFilterBefore(
+                dummyJwtFilter, org.springframework.security.web.context.SecurityContextPersistenceFilter.class);
+        return http.build();
+    }
 
-  @Bean
-  public AuthenticationManager authenticationManager(
-      AuthenticationConfiguration authenticationConfiguration) throws Exception {
-    return authenticationConfiguration.getAuthenticationManager();
-  }
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

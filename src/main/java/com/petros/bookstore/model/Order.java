@@ -18,24 +18,24 @@ import lombok.Setter;
 @NoArgsConstructor
 @Table(name = "orders")
 public class Order {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @ManyToOne
-  @JoinColumn(name = "user_id", nullable = false)
-  private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private Status status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Status status;
 
-  @Column(nullable = false)
-  private Double total_price;
+    @Column(nullable = false)
+    private Double total_price;
 
-  @Column(nullable = false)
-  private Timestamp order_date;
+    @Column(nullable = false)
+    private Timestamp order_date;
 
-  @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Order_Item> orderItems = new ArrayList<>();
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order_Item> orderItems = new ArrayList<>();
 }

@@ -1,4 +1,4 @@
-package com.petros.bookstore.dto;
+package com.petros.bookstore.dto.PaginationDTO;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
@@ -15,13 +15,13 @@ import org.springframework.data.domain.PageRequest;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PaginatedResponseDto<T> {
 
-  private List<T> content;
-  private int number;
-  private int size;
-  private int totalPages;
-  private long totalElements;
+    private List<T> content;
+    private int number;
+    private int size;
+    private int totalPages;
+    private long totalElements;
 
-  public Page<T> toPage() {
-    return new PageImpl<>(content, PageRequest.of(number, size), totalElements);
-  }
+    public Page<T> toPage() {
+        return new PageImpl<>(content, PageRequest.of(number, size), totalElements);
+    }
 }

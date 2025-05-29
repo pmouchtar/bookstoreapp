@@ -13,8 +13,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CartItemRepository extends JpaRepository<Cart_Item, Long> {
-  Optional<Cart_Item> findByShoppingCartAndBook(Shopping_Cart cart, Book book);
+    Optional<Cart_Item> findByShoppingCartAndBook(Shopping_Cart cart, Book book);
 
-  Page<Cart_Item> findByShoppingCart(Shopping_Cart shoppingCart, Pageable pageable);
+    Page<Cart_Item> findByShoppingCart(Shopping_Cart shoppingCart, Pageable pageable);
 
 }

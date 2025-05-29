@@ -25,63 +25,56 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 @Configuration
 public class JwtConfig {
 
-  @Value("${jwt.private-key}")
-  private Resource privateKeyResource;
+    @Value("${jwt.private-key}")
+    private Resource privateKeyResource;
 
-  @Value("${jwt.public-key}")
-  private Resource publicKeyResource;
+    @Value("${jwt.public-key}")
+    private Resource publicKeyResource;
 
-  @Value("${jwt.ttl}")
-  private Duration ttl;
+    @Value("${jwt.ttl}")
+    private Duration ttl;
 
-  @Bean
-  public RSAPublicKey publicKey() throws Exception {
-    try (var is = publicKeyResource.getInputStream()) {
-      String key =
-          new String(is.readAllBytes(), StandardCharsets.UTF_8)
-              .replace("-----BEGIN PUBLIC KEY-----", "")
-              .replace("-----END PUBLIC KEY-----", "")
-              .replaceAll("\\s+", "");
+    @Bean
+    public RSAPublicKey publicKey() throws Exception {
+        try (var is = publicKeyResource.getInputStream()) {
+            String key = new String(is.readAllBytes(), StandardCharsets.UTF_8).replace("-----BEGIN PUBLIC KEY-----", "")
+                    .replace("-----END PUBLIC KEY-----", "").replaceAll("\\s+", "");
 
-      byte[] decoded = Base64.getDecoder().decode(key);
-      X509EncodedKeySpec keySpec = new X509EncodedKeySpec(decoded);
-      KeyFactory kf = KeyFactory.getInstance("RSA");
-      return (RSAPublicKey) kf.generatePublic(keySpec);
+            byte[] decoded = Base64.getDecoder().decode(key);
+            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(decoded);
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            return (RSAPublicKey) kf.generatePublic(keySpec);
+        }
     }
-  }
 
-  @Bean
-  public RSAPrivateKey privateKey() throws Exception {
-    try (var is = privateKeyResource.getInputStream()) {
-      String key =
-          new String(is.readAllBytes(), StandardCharsets.UTF_8)
-              .replace("-----BEGIN PRIVATE KEY-----", "")
-              .replace("-----END PRIVATE KEY-----", "")
-              .replaceAll("\\s+", "");
+    @Bean
+    public RSAPrivateKey privateKey() throws Exception {
+        try (var is = privateKeyResource.getInputStream()) {
+            String key = new String(is.readAllBytes(), StandardCharsets.UTF_8)
+                    .replace("-----BEGIN PRIVATE KEY-----", "").replace("-----END PRIVATE KEY-----", "")
+                    .replaceAll("\\s+", "");
 
-      byte[] decoded = Base64.getDecoder().decode(key);
-      PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decoded);
-      KeyFactory kf = KeyFactory.getInstance("RSA");
-      return (RSAPrivateKey) kf.generatePrivate(keySpec);
+            byte[] decoded = Base64.getDecoder().decode(key);
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(decoded);
+            KeyFactory kf = KeyFactory.getInstance("RSA");
+            return (RSAPrivateKey) kf.generatePrivate(keySpec);
+        }
     }
-  }
 
-  @Bean
-  public JwtEncoder jwtEncoder(RSAPublicKey publicKey, RSAPrivateKey privateKey) {
-    var jwk = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
-    return new NimbusJwtEncoder(new ImmutableJWKSet<>(new JWKSet(jwk)));
-  }
+    @Bean
+    public JwtEncoder jwtEncoder(RSAPublicKey publicKey, RSAPrivateKey privateKey) {
+        var jwk = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
+        return new NimbusJwtEncoder(new ImmutableJWKSet<>(new JWKSet(jwk)));
+    }
 
-  @Bean
-  public JwtDecoder jwtDecoder(RSAPublicKey publicKey) {
-    return NimbusJwtDecoder.withPublicKey(publicKey).build();
-  }
+    @Bean
+    public JwtDecoder jwtDecoder(RSAPublicKey publicKey) {
+        return NimbusJwtDecoder.withPublicKey(publicKey).build();
+    }
 
-  @Bean
-  public JwtService jwtService(
-      UserService userService,
-      @Value("${spring.application.name}") String appName,
-      JwtEncoder jwtEncoder) {
-    return new JwtService(userService, appName, ttl, jwtEncoder);
-  }
+    @Bean
+    public JwtService jwtService(UserService userService, @Value("${spring.application.name}") String appName,
+            JwtEncoder jwtEncoder) {
+        return new JwtService(userService, appName, ttl, jwtEncoder);
+    }
 }

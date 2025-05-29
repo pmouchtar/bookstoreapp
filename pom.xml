@@ -152,7 +152,9 @@
 				</executions>
 				<configuration>
 					<java>
-						<googleJavaFormat/>
+						<eclipse>
+							<file>${project.basedir}/custom-style.xml</file>
+						</eclipse>
 					</java>
 				</configuration>
 			</plugin>

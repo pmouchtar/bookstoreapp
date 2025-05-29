@@ -1,8 +1,8 @@
 package com.petros.bookstore.service;
 
-import com.petros.bookstore.dto.OrderResponseDto;
-import com.petros.bookstore.dto.OrderStatusUpdateRequestDto;
-import com.petros.bookstore.exception.ResourceNotFoundException;
+import com.petros.bookstore.dto.OrderDTO.OrderResponseDto;
+import com.petros.bookstore.dto.OrderDTO.OrderStatusUpdateRequestDto;
+import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.mapper.OrderMapper;
 import com.petros.bookstore.model.*;
 import com.petros.bookstore.model.enums.Status;
@@ -31,15 +31,9 @@ public class OrderService {
 
     @Transactional
     public OrderResponseDto placeOrder(Long userId, Pageable pageable) throws BadRequestException {
-        User user =
-                userRepo
-                        .findById(userId)
-                        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Shopping_Cart cart =
-                cartRepo
-                        .findByUser(user)
-                        .orElseThrow(() -> new BadRequestException("No cart"));
+        Shopping_Cart cart = cartRepo.findByUser(user).orElseThrow(() -> new BadRequestException("No cart"));
 
         Page<Cart_Item> cartItems = cartItemRepo.findByShoppingCart(cart, pageable);
         if (cartItems.isEmpty()) {
@@ -72,38 +66,26 @@ public class OrderService {
 
         cartItemRepo.deleteAll(cartItems); // clear cart
 
-
         return OrderMapper.toDto(order);
     }
 
     @Transactional
     public Page<OrderResponseDto> getOrdersForUser(Long userId, Pageable pageable) {
-        User user =
-                userRepo
-                        .findById(userId)
-                        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return orderRepo.findByUser(user, pageable).map(OrderMapper::toDto);
     }
 
     @Transactional
     public OrderResponseDto getOrderForUser(Long orderId, Long userId) {
-        User user =
-                userRepo
-                        .findById(userId)
-                        .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        Order order =
-                orderRepo
-                        .findByIdAndUser(orderId, user)
-                        .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Order order = orderRepo.findByIdAndUser(orderId, user)
+                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
         return OrderMapper.toDto(order);
     }
 
     @Transactional
     public OrderResponseDto updateOrderStatus(Long orderId, OrderStatusUpdateRequestDto request) {
-        Order order =
-                orderRepo
-                        .findById(orderId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+        Order order = orderRepo.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
         order.setStatus(request.status());
         Order saved = orderRepo.save(order);
         return OrderMapper.toDto(saved);
@@ -113,10 +95,8 @@ public class OrderService {
         return orderRepo.findAll(pageable).map(OrderMapper::toDto);
     }
 
-    public OrderResponseDto getOrderById(Long orderId){
-        Order order = orderRepo
-                .findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+    public OrderResponseDto getOrderById(Long orderId) {
+        Order order = orderRepo.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
         return OrderMapper.toDto(order);
     }

@@ -11,18 +11,13 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-  Optional<User> findByUsername(String username);
+    Optional<User> findByUsername(String username);
 
-  boolean existsByUsername(String username);
+    boolean existsByUsername(String username);
 
-  @Query(
-      "SELECT u FROM User u WHERE "
-          + "(:username IS NULL OR u.username ILIKE %:username%) AND "
-          + "(:firstName IS NULL OR u.firstName ILIKE %:firstName%) AND "
-          + "(:lastName IS NULL OR u.lastName ILIKE %:lastName%)")
-  Page<User> searchUsers(
-      @Param("username") String username,
-      @Param("firstName") String firstName,
-      @Param("lastName") String lastName,
-      Pageable pageable);
+    @Query("SELECT u FROM User u WHERE " + "(:username IS NULL OR u.username ILIKE %:username%) AND "
+            + "(:firstName IS NULL OR u.firstName ILIKE %:firstName%) AND "
+            + "(:lastName IS NULL OR u.lastName ILIKE %:lastName%)")
+    Page<User> searchUsers(@Param("username") String username, @Param("firstName") String firstName,
+            @Param("lastName") String lastName, Pageable pageable);
 }

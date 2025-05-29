@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.AbstractPostgresContainerTest;
-import com.petros.bookstore.dto.OrderResponseDto;
-import com.petros.bookstore.dto.OrderStatusUpdateRequestDto;
+import com.petros.bookstore.dto.OrderDTO.OrderResponseDto;
+import com.petros.bookstore.dto.OrderDTO.OrderStatusUpdateRequestDto;
 import com.petros.bookstore.model.*;
 import com.petros.bookstore.model.enums.Genre;
 import com.petros.bookstore.model.enums.Role;
@@ -30,15 +30,23 @@ import org.springframework.test.context.ActiveProfiles;
 @ActiveProfiles("test")
 class OrderIntegrationTest extends AbstractPostgresContainerTest {
 
-    @Autowired private TestRestTemplate restTemplate;
-    @Autowired private ObjectMapper objectMapper;
+    @Autowired
+    private TestRestTemplate restTemplate;
+    @Autowired
+    private ObjectMapper objectMapper;
 
-    @Autowired private UserRepository userRepository;
-    @Autowired private BookRepository bookRepository;
-    @Autowired private ShoppingCartRepository shoppingCartRepository;
-    @Autowired private CartItemRepository cartItemRepository;
-    @Autowired private OrderRepository orderRepository;
-    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private BookRepository bookRepository;
+    @Autowired
+    private ShoppingCartRepository shoppingCartRepository;
+    @Autowired
+    private CartItemRepository cartItemRepository;
+    @Autowired
+    private OrderRepository orderRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private Long userId;
     private Long adminId;
@@ -104,8 +112,8 @@ class OrderIntegrationTest extends AbstractPostgresContainerTest {
     void placeOrder_ShouldReturn200_AndPersistOrder() {
         HttpEntity<Void> entity = new HttpEntity<>(userHeaders);
 
-        ResponseEntity<OrderResponseDto> res =
-                restTemplate.postForEntity("/users/me/orders", entity, OrderResponseDto.class);
+        ResponseEntity<OrderResponseDto> res = restTemplate.postForEntity("/users/me/orders", entity,
+                OrderResponseDto.class);
 
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(res.getBody()).isNotNull();
@@ -119,12 +127,9 @@ class OrderIntegrationTest extends AbstractPostgresContainerTest {
 
         HttpEntity<Void> entity = new HttpEntity<>(userHeaders);
 
-        ResponseEntity<Map<String, Object>> res =
-                restTemplate.exchange(
-                        "/users/me/orders",
-                        HttpMethod.GET,
-                        entity,
-                        new ParameterizedTypeReference<>() {});
+        ResponseEntity<Map<String, Object>> res = restTemplate.exchange("/users/me/orders", HttpMethod.GET, entity,
+                new ParameterizedTypeReference<>() {
+                });
 
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
         List<?> content = (List<?>) res.getBody().get("content");
@@ -136,13 +141,8 @@ class OrderIntegrationTest extends AbstractPostgresContainerTest {
         Long orderId = placeOrderViaEndpoint();
 
         HttpEntity<Void> entity = new HttpEntity<>(userHeaders);
-        ResponseEntity<OrderResponseDto> res =
-                restTemplate.exchange(
-                        "/users/me/orders/{orderId}",
-                        HttpMethod.GET,
-                        entity,
-                        OrderResponseDto.class,
-                        orderId);
+        ResponseEntity<OrderResponseDto> res = restTemplate.exchange("/users/me/orders/{orderId}", HttpMethod.GET,
+                entity, OrderResponseDto.class, orderId);
 
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(res.getBody()).isNotNull();
@@ -155,12 +155,9 @@ class OrderIntegrationTest extends AbstractPostgresContainerTest {
 
         HttpEntity<Void> entity = new HttpEntity<>(adminHeaders);
 
-        ResponseEntity<Map<String, Object>> res =
-                restTemplate.exchange(
-                        "/orders",
-                        HttpMethod.GET,
-                        entity,
-                        new ParameterizedTypeReference<>() {});
+        ResponseEntity<Map<String, Object>> res = restTemplate.exchange("/orders", HttpMethod.GET, entity,
+                new ParameterizedTypeReference<>() {
+                });
 
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
         List<?> content = (List<?>) res.getBody().get("content");
@@ -175,13 +172,8 @@ class OrderIntegrationTest extends AbstractPostgresContainerTest {
         adminHeaders.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<OrderStatusUpdateRequestDto> entity = new HttpEntity<>(req, adminHeaders);
 
-        ResponseEntity<OrderResponseDto> res =
-                restTemplate.exchange(
-                        "/orders/{orderId}",
-                        HttpMethod.PUT,
-                        entity,
-                        OrderResponseDto.class,
-                        orderId);
+        ResponseEntity<OrderResponseDto> res = restTemplate.exchange("/orders/{orderId}", HttpMethod.PUT, entity,
+                OrderResponseDto.class, orderId);
 
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(res.getBody()).isNotNull();
@@ -194,26 +186,20 @@ class OrderIntegrationTest extends AbstractPostgresContainerTest {
 
         HttpEntity<Void> entity = new HttpEntity<>(adminHeaders);
 
-        ResponseEntity<OrderResponseDto> res =
-                restTemplate.exchange(
-                        "/orders/{orderId}",
-                        HttpMethod.GET,
-                        entity,
-                        OrderResponseDto.class,
-                        orderId);
+        ResponseEntity<OrderResponseDto> res = restTemplate.exchange("/orders/{orderId}", HttpMethod.GET, entity,
+                OrderResponseDto.class, orderId);
 
         assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(res.getBody()).isNotNull();
         assertThat(res.getBody().id()).isEqualTo(orderId);
     }
 
-
     // place order util method
     private Long placeOrderViaEndpoint() {
         HttpEntity<Void> entity = new HttpEntity<>(userHeaders);
 
-        ResponseEntity<OrderResponseDto> res =
-                restTemplate.postForEntity("/users/me/orders", entity, OrderResponseDto.class);
+        ResponseEntity<OrderResponseDto> res = restTemplate.postForEntity("/users/me/orders", entity,
+                OrderResponseDto.class);
         return res.getBody().id();
     }
 }

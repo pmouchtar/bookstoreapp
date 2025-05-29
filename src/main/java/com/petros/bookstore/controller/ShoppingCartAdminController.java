@@ -1,6 +1,6 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.CartItemResponseDto;
+import com.petros.bookstore.dto.CartItemDTO.CartItemResponseDto;
 import com.petros.bookstore.service.ShoppingCartService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,22 +21,22 @@ import org.springframework.web.bind.annotation.RestController;
 @PreAuthorize("hasRole('ADMIN')")
 public class ShoppingCartAdminController {
 
-  @Autowired ShoppingCartService shoppingCartService;
+    @Autowired
+    ShoppingCartService shoppingCartService;
 
-  @GetMapping()
-  @SecurityRequirement(name = "bearerAuth")
-  public Page<CartItemResponseDto> getMyCartItems(
-      Authentication auth, @PathVariable Long userId, Pageable pageable) {
+    @GetMapping()
+    @SecurityRequirement(name = "bearerAuth")
+    public Page<CartItemResponseDto> getMyCartItems(Authentication auth, @PathVariable Long userId, Pageable pageable) {
 
-    return shoppingCartService.getCartItems(userId, pageable);
-  }
+        return shoppingCartService.getCartItems(userId, pageable);
+    }
 
-  @GetMapping("{itemId}")
-  @SecurityRequirement(name = "bearerAuth")
-  public ResponseEntity<CartItemResponseDto> getBook(
-      Authentication auth, @PathVariable Long userId, @PathVariable Long itemId) {
+    @GetMapping("{itemId}")
+    @SecurityRequirement(name = "bearerAuth")
+    public ResponseEntity<CartItemResponseDto> getBook(Authentication auth, @PathVariable Long userId,
+            @PathVariable Long itemId) {
 
-    CartItemResponseDto response = shoppingCartService.findItemById(itemId, userId);
-    return ResponseEntity.ok(response);
-  }
+        CartItemResponseDto response = shoppingCartService.findItemById(itemId, userId);
+        return ResponseEntity.ok(response);
+    }
 }

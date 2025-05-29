@@ -1,9 +1,9 @@
 package com.petros.bookstore.service;
 
-import com.petros.bookstore.dto.CartItemRequestDto;
-import com.petros.bookstore.dto.CartItemResponseDto;
-import com.petros.bookstore.dto.CartItemUpdateRequestDto;
-import com.petros.bookstore.exception.ResourceNotFoundException;
+import com.petros.bookstore.dto.CartItemDTO.CartItemRequestDto;
+import com.petros.bookstore.dto.CartItemDTO.CartItemResponseDto;
+import com.petros.bookstore.dto.CartItemDTO.CartItemUpdateRequestDto;
+import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.mapper.CartItemMapper;
 import com.petros.bookstore.model.*;
 import com.petros.bookstore.repository.*;
@@ -17,101 +17,80 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class ShoppingCartService {
 
-  private final ShoppingCartRepository cartRepo;
-  private final CartItemRepository itemRepo;
-  private final BookRepository bookRepo;
-  private final UserRepository userRepo;
+    private final ShoppingCartRepository cartRepo;
+    private final CartItemRepository itemRepo;
+    private final BookRepository bookRepo;
+    private final UserRepository userRepo;
 
-  @Transactional
-  public CartItemResponseDto addToCart(Long userId, CartItemRequestDto request) {
-    User user =
-        userRepo
-            .findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    @Transactional
+    public CartItemResponseDto addToCart(Long userId, CartItemRequestDto request) {
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-    Book book =
-        bookRepo
-            .findById(request
-                    .bookId())
-            .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
+        Book book = bookRepo.findById(request.bookId())
+                .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
 
-    Shopping_Cart cart =
-        cartRepo
-            .findByUser(user)
-            .orElseGet(
-                () -> { // if, for some reason, user's cart doesn't exist we create it here in the
-                  // first add to his cart
-                  Shopping_Cart c = new Shopping_Cart();
-                  c.setUser(user);
-                  return cartRepo.save(c);
-                });
+        Shopping_Cart cart = cartRepo.findByUser(user).orElseGet(() -> { // if, for some reason, user's cart doesn't
+                                                                         // exist we create it here in the
+            // first add to his cart
+            Shopping_Cart c = new Shopping_Cart();
+            c.setUser(user);
+            return cartRepo.save(c);
+        });
 
-    Cart_Item item = itemRepo.findByShoppingCartAndBook(cart, book).orElse(null);
-    if (item == null) {
-      item = new Cart_Item();
-      item.setShoppingCart(cart);
-      item.setBook(book);
-      item.setQuantity(request.quantity());
-    } else {
-      item.setQuantity(item.getQuantity() + request.quantity());
+        Cart_Item item = itemRepo.findByShoppingCartAndBook(cart, book).orElse(null);
+        if (item == null) {
+            item = new Cart_Item();
+            item.setShoppingCart(cart);
+            item.setBook(book);
+            item.setQuantity(request.quantity());
+        } else {
+            item.setQuantity(item.getQuantity() + request.quantity());
+        }
+
+        Cart_Item saved = itemRepo.save(item);
+        return CartItemMapper.toDto(saved);
     }
 
-    Cart_Item saved = itemRepo.save(item);
-    return CartItemMapper.toDto(saved);
-  }
+    @Transactional
+    public Page<CartItemResponseDto> getCartItems(Long userId, Pageable pageable) {
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-  @Transactional
-  public Page<CartItemResponseDto> getCartItems(Long userId, Pageable pageable) {
-    User user =
-        userRepo
-            .findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Shopping_Cart cart = cartRepo.findByUser(user).orElse(null);
 
-    Shopping_Cart cart = cartRepo.findByUser(user).orElse(null);
+        if (cart == null) {
+            return Page.empty(pageable);
+        }
 
-    if (cart == null) {
-      return Page.empty(pageable);
+        return itemRepo.findByShoppingCart(cart, pageable).map(CartItemMapper::toDto);
     }
 
-    return itemRepo.findByShoppingCart(cart, pageable).map(CartItemMapper::toDto);
-  }
+    @Transactional
+    public CartItemResponseDto findItemById(Long itemId, Long userId) {
+        Cart_Item item = itemRepo.findById(itemId).filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
+                .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
 
-  @Transactional
-  public CartItemResponseDto findItemById(Long itemId, Long userId) {
-    Cart_Item item =
-        itemRepo
-            .findById(itemId)
-            .filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
-            .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
-
-    return CartItemMapper.toDto(item);
-  }
-
-  @Transactional
-  public CartItemResponseDto updateCartItem(Long itemId, CartItemUpdateRequestDto request, Long userId) {
-    Cart_Item item =
-        itemRepo
-            .findById(itemId)
-            .filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
-            .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
-
-    int newQty = request.quantity();
-    if (newQty <= 0) {
-      itemRepo.delete(item);
-      return null;
+        return CartItemMapper.toDto(item);
     }
-    item.setQuantity(newQty);
-    Cart_Item saved = itemRepo.save(item);
-    return CartItemMapper.toDto(saved);
-  }
 
-  @Transactional
-  public void removeFromCart(Long userId, Long itemId) {
-    Cart_Item item =
-        itemRepo
-            .findById(itemId)
-            .filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
-            .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
-    itemRepo.delete(item);
-  }
+    @Transactional
+    public CartItemResponseDto updateCartItem(Long itemId, CartItemUpdateRequestDto request, Long userId) {
+        Cart_Item item = itemRepo.findById(itemId).filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
+                .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
+
+        int newQty = request.quantity();
+        if (newQty <= 0) {
+            itemRepo.delete(item);
+            return null;
+        }
+        item.setQuantity(newQty);
+        Cart_Item saved = itemRepo.save(item);
+        return CartItemMapper.toDto(saved);
+    }
+
+    @Transactional
+    public void removeFromCart(Long userId, Long itemId) {
+        Cart_Item item = itemRepo.findById(itemId).filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
+                .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
+        itemRepo.delete(item);
+    }
 }

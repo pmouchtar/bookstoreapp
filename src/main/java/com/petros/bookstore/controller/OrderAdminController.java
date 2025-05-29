@@ -1,7 +1,7 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.OrderResponseDto;
-import com.petros.bookstore.dto.OrderStatusUpdateRequestDto;
+import com.petros.bookstore.dto.OrderDTO.OrderResponseDto;
+import com.petros.bookstore.dto.OrderDTO.OrderStatusUpdateRequestDto;
 import com.petros.bookstore.service.OrderService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -29,8 +29,8 @@ public class OrderAdminController {
 
     @PutMapping("/orders/{orderId}")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<OrderResponseDto> updateStatus(
-            @PathVariable Long orderId, @Valid @RequestBody OrderStatusUpdateRequestDto request) {
+    public ResponseEntity<OrderResponseDto> updateStatus(@PathVariable Long orderId,
+            @Valid @RequestBody OrderStatusUpdateRequestDto request) {
 
         OrderResponseDto response = orderService.updateOrderStatus(orderId, request);
         return ResponseEntity.ok(response);
@@ -38,8 +38,7 @@ public class OrderAdminController {
 
     @GetMapping("/orders/{orderId}")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<OrderResponseDto> getOrderById(
-            @PathVariable Long orderId) {
+    public ResponseEntity<OrderResponseDto> getOrderById(@PathVariable Long orderId) {
 
         OrderResponseDto response = orderService.getOrderById(orderId);
         return ResponseEntity.ok(response);

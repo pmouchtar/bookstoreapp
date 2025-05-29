@@ -19,33 +19,27 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-@Component //loaded only in tests
+@Component // loaded only in tests
 @Profile("test")
 public class TestDummyJwtFilter extends OncePerRequestFilter {
 
-  @Override
-  protected void doFilterInternal(
-      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-      throws ServletException, IOException {
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
-    String userIdHeader = request.getHeader("X-USER-ID");
-    if (StringUtils.hasText(userIdHeader)) {
-      long userId = Long.parseLong(userIdHeader);
+        String userIdHeader = request.getHeader("X-USER-ID");
+        if (StringUtils.hasText(userIdHeader)) {
+            long userId = Long.parseLong(userIdHeader);
 
-      Jwt jwt =
-          new Jwt(
-              "dummy-token",
-              Instant.now(),
-              Instant.now().plusSeconds(3_600),
-              Map.of("alg", "none"),
-              Map.of("userId", userId));
+            Jwt jwt = new Jwt("dummy-token", Instant.now(), Instant.now().plusSeconds(3_600), Map.of("alg", "none"),
+                    Map.of("userId", userId));
 
-      List<GrantedAuthority> authorities = List.of(() -> "ROLE_USER");
-      Authentication auth = new JwtAuthenticationToken(jwt, authorities, "user-" + userId);
+            List<GrantedAuthority> authorities = List.of(() -> "ROLE_USER");
+            Authentication auth = new JwtAuthenticationToken(jwt, authorities, "user-" + userId);
 
-      SecurityContextHolder.getContext().setAuthentication(auth);
+            SecurityContextHolder.getContext().setAuthentication(auth);
+        }
+
+        filterChain.doFilter(request, response);
     }
-
-    filterChain.doFilter(request, response);
-  }
 }

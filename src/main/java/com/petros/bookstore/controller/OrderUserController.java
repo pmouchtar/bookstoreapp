@@ -1,6 +1,6 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.OrderResponseDto;
+import com.petros.bookstore.dto.OrderDTO.OrderResponseDto;
 import com.petros.bookstore.service.OrderService;
 import com.petros.bookstore.utils.AuthUtils;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -48,7 +48,7 @@ public class OrderUserController {
     public ResponseEntity<OrderResponseDto> myOrder(@PathVariable Long orderId) {
 
         userId = authUtils.extractUserId();
-        OrderResponseDto response =orderService.getOrderForUser(orderId, userId);
+        OrderResponseDto response = orderService.getOrderForUser(orderId, userId);
         return ResponseEntity.ok(response);
     }
 }
