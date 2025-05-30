@@ -26,6 +26,7 @@ public class ShoppingCartUserController {
     @Autowired
     ShoppingCartService shoppingCartService;
 
+
     private final AuthUtils authUtils = new AuthUtils();
 
     private Long userId;

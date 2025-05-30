@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/users/me")
+@RequestMapping("/users/me/favourite-books")
 @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 public class FavouriteBookUserController {
 
@@ -29,7 +29,7 @@ public class FavouriteBookUserController {
     @Autowired
     private FavouriteBookService favouriteService;
 
-    @PostMapping("/favourite-books")
+    @PostMapping("")
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<FavouriteBookResponseDto> addFavouriteBook(
             @Valid @RequestBody FavouriteBookRequestDto request) {
@@ -39,7 +39,7 @@ public class FavouriteBookUserController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/favourite-books")
+    @GetMapping("")
     @SecurityRequirement(name = "bearerAuth")
     public Page<FavouriteBookResponseDto> getMyFavouriteBooks(Pageable pageable) {
 
@@ -47,7 +47,7 @@ public class FavouriteBookUserController {
         return favouriteService.getFavourites(userId, pageable);
     }
 
-    @DeleteMapping("/favourite-books/{bookId}")
+    @DeleteMapping("/{bookId}")
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> deleteFavouriteBook(@PathVariable Long bookId) {
 
