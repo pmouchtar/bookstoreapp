@@ -10,11 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST controller for admins to access shopping cart items of any user.
+ * Provides functionality for viewing cart contents and specific cart items by user.
+ */
 @Validated
 @RestController
 @RequestMapping("/users/{userId}/shopping-cart/items")
@@ -24,17 +25,31 @@ public class ShoppingCartAdminController {
     @Autowired
     ShoppingCartService shoppingCartService;
 
+    /**
+     * Retrieves paginated cart items of a specific user.
+     *
+     * @param userId   the ID of the user whose cart is being accessed
+     * @param pageable pagination and sorting information
+     * @return a page of CartItemResponseDto representing the user's cart contents
+     */
     @GetMapping()
     @SecurityRequirement(name = "bearerAuth")
-    public Page<CartItemResponseDto> getMyCartItems(Authentication auth, @PathVariable Long userId, Pageable pageable) {
+    public Page<CartItemResponseDto> getMyCartItems(@PathVariable Long userId, Pageable pageable) {
 
         return shoppingCartService.getCartItems(userId, pageable);
     }
 
+    /**
+     * Retrieves a specific cart item for a given user.
+     *
+     * @param userId  the ID of the user
+     * @param itemId  the ID of the cart item to retrieve
+     * @return a ResponseEntity containing the CartItemResponseDto
+     */
     @GetMapping("{itemId}")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<CartItemResponseDto> getBook(Authentication auth, @PathVariable Long userId,
-            @PathVariable Long itemId) {
+    public ResponseEntity<CartItemResponseDto> getBook(@PathVariable Long userId,
+                                                       @PathVariable Long itemId) {
 
         CartItemResponseDto response = shoppingCartService.findItemById(itemId, userId);
         return ResponseEntity.ok(response);

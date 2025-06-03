@@ -12,6 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * Controller for handling authenticated user profile actions.
+ * Allows users (with USER or ADMIN roles) to view, update, or delete their own account.
+ */
 @RestController
 @RequestMapping("/users/me")
 @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
@@ -19,36 +23,46 @@ import org.springframework.web.bind.annotation.*;
 public class UserProfileController {
 
     private final UserService userService;
+    private final AuthUtils authUtils;
 
-    private final AuthUtils authUtils = new AuthUtils();
-
-    private Long userId;
-
-    @GetMapping()
+    /**
+     * Retrieves the authenticated user's profile.
+     *
+     * @return the current user's profile
+     */
+    @GetMapping
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<UserProfileResponseDto> getUserProfile() {
-
-        userId = authUtils.extractUserId();
-        final var user = userService.findUserById(userId);
-
+        Long userId = authUtils.extractUserId();
+        var user = userService.findUserById(userId);
         return ResponseEntity.ok(user);
     }
 
+    /**
+     * Updates the authenticated user's profile.
+     *
+     * @param request the new profile data
+     * @return the updated user profile
+     */
     @PutMapping
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<UserProfileResponseDto> updateUserProfile(
             @Valid @RequestBody UserProfileUpdateRequestDto request) {
 
-        userId = authUtils.extractUserId();
-        final var updatedUser = userService.updateUserProfile(userId, request);
+        Long userId = authUtils.extractUserId();
+        var updatedUser = userService.updateUserProfile(userId, request);
         return ResponseEntity.ok(UserMapper.toUserProfileDto(updatedUser));
     }
 
+    /**
+     * Deletes the authenticated user's account.
+     *
+     * @return 204 No Content if deletion was successful
+     */
     @DeleteMapping
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<Void> deleteUserProfile() {
-
-        userId = authUtils.extractUserId();
+        Long userId = authUtils.extractUserId();
         userService.deleteUserById(userId);
         return ResponseEntity.noContent().build();
     }

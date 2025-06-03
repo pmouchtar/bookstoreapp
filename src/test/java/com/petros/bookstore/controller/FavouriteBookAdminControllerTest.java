@@ -44,10 +44,9 @@ class FavouriteBookAdminControllerTest {
     private static final String ADMIN_HEADER = "X-USER-ID";
     private static final String BASE_URL = "/users/1/favourite-books";
 
-    @BeforeEach
-    void setup() {
-        // optional setup
-    }
+//    @BeforeEach
+//    void setup() {
+//    }
 
     @Test
     void testGetUserFavouriteBooks_success() throws Exception {
