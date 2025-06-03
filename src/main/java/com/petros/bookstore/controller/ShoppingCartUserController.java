@@ -17,8 +17,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Controller for managing shopping cart items for the currently authenticated user.
- * Provides endpoints to add, retrieve, update, and delete cart items.
+ * Controller for managing shopping cart items for the currently authenticated
+ * user. Provides endpoints to add, retrieve, update, and delete cart items.
  */
 @Validated
 @RestController
@@ -37,7 +37,8 @@ public class ShoppingCartUserController {
     /**
      * Adds an item to the current user's shopping cart.
      *
-     * @param request the item to add
+     * @param request
+     *            the item to add
      * @return the added CartItemResponseDto
      */
     @PostMapping()
@@ -51,7 +52,8 @@ public class ShoppingCartUserController {
     /**
      * Retrieves paginated cart items for the current user.
      *
-     * @param pageable pagination and sorting information
+     * @param pageable
+     *            pagination and sorting information
      * @return a page of CartItemResponseDto objects
      */
     @GetMapping()
@@ -64,7 +66,8 @@ public class ShoppingCartUserController {
     /**
      * Retrieves a specific cart item by its ID for the current user.
      *
-     * @param itemId the ID of the item
+     * @param itemId
+     *            the ID of the item
      * @return the CartItemResponseDto
      */
     @GetMapping("/{itemId}")
@@ -77,13 +80,15 @@ public class ShoppingCartUserController {
     /**
      * Updates a specific item in the current user's cart.
      *
-     * @param itemId  the ID of the item
-     * @param request the updated item details
+     * @param itemId
+     *            the ID of the item
+     * @param request
+     *            the updated item details
      * @return the updated CartItemResponseDto
      */
     @PutMapping("/{itemId}")
     public ResponseEntity<CartItemResponseDto> updateCartItem(@PathVariable Long itemId,
-                                                              @Valid @RequestBody CartItemUpdateRequestDto request) {
+            @Valid @RequestBody CartItemUpdateRequestDto request) {
         userId = authUtils.extractUserId();
         CartItemResponseDto response = shoppingCartService.updateCartItem(itemId, request, userId);
         return ResponseEntity.ok(response);
@@ -92,7 +97,8 @@ public class ShoppingCartUserController {
     /**
      * Deletes a specific item from the current user's cart.
      *
-     * @param itemId the ID of the item
+     * @param itemId
+     *            the ID of the item
      * @return 204 No Content if successful
      */
     @DeleteMapping("/{itemId}")

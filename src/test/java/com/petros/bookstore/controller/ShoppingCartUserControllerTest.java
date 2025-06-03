@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class ShoppingCartUserControllerTest {
 
     private static final String HEADER = "X-USER-ID";
-    private static final Long   USER_ID = 123L;
+    private static final Long USER_ID = 123L;
     private static final String BASE_URL = "/users/me/shopping-cart/items";
 
     @Autowired
@@ -46,24 +46,20 @@ class ShoppingCartUserControllerTest {
     ObjectMapper mapper;
 
     @Autowired
-    ShoppingCartService shoppingCartService;      // mocked bean
+    ShoppingCartService shoppingCartService; // mocked bean
 
     private final Book book = new Book("title", "author", "description", 45.99, 5, Genre.SCIENCE_FICTION);
 
     @Test
     void addItemToCart_success() throws Exception {
-        CartItemRequestDto req  = new CartItemRequestDto(42L, 3);
+        CartItemRequestDto req = new CartItemRequestDto(42L, 3);
         CartItemResponseDto res = new CartItemResponseDto(1L, book, 3);
 
         Mockito.when(shoppingCartService.addToCart(eq(USER_ID), any(CartItemRequestDto.class))).thenReturn(res);
 
-        mockMvc.perform(post(BASE_URL)
-                        .header(HEADER, USER_ID.toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(req)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(res.id()))
-                .andExpect(jsonPath("$.quantity").value(res.quantity()));
+        mockMvc.perform(post(BASE_URL).header(HEADER, USER_ID.toString()).contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(req))).andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(res.id())).andExpect(jsonPath("$.quantity").value(res.quantity()));
     }
 
     @Test
@@ -73,12 +69,8 @@ class ShoppingCartUserControllerTest {
         Mockito.when(shoppingCartService.getCartItems(eq(USER_ID), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(res), PageRequest.of(0, 10), 1));
 
-        mockMvc.perform(get(BASE_URL)
-                        .header(HEADER, USER_ID.toString())
-                        .param("page", "0")
-                        .param("size", "10"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].quantity").value(res.quantity()))
+        mockMvc.perform(get(BASE_URL).header(HEADER, USER_ID.toString()).param("page", "0").param("size", "10"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.content[0].quantity").value(res.quantity()))
                 .andExpect(jsonPath("$.content.length()").value(1));
     }
 
@@ -87,32 +79,25 @@ class ShoppingCartUserControllerTest {
         CartItemResponseDto res = new CartItemResponseDto(1L, book, 2);
         Mockito.when(shoppingCartService.findItemById(1L, USER_ID)).thenReturn(res);
 
-        mockMvc.perform(get(BASE_URL + "/1")
-                        .header(HEADER, USER_ID.toString()))
-                .andExpect(status().isOk())
+        mockMvc.perform(get(BASE_URL + "/1").header(HEADER, USER_ID.toString())).andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(2));
     }
 
     @Test
     void updateCartItem_success() throws Exception {
         CartItemUpdateRequestDto req = new CartItemUpdateRequestDto(5);
-        CartItemResponseDto      res = new CartItemResponseDto(1L, book, 5);
+        CartItemResponseDto res = new CartItemResponseDto(1L, book, 5);
 
         Mockito.when(shoppingCartService.updateCartItem(1L, req, USER_ID)).thenReturn(res);
 
-        mockMvc.perform(put(BASE_URL + "/1")
-                        .header(HEADER, USER_ID.toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(req)))
-                .andExpect(status().isOk())
+        mockMvc.perform(put(BASE_URL + "/1").header(HEADER, USER_ID.toString()).contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(req))).andExpect(status().isOk())
                 .andExpect(jsonPath("$.quantity").value(5));
     }
 
     @Test
     void deleteCartItem_success() throws Exception {
-        mockMvc.perform(delete(BASE_URL + "/1")
-                        .header(HEADER, USER_ID.toString()))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(delete(BASE_URL + "/1").header(HEADER, USER_ID.toString())).andExpect(status().isNoContent());
 
         Mockito.verify(shoppingCartService).removeFromCart(USER_ID, 1L);
     }
@@ -124,11 +109,8 @@ class ShoppingCartUserControllerTest {
         // missing quantity & bookId invalid
         String invalidJson = "{}";
 
-        mockMvc.perform(post(BASE_URL)
-                        .header(HEADER, USER_ID.toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(invalidJson))
-                .andExpect(status().isBadRequest());
+        mockMvc.perform(post(BASE_URL).header(HEADER, USER_ID.toString()).contentType(MediaType.APPLICATION_JSON)
+                .content(invalidJson)).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -136,9 +118,7 @@ class ShoppingCartUserControllerTest {
         Mockito.when(shoppingCartService.findItemById(99L, USER_ID))
                 .thenThrow(new ResourceNotFoundException("Item not found"));
 
-        mockMvc.perform(get(BASE_URL + "/99")
-                        .header(HEADER, USER_ID.toString()))
-                .andExpect(status().isNotFound())
+        mockMvc.perform(get(BASE_URL + "/99").header(HEADER, USER_ID.toString())).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value(containsString("Item not found")));
     }
 
@@ -149,11 +129,8 @@ class ShoppingCartUserControllerTest {
         Mockito.when(shoppingCartService.updateCartItem(99L, req, USER_ID))
                 .thenThrow(new ResourceNotFoundException("Item not found"));
 
-        mockMvc.perform(put(BASE_URL + "/99")
-                        .header(HEADER, USER_ID.toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(req)))
-                .andExpect(status().isNotFound())
+        mockMvc.perform(put(BASE_URL + "/99").header(HEADER, USER_ID.toString()).contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(req))).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value(containsString("Item not found")));
     }
 }

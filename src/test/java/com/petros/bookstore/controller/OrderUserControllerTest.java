@@ -29,7 +29,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 @WebMvcTest(OrderUserController.class)
 @Import({TestServiceConfig.class, TestSecurityConfig.class, TestDummyJwtFilter.class})
 @ActiveProfiles("test")
@@ -48,20 +47,14 @@ class OrderUserControllerTest {
     @Autowired
     OrderService orderService;
 
-
     @Test
     void placeOrder_success() throws Exception {
         OrderResponseDto orderResponse = sampleOrderResponseDto();
 
-        Mockito.when(orderService.placeOrder(eq(USER_ID), any(Pageable.class)))
-                .thenReturn(orderResponse);
+        Mockito.when(orderService.placeOrder(eq(USER_ID), any(Pageable.class))).thenReturn(orderResponse);
 
-        mockMvc.perform(post(BASE_URL)
-                        .header(HEADER, USER_ID.toString())
-                        .param("page", "0")
-                        .param("size", "10")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+        mockMvc.perform(post(BASE_URL).header(HEADER, USER_ID.toString()).param("page", "0").param("size", "10")
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(orderResponse.id()))
                 .andExpect(jsonPath("$.userId").value(orderResponse.userId()))
                 .andExpect(jsonPath("$.status").value(orderResponse.status().toString()));
@@ -74,12 +67,8 @@ class OrderUserControllerTest {
         Mockito.when(orderService.getOrdersForUser(eq(USER_ID), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(orderResponse), PageRequest.of(0, 10), 1));
 
-        mockMvc.perform(get(BASE_URL)
-                        .header(HEADER, USER_ID.toString())
-                        .param("page", "0")
-                        .param("size", "10"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id").value(orderResponse.id()))
+        mockMvc.perform(get(BASE_URL).header(HEADER, USER_ID.toString()).param("page", "0").param("size", "10"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.content[0].id").value(orderResponse.id()))
                 .andExpect(jsonPath("$.content.length()").value(1));
     }
 
@@ -87,25 +76,19 @@ class OrderUserControllerTest {
     void myOrder_success() throws Exception {
         OrderResponseDto orderResponse = sampleOrderResponseDto();
 
-        Mockito.when(orderService.getOrderForUser(1L, USER_ID))
-                .thenReturn(orderResponse);
+        Mockito.when(orderService.getOrderForUser(1L, USER_ID)).thenReturn(orderResponse);
 
-        mockMvc.perform(get(BASE_URL + "/1")
-                        .header(HEADER, USER_ID.toString()))
-                .andExpect(status().isOk())
+        mockMvc.perform(get(BASE_URL + "/1").header(HEADER, USER_ID.toString())).andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(orderResponse.id()))
                 .andExpect(jsonPath("$.status").value(orderResponse.status().toString()));
     }
-
 
     @Test
     void myOrder_notFound_returns404() throws Exception {
         Mockito.when(orderService.getOrderForUser(999L, USER_ID))
                 .thenThrow(new ResourceNotFoundException("Order not found"));
 
-        mockMvc.perform(get(BASE_URL + "/999")
-                        .header(HEADER, USER_ID.toString()))
-                .andExpect(status().isNotFound())
+        mockMvc.perform(get(BASE_URL + "/999").header(HEADER, USER_ID.toString())).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value(containsString("Order not found")));
     }
 
@@ -114,24 +97,13 @@ class OrderUserControllerTest {
         Mockito.when(orderService.placeOrder(eq(USER_ID), any(Pageable.class)))
                 .thenThrow(new IllegalArgumentException("Invalid order request"));
 
-        mockMvc.perform(post(BASE_URL)
-                        .header(HEADER, USER_ID.toString())
-                        .param("page", "0")
-                        .param("size", "10")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+        mockMvc.perform(post(BASE_URL).header(HEADER, USER_ID.toString()).param("page", "0").param("size", "10")
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
     }
 
-    //helper method
+    // helper method
     private OrderResponseDto sampleOrderResponseDto() {
         Timestamp timestampNow = Timestamp.from(Instant.now());
-        return new OrderResponseDto(
-                1L,
-                USER_ID,
-                Status.PENDING,
-                123.45,
-                timestampNow,
-                List.of()
-        );
+        return new OrderResponseDto(1L, USER_ID, Status.PENDING, 123.45, timestampNow, List.of());
     }
 }

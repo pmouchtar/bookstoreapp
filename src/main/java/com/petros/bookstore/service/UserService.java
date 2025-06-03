@@ -16,8 +16,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
- * Service class responsible for handling User functionality,
- * including profile updates, administrative updates, user search, and deletion.
+ * Service class responsible for handling User functionality, including profile
+ * updates, administrative updates, user search, and deletion.
  */
 @Service
 @RequiredArgsConstructor
@@ -29,9 +29,11 @@ public class UserService {
     /**
      * Retrieves a user by their username.
      *
-     * @param username the username of the user
+     * @param username
+     *            the username of the user
      * @return the found {@link User}
-     * @throws ResourceGoneException if the user account is deleted
+     * @throws ResourceGoneException
+     *             if the user account is deleted
      */
     public User getUserByUsername(final String username) {
         return userRepository.findByUsername(username)
@@ -41,10 +43,13 @@ public class UserService {
     /**
      * Updates the profile of a user.
      *
-     * @param userId the ID of the user to update
-     * @param updateRequest the profile update request data
+     * @param userId
+     *            the ID of the user to update
+     * @param updateRequest
+     *            the profile update request data
      * @return the updated {@link User}
-     * @throws ResourceNotFoundException if the user does not exist
+     * @throws ResourceNotFoundException
+     *             if the user does not exist
      */
     public User updateUserProfile(final Long userId, UserProfileUpdateRequestDto updateRequest) {
         User user = userRepository.findById(userId)
@@ -69,21 +74,26 @@ public class UserService {
     /**
      * Searches users based on optional username, first name, and last name filters.
      *
-     * @param username optional username filter
-     * @param firstName optional first name filter
-     * @param lastName optional last name filter
-     * @param pageable the pagination and sorting information
+     * @param username
+     *            optional username filter
+     * @param firstName
+     *            optional first name filter
+     * @param lastName
+     *            optional last name filter
+     * @param pageable
+     *            the pagination and sorting information
      * @return a page of {@link UserProfileResponseDto} matching the criteria
      */
     public Page<UserProfileResponseDto> searchUsers(String username, String firstName, String lastName,
-                                                    Pageable pageable) {
+            Pageable pageable) {
         return userRepository.searchUsers(username, firstName, lastName, pageable).map(UserMapper::toUserProfileDto);
     }
 
     /**
      * Retrieves all users with pagination.
      *
-     * @param pageable the pagination and sorting information
+     * @param pageable
+     *            the pagination and sorting information
      * @return a page of {@link UserProfileResponseDto}
      */
     public Page<UserProfileResponseDto> findAll(Pageable pageable) {
@@ -93,9 +103,11 @@ public class UserService {
     /**
      * Retrieves a user by ID.
      *
-     * @param id the ID of the user
+     * @param id
+     *            the ID of the user
      * @return the {@link UserProfileResponseDto} of the user
-     * @throws ResourceNotFoundException if the user is not found
+     * @throws ResourceNotFoundException
+     *             if the user is not found
      */
     public UserProfileResponseDto findUserById(Long id) {
         User user = userRepository.findById(id)
@@ -106,10 +118,13 @@ public class UserService {
     /**
      * Updates user information by ID as an administrator.
      *
-     * @param id the ID of the user to update
-     * @param request the admin update request data
+     * @param id
+     *            the ID of the user to update
+     * @param request
+     *            the admin update request data
      * @return the updated {@link UserProfileResponseDto}
-     * @throws ResourceNotFoundException if the user does not exist
+     * @throws ResourceNotFoundException
+     *             if the user does not exist
      */
     public UserProfileResponseDto updateUserById(Long id, UserAdminUpdateRequestDto request) {
         User user = userRepository.findById(id)
@@ -128,9 +143,11 @@ public class UserService {
     /**
      * Deletes a user by ID.
      *
-     * @param id the ID of the user to delete
+     * @param id
+     *            the ID of the user to delete
      * @return true if the deletion was successful
-     * @throws ResourceNotFoundException if the user is not found
+     * @throws ResourceNotFoundException
+     *             if the user is not found
      */
     public boolean deleteUserById(Long id) {
         if (userRepository.existsById(id)) {

@@ -13,8 +13,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Controller for handling authenticated user profile actions.
- * Allows users (with USER or ADMIN roles) to view, update, or delete their own account.
+ * Controller for handling authenticated user profile actions. Allows users
+ * (with USER or ADMIN roles) to view, update, or delete their own account.
  */
 @RestController
 @RequestMapping("/users/me")
@@ -41,7 +41,8 @@ public class UserProfileController {
     /**
      * Updates the authenticated user's profile.
      *
-     * @param request the new profile data
+     * @param request
+     *            the new profile data
      * @return the updated user profile
      */
     @PutMapping

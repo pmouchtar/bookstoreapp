@@ -56,11 +56,8 @@ class FavouriteBookUserControllerTest {
 
         Mockito.when(favouriteService.addToFavourites(eq(123L), any())).thenReturn(response);
 
-        mockMvc.perform(post(BASE_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(HEADER, "123")
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
+        mockMvc.perform(post(BASE_URL).contentType(MediaType.APPLICATION_JSON).header(HEADER, "123")
+                .content(objectMapper.writeValueAsString(request))).andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(response.id()))
                 .andExpect(jsonPath("$.bookId").value(response.bookId()));
     }
@@ -72,20 +69,14 @@ class FavouriteBookUserControllerTest {
         Mockito.when(favouriteService.getFavourites(eq(123L), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(response), PageRequest.of(0, 10), 1));
 
-        mockMvc.perform(get(BASE_URL)
-                        .header(HEADER, "123")
-                        .param("page", "0")
-                        .param("size", "10"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id").value(response.id()))
+        mockMvc.perform(get(BASE_URL).header(HEADER, "123").param("page", "0").param("size", "10"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.content[0].id").value(response.id()))
                 .andExpect(jsonPath("$.content[0].bookId").value(response.bookId()));
     }
 
     @Test
     void testDeleteFavouriteBook() throws Exception {
-        mockMvc.perform(delete(BASE_URL + "/42")
-                        .header(HEADER, "123"))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(delete(BASE_URL + "/42").header(HEADER, "123")).andExpect(status().isNoContent());
 
         Mockito.verify(favouriteService).removeFromFavourites(123L, 42L);
     }
@@ -95,11 +86,8 @@ class FavouriteBookUserControllerTest {
         // Missing bookId
         String invalidRequestJson = "{}";
 
-        mockMvc.perform(post(BASE_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(HEADER, "123")
-                        .content(invalidRequestJson))
-                .andExpect(status().isBadRequest());
+        mockMvc.perform(post(BASE_URL).contentType(MediaType.APPLICATION_JSON).header(HEADER, "123")
+                .content(invalidRequestJson)).andExpect(status().isBadRequest());
     }
 
     @Test
@@ -109,22 +97,17 @@ class FavouriteBookUserControllerTest {
         Mockito.when(favouriteService.addToFavourites(eq(123L), any()))
                 .thenThrow(new ResourceAlreadyExistsException("Book already in favourites"));
 
-        mockMvc.perform(post(BASE_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(HEADER, "123")
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isConflict())
+        mockMvc.perform(post(BASE_URL).contentType(MediaType.APPLICATION_JSON).header(HEADER, "123")
+                .content(objectMapper.writeValueAsString(request))).andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value(containsString("already in favourites")));
     }
 
     @Test
     void testDeleteFavouriteBook_whenNotFound_returnsNotFound() throws Exception {
-        Mockito.doThrow(new ResourceNotFoundException("Favourite not found"))
-                .when(favouriteService).removeFromFavourites(123L, 99L);
+        Mockito.doThrow(new ResourceNotFoundException("Favourite not found")).when(favouriteService)
+                .removeFromFavourites(123L, 99L);
 
-        mockMvc.perform(delete(BASE_URL + "/99")
-                        .header(HEADER, "123"))
-                .andExpect(status().isNotFound())
+        mockMvc.perform(delete(BASE_URL + "/99").header(HEADER, "123")).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value(containsString("not found")));
     }
 
@@ -133,9 +116,7 @@ class FavouriteBookUserControllerTest {
         Mockito.when(favouriteService.getFavourites(eq(123L), any(Pageable.class)))
                 .thenThrow(new ResourceNotFoundException("User not found"));
 
-        mockMvc.perform(get(BASE_URL)
-                        .header(HEADER, "123"))
-                .andExpect(status().isNotFound())
+        mockMvc.perform(get(BASE_URL).header(HEADER, "123")).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value(containsString("User not found")));
     }
 }

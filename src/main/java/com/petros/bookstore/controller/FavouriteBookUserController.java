@@ -35,7 +35,8 @@ public class FavouriteBookUserController {
     /**
      * Adds a book to the authenticated user's favourites.
      *
-     * @param request the favourite book request DTO containing book details
+     * @param request
+     *            the favourite book request DTO containing book details
      * @return the favourite book response DTO with added favourite info
      */
     @PostMapping()
@@ -50,7 +51,8 @@ public class FavouriteBookUserController {
     /**
      * Retrieves a paginated list of the authenticated user's favourite books.
      *
-     * @param pageable pagination and sorting information
+     * @param pageable
+     *            pagination and sorting information
      * @return a page of FavouriteBookResponseDto objects
      */
     @GetMapping()
@@ -63,7 +65,8 @@ public class FavouriteBookUserController {
     /**
      * Deletes a book from the authenticated user's favourites by book ID.
      *
-     * @param bookId the ID of the book to remove from favourites
+     * @param bookId
+     *            the ID of the book to remove from favourites
      * @return a response entity with no content on successful deletion
      */
     @DeleteMapping("/{bookId}")

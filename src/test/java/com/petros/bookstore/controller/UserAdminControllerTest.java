@@ -35,11 +35,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ActiveProfiles("test")
 class UserAdminControllerTest {
 
-
-
-    @Autowired MockMvc       mockMvc;
-    @Autowired ObjectMapper  objectMapper;
-    @Autowired UserService   userService;
+    @Autowired
+    MockMvc mockMvc;
+    @Autowired
+    ObjectMapper objectMapper;
+    @Autowired
+    UserService userService;
 
     private UserProfileResponseDto userDto;
 
@@ -54,10 +55,7 @@ class UserAdminControllerTest {
         when(userService.findAll(any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(userDto), PageRequest.of(0, 10), 1));
 
-        mockMvc.perform(get("/users")
-                        .param("page", "0")
-                        .param("size", "10"))
-                .andExpect(status().isOk())
+        mockMvc.perform(get("/users").param("page", "0").param("size", "10")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].username").value("johndoe"));
     }
 
@@ -67,9 +65,7 @@ class UserAdminControllerTest {
         when(userService.searchUsers(eq("johndoe"), any(), any(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(userDto)));
 
-        mockMvc.perform(get("/users")
-                        .param("username", "johndoe"))
-                .andExpect(status().isOk())
+        mockMvc.perform(get("/users").param("username", "johndoe")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.content[0].username").value("johndoe"));
     }
 
@@ -78,9 +74,7 @@ class UserAdminControllerTest {
     void getUser_shouldReturnUserDto() throws Exception {
         when(userService.findUserById(1L)).thenReturn(userDto);
 
-        mockMvc.perform(get("/users/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("johndoe"));
+        mockMvc.perform(get("/users/1")).andExpect(status().isOk()).andExpect(jsonPath("$.username").value("johndoe"));
     }
 
     @Test
@@ -91,18 +85,14 @@ class UserAdminControllerTest {
         when(userService.updateUserById(eq(1L), any(UserAdminUpdateRequestDto.class)))
                 .thenReturn(new UserProfileResponseDto(1L, "Jane", "Smith", "johndoe", Role.ADMIN));
 
-        mockMvc.perform(put("/users/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName").value("Jane"))
-                .andExpect(jsonPath("$.role").value("ADMIN"));
+        mockMvc.perform(put("/users/1").contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(updateRequest))).andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value("Jane")).andExpect(jsonPath("$.role").value("ADMIN"));
     }
 
     @Test
     @WithMockUser(roles = "ADMIN")
     void deleteUser_shouldReturnNoContent() throws Exception {
-        mockMvc.perform(delete("/users/1"))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(delete("/users/1")).andExpect(status().isNoContent());
     }
 }

@@ -45,7 +45,6 @@ class ShoppingCartAdminControllerTest {
     @Autowired
     ShoppingCartService shoppingCartService;
 
-
     @Test
     void getUserCartItems_success() throws Exception {
         CartItemResponseDto item = new CartItemResponseDto(1L, book, 2);
@@ -53,11 +52,9 @@ class ShoppingCartAdminControllerTest {
         Mockito.when(shoppingCartService.getCartItems(eq(USER_ID), any()))
                 .thenReturn(new PageImpl<>(List.of(item), PageRequest.of(0, 10), 1));
 
-        mockMvc.perform(get("/users/{userId}/shopping-cart/items", USER_ID)
-                        .param("page", "0").param("size", "10")
-                        .header(HEADER, 999)) // Simulates admin auth
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id").value(item.id()))
+        mockMvc.perform(get("/users/{userId}/shopping-cart/items", USER_ID).param("page", "0").param("size", "10")
+                .header(HEADER, 999)) // Simulates admin auth
+                .andExpect(status().isOk()).andExpect(jsonPath("$.content[0].id").value(item.id()))
                 .andExpect(jsonPath("$.content[0].quantity").value(item.quantity()));
     }
 
@@ -66,12 +63,9 @@ class ShoppingCartAdminControllerTest {
         Mockito.when(shoppingCartService.getCartItems(eq(USER_ID), any()))
                 .thenReturn(new PageImpl<>(List.of(), PageRequest.of(0, 10), 0));
 
-        mockMvc.perform(get("/users/{userId}/shopping-cart/items", USER_ID)
-                        .header(HEADER, 999))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content").isEmpty());
+        mockMvc.perform(get("/users/{userId}/shopping-cart/items", USER_ID).header(HEADER, 999))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.content").isEmpty());
     }
-
 
     @Test
     void getUserCartItemById_success() throws Exception {
@@ -79,10 +73,8 @@ class ShoppingCartAdminControllerTest {
 
         Mockito.when(shoppingCartService.findItemById(1L, USER_ID)).thenReturn(item);
 
-        mockMvc.perform(get("/users/{userId}/shopping-cart/items/{itemId}", USER_ID, 1L)
-                        .header(HEADER, 999))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(item.id()))
+        mockMvc.perform(get("/users/{userId}/shopping-cart/items/{itemId}", USER_ID, 1L).header(HEADER, 999))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(item.id()))
                 .andExpect(jsonPath("$.quantity").value(item.quantity()));
     }
 
@@ -91,8 +83,7 @@ class ShoppingCartAdminControllerTest {
         Mockito.when(shoppingCartService.findItemById(42L, USER_ID))
                 .thenThrow(new ResourceNotFoundException("Item not found"));
 
-        mockMvc.perform(get("/users/{userId}/shopping-cart/items/{itemId}", USER_ID, 42L)
-                        .header(HEADER, 999))
+        mockMvc.perform(get("/users/{userId}/shopping-cart/items/{itemId}", USER_ID, 42L).header(HEADER, 999))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value(containsString("Item not found")));
     }

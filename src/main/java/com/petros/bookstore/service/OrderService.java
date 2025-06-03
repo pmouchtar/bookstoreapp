@@ -19,10 +19,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
- * Service responsible for handling operations related to placing and managing orders.
+ * Service responsible for handling operations related to placing and managing
+ * orders.
  * <p>
- * Includes functionality for placing orders, retrieving orders by user or globally (admin),
- * and updating order status.
+ * Includes functionality for placing orders, retrieving orders by user or
+ * globally (admin), and updating order status.
  */
 @Service
 @RequiredArgsConstructor
@@ -35,20 +36,22 @@ public class OrderService {
     private final OrderItemRepository orderItemRepo;
 
     /**
-     * Places an order for the specified user by transferring items from the user's cart into a new order.
+     * Places an order for the specified user by transferring items from the user's
+     * cart into a new order.
      *
-     * @param userId   the ID of the user placing the order
-     * @param pageable the pagination object for cart item retrieval
+     * @param userId
+     *            the ID of the user placing the order
+     * @param pageable
+     *            the pagination object for cart item retrieval
      * @return the DTO representation of the placed order
-     * @throws BadRequestException if the cart does not exist or is empty
+     * @throws BadRequestException
+     *             if the cart does not exist or is empty
      */
     @Transactional
     public OrderResponseDto placeOrder(Long userId, Pageable pageable) throws BadRequestException {
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Shopping_Cart cart = cartRepo.findByUser(user)
-                .orElseThrow(() -> new BadRequestException("No cart"));
+        Shopping_Cart cart = cartRepo.findByUser(user).orElseThrow(() -> new BadRequestException("No cart"));
 
         Page<Cart_Item> cartItems = cartItemRepo.findByShoppingCart(cart, pageable);
         if (cartItems.isEmpty()) {
@@ -88,14 +91,15 @@ public class OrderService {
     /**
      * Retrieves all orders placed by the specified user.
      *
-     * @param userId   the user's ID
-     * @param pageable pagination parameters
+     * @param userId
+     *            the user's ID
+     * @param pageable
+     *            pagination parameters
      * @return paginated list of order response DTOs
      */
     @Transactional
     public Page<OrderResponseDto> getOrdersForUser(Long userId, Pageable pageable) {
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         return orderRepo.findByUser(user, pageable).map(OrderMapper::toDto);
     }
@@ -103,14 +107,15 @@ public class OrderService {
     /**
      * Retrieves a specific order for the given user.
      *
-     * @param orderId the ID of the order
-     * @param userId  the ID of the user
+     * @param orderId
+     *            the ID of the order
+     * @param userId
+     *            the ID of the user
      * @return the order response DTO
      */
     @Transactional
     public OrderResponseDto getOrderForUser(Long orderId, Long userId) {
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Order order = orderRepo.findByIdAndUser(orderId, user)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
@@ -121,14 +126,15 @@ public class OrderService {
     /**
      * Updates the status of an order.
      *
-     * @param orderId the ID of the order
-     * @param request the DTO containing the new status
+     * @param orderId
+     *            the ID of the order
+     * @param request
+     *            the DTO containing the new status
      * @return the updated order as a response DTO
      */
     @Transactional
     public OrderResponseDto updateOrderStatus(Long orderId, OrderStatusUpdateRequestDto request) {
-        Order order = orderRepo.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+        Order order = orderRepo.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
         order.setStatus(request.status());
         Order saved = orderRepo.save(order);
@@ -139,7 +145,8 @@ public class OrderService {
     /**
      * Retrieves all orders in the system (admin view).
      *
-     * @param pageable pagination information
+     * @param pageable
+     *            pagination information
      * @return paginated list of all orders as DTOs
      */
     public Page<OrderResponseDto> getAllOrders(Pageable pageable) {
@@ -149,12 +156,12 @@ public class OrderService {
     /**
      * Retrieves a specific order by ID.
      *
-     * @param orderId the ID of the order
+     * @param orderId
+     *            the ID of the order
      * @return the corresponding order as a DTO
      */
     public OrderResponseDto getOrderById(Long orderId) {
-        Order order = orderRepo.findById(orderId)
-                .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+        Order order = orderRepo.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
 
         return OrderMapper.toDto(order);
     }

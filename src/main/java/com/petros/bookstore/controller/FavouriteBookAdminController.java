@@ -28,8 +28,10 @@ public class FavouriteBookAdminController {
     /**
      * Retrieves a paginated list of favourite books for a specific user.
      *
-     * @param userId   the ID of the user
-     * @param pageable pagination and sorting information
+     * @param userId
+     *            the ID of the user
+     * @param pageable
+     *            pagination and sorting information
      * @return a page of FavouriteBookResponseDto objects
      */
     @SecurityRequirement(name = "bearerAuth")

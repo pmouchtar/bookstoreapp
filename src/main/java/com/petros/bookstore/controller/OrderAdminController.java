@@ -27,7 +27,8 @@ public class OrderAdminController {
     /**
      * Retrieves all orders with pagination.
      *
-     * @param pageable pagination and sorting information
+     * @param pageable
+     *            pagination and sorting information
      * @return a page of OrderResponseDto representing all orders
      */
     @GetMapping("/orders")
@@ -39,14 +40,16 @@ public class OrderAdminController {
     /**
      * Updates the status of a specific order.
      *
-     * @param orderId the ID of the order to update
-     * @param request the request DTO containing the new status
+     * @param orderId
+     *            the ID of the order to update
+     * @param request
+     *            the request DTO containing the new status
      * @return the updated order response DTO
      */
     @PutMapping("/orders/{orderId}")
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<OrderResponseDto> updateStatus(@PathVariable Long orderId,
-                                                         @Valid @RequestBody OrderStatusUpdateRequestDto request) {
+            @Valid @RequestBody OrderStatusUpdateRequestDto request) {
 
         OrderResponseDto response = orderService.updateOrderStatus(orderId, request);
         return ResponseEntity.ok(response);
@@ -55,7 +58,8 @@ public class OrderAdminController {
     /**
      * Retrieves a specific order by its ID.
      *
-     * @param orderId the ID of the order to retrieve
+     * @param orderId
+     *            the ID of the order to retrieve
      * @return the order response DTO
      */
     @GetMapping("/orders/{orderId}")
@@ -69,8 +73,10 @@ public class OrderAdminController {
     /**
      * Retrieves paginated orders for a specific user.
      *
-     * @param userId   the ID of the user whose orders are requested
-     * @param pageable pagination and sorting information
+     * @param userId
+     *            the ID of the user whose orders are requested
+     * @param pageable
+     *            pagination and sorting information
      * @return a page of OrderResponseDto objects for the user
      */
     @GetMapping("/users/{userId}/orders")

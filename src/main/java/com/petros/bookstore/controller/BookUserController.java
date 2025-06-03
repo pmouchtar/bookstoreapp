@@ -1,12 +1,9 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.BookDTO.BookRequestDto;
 import com.petros.bookstore.dto.BookDTO.BookResponseDto;
-import com.petros.bookstore.dto.BookDTO.BookUpdateRequestDto;
 import com.petros.bookstore.exception.customException.InvalidPriceRangeException;
 import com.petros.bookstore.model.enums.Genre;
 import com.petros.bookstore.service.BookService;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Min;
@@ -14,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 

@@ -17,10 +17,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
- * Service class responsible for handling user authentication and registration logic.
+ * Service class responsible for handling user authentication and registration
+ * logic.
  * <p>
- * It integrates with Spring Security to authenticate users using JWT and manages
- * the creation of new users along with their shopping carts.
+ * It integrates with Spring Security to authenticate users using JWT and
+ * manages the creation of new users along with their shopping carts.
  */
 @Service
 @RequiredArgsConstructor
@@ -36,14 +37,16 @@ public class AuthenticationService {
     /**
      * Authenticates a user using the provided credentials and returns a JWT token.
      *
-     * @param request The authentication request DTO containing the username and password.
+     * @param request
+     *            The authentication request DTO containing the username and
+     *            password.
      * @return {@link AuthenticationResponseDto} containing a generated JWT token.
      * @throws org.springframework.security.core.AuthenticationException
-     *         if the credentials are invalid.
+     *             if the credentials are invalid.
      */
     public AuthenticationResponseDto authenticate(final AuthenticationRequestDto request) {
-        final var authToken = UsernamePasswordAuthenticationToken.unauthenticated(
-                request.username(), request.password());
+        final var authToken = UsernamePasswordAuthenticationToken.unauthenticated(request.username(),
+                request.password());
 
         authenticationManager.authenticate(authToken); // will throw if invalid
 
@@ -56,9 +59,11 @@ public class AuthenticationService {
      * <p>
      * This method also encodes the password and checks for username uniqueness.
      *
-     * @param request The user entity containing the registration information.
+     * @param request
+     *            The user entity containing the registration information.
      * @return The saved {@link User} entity.
-     * @throws ValidationException if the username already exists.
+     * @throws ValidationException
+     *             if the username already exists.
      */
     @Transactional
     public User registerUser(User request) {

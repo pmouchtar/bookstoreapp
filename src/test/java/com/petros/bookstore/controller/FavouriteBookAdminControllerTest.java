@@ -44,36 +44,30 @@ class FavouriteBookAdminControllerTest {
     private static final String ADMIN_HEADER = "X-USER-ID";
     private static final String BASE_URL = "/users/1/favourite-books";
 
-//    @BeforeEach
-//    void setup() {
-//    }
+    // @BeforeEach
+    // void setup() {
+    // }
 
     @Test
     void testGetUserFavouriteBooks_success() throws Exception {
-        List<FavouriteBookResponseDto> list = List.of(
-                new FavouriteBookResponseDto(1L, 101L, Instant.now()),
-                new FavouriteBookResponseDto(2L, 102L, Instant.now())
-        );
+        List<FavouriteBookResponseDto> list = List.of(new FavouriteBookResponseDto(1L, 101L, Instant.now()),
+                new FavouriteBookResponseDto(2L, 102L, Instant.now()));
         Page<FavouriteBookResponseDto> page = new PageImpl<>(list);
 
         when(favouriteService.getFavourites(eq(1L), Mockito.any(Pageable.class))).thenReturn(page);
 
-        mockMvc.perform(get(BASE_URL)
-                        .header(ADMIN_HEADER, "999") // simulate admin
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+        mockMvc.perform(get(BASE_URL).header(ADMIN_HEADER, "999") // simulate admin
+                .accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.content.length()").value(2))
                 .andExpect(jsonPath("$.content[0].bookId").value(101));
     }
 
     @Test
     void testGetUserFavouriteBooks_userNotFound_returnsNotFound() throws Exception {
-        when(favouriteService.getFavourites(eq(404L), Mockito.any(Pageable.class)))
-                .thenThrow(new com.petros.bookstore.exception.customException.ResourceNotFoundException("User not found"));
+        when(favouriteService.getFavourites(eq(404L), Mockito.any(Pageable.class))).thenThrow(
+                new com.petros.bookstore.exception.customException.ResourceNotFoundException("User not found"));
 
-        mockMvc.perform(get("/users/404/favourite-books")
-                        .header(ADMIN_HEADER, "999"))
-                .andExpect(status().isNotFound())
+        mockMvc.perform(get("/users/404/favourite-books").header(ADMIN_HEADER, "999")).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("User not found"));
     }
 }

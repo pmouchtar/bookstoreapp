@@ -29,7 +29,8 @@ public class AuthController {
     /**
      * Authenticates a user and returns authentication response with JWT token.
      *
-     * @param authenticationRequestDto the login request DTO containing credentials
+     * @param authenticationRequestDto
+     *            the login request DTO containing credentials
      * @return the authentication response DTO with JWT token.
      */
     @PostMapping("/login")
@@ -41,7 +42,8 @@ public class AuthController {
     /**
      * Registers a new user after validating registration data.
      *
-     * @param registrationDTO the registration request DTO
+     * @param registrationDTO
+     *            the registration request DTO
      * @return the registration response DTO with created user info
      */
     @PostMapping("/register")

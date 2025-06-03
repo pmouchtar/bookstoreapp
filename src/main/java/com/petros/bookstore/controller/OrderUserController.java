@@ -31,9 +31,11 @@ public class OrderUserController {
     /**
      * Places a new order for the authenticated user.
      *
-     * @param pageable pagination info for handling cart items internally (if applicable)
+     * @param pageable
+     *            pagination info for handling cart items internally (if applicable)
      * @return the placed order as OrderResponseDto
-     * @throws BadRequestException if placing the order fails (e.g. empty cart)
+     * @throws BadRequestException
+     *             if placing the order fails (e.g. empty cart)
      */
     @PostMapping
     @SecurityRequirement(name = "bearerAuth")
@@ -47,7 +49,8 @@ public class OrderUserController {
     /**
      * Retrieves paginated orders of the authenticated user.
      *
-     * @param pageable pagination and sorting information
+     * @param pageable
+     *            pagination and sorting information
      * @return a page of OrderResponseDto for the user's orders
      */
     @GetMapping
@@ -61,7 +64,8 @@ public class OrderUserController {
     /**
      * Retrieves a specific order belonging to the authenticated user.
      *
-     * @param orderId the ID of the order to retrieve
+     * @param orderId
+     *            the ID of the order to retrieve
      * @return the OrderResponseDto if the order belongs to the user
      */
     @GetMapping("/{orderId}")

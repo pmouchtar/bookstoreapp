@@ -28,13 +28,17 @@ public class ShoppingCartService {
     private final UserRepository userRepo;
 
     /**
-     * Adds a book to the user's shopping cart. If the cart or the item doesn't exist,
-     * it will be created. If the item already exists in the cart, its quantity is updated.
+     * Adds a book to the user's shopping cart. If the cart or the item doesn't
+     * exist, it will be created. If the item already exists in the cart, its
+     * quantity is updated.
      *
-     * @param userId  ID of the user
-     * @param request DTO containing the book ID and desired quantity
+     * @param userId
+     *            ID of the user
+     * @param request
+     *            DTO containing the book ID and desired quantity
      * @return DTO representing the added or updated cart item
-     * @throws ResourceNotFoundException if user or book is not found
+     * @throws ResourceNotFoundException
+     *             if user or book is not found
      */
     @Transactional
     public CartItemResponseDto addToCart(Long userId, CartItemRequestDto request) {
@@ -66,10 +70,13 @@ public class ShoppingCartService {
     /**
      * Retrieves a paginated list of items in the user's shopping cart.
      *
-     * @param userId   ID of the user
-     * @param pageable pagination information
+     * @param userId
+     *            ID of the user
+     * @param pageable
+     *            pagination information
      * @return a page of cart item DTOs
-     * @throws ResourceNotFoundException if user is not found
+     * @throws ResourceNotFoundException
+     *             if user is not found
      */
     @Transactional
     public Page<CartItemResponseDto> getCartItems(Long userId, Pageable pageable) {
@@ -85,36 +92,42 @@ public class ShoppingCartService {
     }
 
     /**
-     * Retrieves a single cart item by its ID, ensuring it belongs to the specified user.
+     * Retrieves a single cart item by its ID, ensuring it belongs to the specified
+     * user.
      *
-     * @param itemId ID of the cart item
-     * @param userId ID of the user
+     * @param itemId
+     *            ID of the cart item
+     * @param userId
+     *            ID of the user
      * @return DTO of the found cart item
-     * @throws ResourceNotFoundException if the item is not found or does not belong to the user
+     * @throws ResourceNotFoundException
+     *             if the item is not found or does not belong to the user
      */
     @Transactional
     public CartItemResponseDto findItemById(Long itemId, Long userId) {
-        Cart_Item item = itemRepo.findById(itemId)
-                .filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
+        Cart_Item item = itemRepo.findById(itemId).filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
                 .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
 
         return CartItemMapper.toDto(item);
     }
 
     /**
-     * Updates the quantity of a cart item. If the new quantity is 0,
-     * the item is removed from the cart.
+     * Updates the quantity of a cart item. If the new quantity is 0, the item is
+     * removed from the cart.
      *
-     * @param itemId  ID of the cart item to update
-     * @param request DTO containing the new quantity
-     * @param userId  ID of the user
+     * @param itemId
+     *            ID of the cart item to update
+     * @param request
+     *            DTO containing the new quantity
+     * @param userId
+     *            ID of the user
      * @return DTO of the updated cart item, or null if the item was deleted
-     * @throws ResourceNotFoundException if the item is not found or does not belong to the user
+     * @throws ResourceNotFoundException
+     *             if the item is not found or does not belong to the user
      */
     @Transactional
     public CartItemResponseDto updateCartItem(Long itemId, CartItemUpdateRequestDto request, Long userId) {
-        Cart_Item item = itemRepo.findById(itemId)
-                .filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
+        Cart_Item item = itemRepo.findById(itemId).filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
                 .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
 
         int newQty = request.quantity();
@@ -130,14 +143,16 @@ public class ShoppingCartService {
     /**
      * Removes a cart item from the user's shopping cart.
      *
-     * @param userId ID of the user
-     * @param itemId ID of the cart item to remove
-     * @throws ResourceNotFoundException if the item is not found or does not belong to the user
+     * @param userId
+     *            ID of the user
+     * @param itemId
+     *            ID of the cart item to remove
+     * @throws ResourceNotFoundException
+     *             if the item is not found or does not belong to the user
      */
     @Transactional
     public void removeFromCart(Long userId, Long itemId) {
-        Cart_Item item = itemRepo.findById(itemId)
-                .filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
+        Cart_Item item = itemRepo.findById(itemId).filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
                 .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
         itemRepo.delete(item);
     }
