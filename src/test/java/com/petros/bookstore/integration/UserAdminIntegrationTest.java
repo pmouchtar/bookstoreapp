@@ -1,78 +1,52 @@
 package com.petros.bookstore.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.AbstractPostgresContainerTest;
-import com.petros.bookstore.dto.UserAdminUpdateRequest;
+import com.petros.bookstore.dto.UserDTO.UserAdminUpdateRequestDto;
+import com.petros.bookstore.dto.UserDTO.UserProfileResponseDto;
 import com.petros.bookstore.model.User;
 import com.petros.bookstore.model.enums.Role;
 import com.petros.bookstore.repository.UserRepository;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
-
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Integration tests for admin-only user management endpoints.
+ * Integration tests for admin-only user-management endpoints using
+ * TestRestTemplate.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
 @ActiveProfiles("test")
 class UserAdminIntegrationTest extends AbstractPostgresContainerTest {
 
-    @Autowired private MockMvc mockMvc;
-    @Autowired private UserRepository userRepository;
-    @Autowired private ObjectMapper objectMapper;
-    @Autowired private PasswordEncoder passwordEncoder;
+    @Autowired
+    private TestRestTemplate restTemplate;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private Long adminId;
     private Long normalUserId;
-
-    private void mockAuthentication(Long userId, String role) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userId);
-
-        Jwt jwt = new Jwt(
-                "fake-token",
-                Instant.now(),
-                Instant.now().plusSeconds(3_600),
-                Map.of("alg", "none"),
-                claims
-        );
-
-        List<GrantedAuthority> authorities = List.of(() -> "ROLE_" + role);
-        JwtAuthenticationToken auth =
-                new JwtAuthenticationToken(jwt, authorities, "user-" + userId);
-        auth.setAuthenticated(true);
-
-        SecurityContext ctx = SecurityContextHolder.createEmptyContext();
-        ctx.setAuthentication(auth);
-        SecurityContextHolder.setContext(ctx);
-    }
+    private HttpHeaders adminHeaders;
 
     @BeforeEach
-    void init() {
+    void setUp() {
         userRepository.deleteAll();
 
-        // admin user
+        // admin
         User admin = new User();
         admin.setFirstName("Admin");
         admin.setLastName("Boss");
@@ -89,51 +63,100 @@ class UserAdminIntegrationTest extends AbstractPostgresContainerTest {
         user.setPassword(passwordEncoder.encode("Secure123"));
         user.setRole(Role.USER);
         normalUserId = userRepository.save(user).getId();
+
+        adminHeaders = new HttpHeaders();
+        adminHeaders.add("X-USER-ID", adminId.toString()); // handled by DummyJwtFilter
     }
 
     @Test
-    void getAllUsers_AsAdmin_ShouldReturnPage() throws Exception {
-        mockAuthentication(adminId, "ADMIN");
+    void getAllUsers_AsAdmin_ShouldReturnPage() {
+        HttpEntity<Void> entity = new HttpEntity<>(adminHeaders);
 
-        mockMvc.perform(get("/users"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content.length()").value(2));
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange("/users", HttpMethod.GET, entity,
+                new ParameterizedTypeReference<>() {
+                });
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        List<?> content = (List<?>) response.getBody().get("content");
+        assertThat(content).hasSize(2);
     }
 
     @Test
-    void updateUser_AsAdmin_ShouldUpdateRole() throws Exception {
-        mockAuthentication(adminId, "ADMIN");
+    void getAllUsers_WithUsernameFilter_ShouldReturnOneUser() {
+        HttpEntity<Void> entity = new HttpEntity<>(adminHeaders);
 
-        UserAdminUpdateRequest req = new UserAdminUpdateRequest();
-        req.setFirstName("Updated");
-        req.setLastName("User");
-        req.setRole(Role.ADMIN); // promote
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange("/users?username=petrosdev",
+                HttpMethod.GET, entity, new ParameterizedTypeReference<>() {
+                });
 
-        mockMvc.perform(put("/users/{id}", normalUserId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName").value("Updated"))
-                .andExpect(jsonPath("$.role").value("ADMIN"));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        List<?> content = (List<?>) response.getBody().get("content");
+        assertThat(content).hasSize(1);
     }
 
     @Test
-    void deleteUser_AsAdmin_ShouldRemoveUser() throws Exception {
-        mockAuthentication(adminId, "ADMIN");
+    void updateUser_AsAdmin_ShouldPromoteUser() {
+        UserAdminUpdateRequestDto req = new UserAdminUpdateRequestDto("Updated", "User", Role.ADMIN);
 
-        mockMvc.perform(delete("/users/{id}", normalUserId))
-                .andExpect(status().isNoContent());
+        adminHeaders.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<UserAdminUpdateRequestDto> entity = new HttpEntity<>(req, adminHeaders);
 
+        ResponseEntity<UserProfileResponseDto> response = restTemplate.exchange("/users/{id}", HttpMethod.PUT, entity,
+                UserProfileResponseDto.class, normalUserId);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().role()).isEqualTo(Role.ADMIN);
+        assertThat(response.getBody().firstName()).isEqualTo("Updated");
+    }
+
+    @Test
+    void updateUser_NonExisting_ShouldReturn404() {
+        long nonexistentId = 9_999L;
+
+        UserAdminUpdateRequestDto req = new UserAdminUpdateRequestDto("Foo", "Bar", Role.USER);
+
+        adminHeaders.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<UserAdminUpdateRequestDto> entity = new HttpEntity<>(req, adminHeaders);
+
+        ResponseEntity<String> response = restTemplate.exchange("/users/{id}", HttpMethod.PUT, entity, String.class,
+                nonexistentId);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    void updateUser_InvalidPayload_ShouldReturn400() throws Exception {
+        UserAdminUpdateRequestDto req = new UserAdminUpdateRequestDto("", "", Role.USER);
+
+        adminHeaders.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(req), adminHeaders);
+
+        ResponseEntity<String> response = restTemplate.exchange("/users/{id}", HttpMethod.PUT, entity, String.class,
+                normalUserId);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void deleteUser_AsAdmin_ShouldRemoveUser() {
+        HttpEntity<Void> entity = new HttpEntity<>(adminHeaders);
+
+        ResponseEntity<Void> response = restTemplate.exchange("/users/{id}", HttpMethod.DELETE, entity, Void.class,
+                normalUserId);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         assertThat(userRepository.findById(normalUserId)).isEmpty();
     }
 
     @Test
-    void deleteNonExistingUser_AsAdmin_ShouldReturn404() throws Exception {
-        mockAuthentication(adminId, "ADMIN");
+    void deleteUser_NonExisting_ShouldReturn404() {
+        HttpEntity<Void> entity = new HttpEntity<>(adminHeaders);
+        long nonexistentId = 8_888L;
 
-        Long nonexistentId = 9_999L;
+        ResponseEntity<String> response = restTemplate.exchange("/users/{id}", HttpMethod.DELETE, entity, String.class,
+                nonexistentId);
 
-        mockMvc.perform(delete("/users/{id}", nonexistentId))
-                .andExpect(status().isNotFound());
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 }

@@ -3,21 +3,8 @@ package com.petros.bookstore.config;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import com.petros.bookstore.service.UserService;
-import org.springframework.core.io.Resource;
 import com.petros.bookstore.service.JwtService;
-import lombok.Getter;
-import lombok.Setter;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtEncoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-
+import com.petros.bookstore.service.UserService;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.interfaces.RSAPrivateKey;
@@ -26,6 +13,14 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.Duration;
 import java.util.Base64;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.Resource;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 
 @Configuration
 public class JwtConfig {
@@ -42,10 +37,8 @@ public class JwtConfig {
     @Bean
     public RSAPublicKey publicKey() throws Exception {
         try (var is = publicKeyResource.getInputStream()) {
-            String key = new String(is.readAllBytes(), StandardCharsets.UTF_8)
-                    .replace("-----BEGIN PUBLIC KEY-----", "")
-                    .replace("-----END PUBLIC KEY-----", "")
-                    .replaceAll("\\s+", "");
+            String key = new String(is.readAllBytes(), StandardCharsets.UTF_8).replace("-----BEGIN PUBLIC KEY-----", "")
+                    .replace("-----END PUBLIC KEY-----", "").replaceAll("\\s+", "");
 
             byte[] decoded = Base64.getDecoder().decode(key);
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(decoded);
@@ -58,8 +51,7 @@ public class JwtConfig {
     public RSAPrivateKey privateKey() throws Exception {
         try (var is = privateKeyResource.getInputStream()) {
             String key = new String(is.readAllBytes(), StandardCharsets.UTF_8)
-                    .replace("-----BEGIN PRIVATE KEY-----", "")
-                    .replace("-----END PRIVATE KEY-----", "")
+                    .replace("-----BEGIN PRIVATE KEY-----", "").replace("-----END PRIVATE KEY-----", "")
                     .replaceAll("\\s+", "");
 
             byte[] decoded = Base64.getDecoder().decode(key);
@@ -82,9 +74,7 @@ public class JwtConfig {
 
     @Bean
     public JwtService jwtService(UserService userService, @Value("${spring.application.name}") String appName,
-                                 JwtEncoder jwtEncoder) {
+            JwtEncoder jwtEncoder) {
         return new JwtService(userService, appName, ttl, jwtEncoder);
     }
 }
-
-

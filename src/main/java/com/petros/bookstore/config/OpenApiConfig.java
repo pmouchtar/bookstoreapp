@@ -1,7 +1,5 @@
 package com.petros.bookstore.config;
 
-
-
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -15,17 +13,9 @@ public class OpenApiConfig {
 
     @Bean
     public OpenAPI openAPI() {
-        return new OpenAPI()
-                .info(new Info().title("BookStore").version("v1"))
+        return new OpenAPI().info(new Info().title("BookStore").version("v1"))
                 .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
-                .components(new Components()
-                        .addSecuritySchemes("bearerAuth",
-                                new SecurityScheme()
-                                        .name("Authorization")
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("bearer")
-                                        .bearerFormat("JWT")
-                        )
-                );
+                .components(new Components().addSecuritySchemes("bearerAuth", new SecurityScheme().name("Authorization")
+                        .type(SecurityScheme.Type.HTTP).scheme("bearer").bearerFormat("JWT")));
     }
 }

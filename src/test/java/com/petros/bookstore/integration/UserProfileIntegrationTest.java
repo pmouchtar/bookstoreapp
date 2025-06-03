@@ -1,54 +1,42 @@
 package com.petros.bookstore.integration;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.AbstractPostgresContainerTest;
-import com.petros.bookstore.dto.UserProfileUpdateRequest;
+import com.petros.bookstore.dto.UserDTO.UserProfileResponseDto;
+import com.petros.bookstore.dto.UserDTO.UserProfileUpdateRequestDto;
 import com.petros.bookstore.model.User;
 import com.petros.bookstore.model.enums.Role;
 import com.petros.bookstore.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-
+/** Integration tests for user-only endpoints using TestRestTemplate. */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class UserProfileIntegrationTest extends AbstractPostgresContainerTest{
+class UserProfileIntegrationTest extends AbstractPostgresContainerTest {
 
     @Autowired
-    private MockMvc mockMvc;
+    private TestRestTemplate restTemplate;
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     private Long testUserId;
+    private HttpHeaders headers;
 
     @BeforeEach
     void setUp() {
@@ -62,86 +50,73 @@ public class UserProfileIntegrationTest extends AbstractPostgresContainerTest{
         user.setRole(Role.USER);
 
         testUserId = userRepository.save(user).getId();
-    }
 
-
-    //mockAuthentication is used because the controller works with (authentication). Otherwise, nullPointerException is thrown
-    private void mockAuthenticationWithUserId(Long userId) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("userId", userId);
-
-        Jwt jwt = new Jwt(
-                "fake-token",         // token value
-                Instant.now(),
-                Instant.now().plusSeconds(3600),
-                Map.of("alg", "none"),  // headers
-                claims
-        );
-
-        List<GrantedAuthority> authorities = List.of(() -> "ROLE_USER");
-
-        JwtAuthenticationToken auth = new JwtAuthenticationToken(jwt, authorities, "user-" + userId);
-        auth.setAuthenticated(true);
-
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
-        context.setAuthentication(auth);
-        SecurityContextHolder.setContext(context);
-    }
-
-
-    @Test
-    void testGetUserProfile() throws Exception {
-        mockAuthenticationWithUserId(testUserId);
-
-        mockMvc.perform(get("/users/me"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("petrosdev"));
+        headers = new HttpHeaders();
+        headers.add("X-USER-ID", testUserId.toString()); // magic header for the DummyJwtFilter
     }
 
     @Test
-    void testUpdateUserProfile() throws Exception {
-        mockAuthenticationWithUserId(testUserId);
+    void testGetUserProfile() {
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
 
-        UserProfileUpdateRequest updateRequest = new UserProfileUpdateRequest();
-        updateRequest.setFirstName("Updated");
-        updateRequest.setLastName("Name");
-        updateRequest.setUsername("updateduser");
-        updateRequest.setPassword("Newpass123");
+        ResponseEntity<UserProfileResponseDto> response = restTemplate.exchange("/users/me", HttpMethod.GET, entity,
+                UserProfileResponseDto.class);
 
-        mockMvc.perform(put("/users/me")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName").value("Updated"))
-                .andExpect(jsonPath("$.username").value("updateduser"));
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().username()).isEqualTo("petrosdev");
     }
 
     @Test
-    void testDeleteUserProfile() throws Exception {
-        mockAuthenticationWithUserId(testUserId);
+    void testUpdateUserProfile() {
+        UserProfileUpdateRequestDto updateRequest = new UserProfileUpdateRequestDto("Updated", "Name", "updateduser",
+                "Newpass123");
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<UserProfileUpdateRequestDto> entity = new HttpEntity<>(updateRequest, headers);
 
-        mockMvc.perform(delete("/users/me"))
-                .andExpect(status().isNoContent());
+        ResponseEntity<UserProfileResponseDto> response = restTemplate.exchange("/users/me", HttpMethod.PUT, entity,
+                UserProfileResponseDto.class);
 
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody().firstName()).isEqualTo("Updated");
+        assertThat(response.getBody().username()).isEqualTo("updateduser");
+    }
+
+    @Test
+    void testDeleteUserProfile() {
+        HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<Void> response = restTemplate.exchange("/users/me", HttpMethod.DELETE, entity, Void.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
         assertThat(userRepository.findById(testUserId)).isEmpty();
     }
 
     @Test
-    void testUpdateUserProfile_WithInvalidPassword_ShouldReturn400() throws Exception {
-        mockAuthenticationWithUserId(testUserId);
+    void testUpdateUserProfile_WithInvalidPassword_ShouldReturn400() {
+        UserProfileUpdateRequestDto updateRequest = new UserProfileUpdateRequestDto("Petros", "Papadopoulos",
+                "petrosdev", "123");
 
-        UserProfileUpdateRequest updateRequest = new UserProfileUpdateRequest();
-        updateRequest.setFirstName("Petros");
-        updateRequest.setLastName("Papadopoulos");
-        updateRequest.setUsername("petrosdev");
-        updateRequest.setPassword("123"); // invalid password
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<UserProfileUpdateRequestDto> entity = new HttpEntity<>(updateRequest, headers);
 
-        mockMvc.perform(put("/users/me")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updateRequest)))
-                .andExpect(status().isBadRequest());
+        ResponseEntity<String> response = restTemplate.exchange("/users/me", HttpMethod.PUT, entity, String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    void testUpdateUserProfile_ShouldReturn400_WhenMissingFields() {
+        UserProfileUpdateRequestDto request = new UserProfileUpdateRequestDto("", null, null, null);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<UserProfileUpdateRequestDto> entity = new HttpEntity<>(request, headers);
+
+        var response = restTemplate.exchange("/users/me?userId=" + testUserId, HttpMethod.PUT, entity, String.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 }
-
-
-

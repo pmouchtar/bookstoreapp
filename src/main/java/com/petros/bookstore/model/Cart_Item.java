@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "cart_items",uniqueConstraints = @UniqueConstraint(columnNames = {"book_id", "shopping_cart_id"}))
+@Table(name = "cart_items", uniqueConstraints = @UniqueConstraint(columnNames = {"book_id", "shopping_cart_id"}))
 public class Cart_Item {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

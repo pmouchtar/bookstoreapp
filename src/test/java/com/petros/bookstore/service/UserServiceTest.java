@@ -1,27 +1,25 @@
 package com.petros.bookstore.service;
 
-import com.petros.bookstore.dto.UserAdminUpdateRequest;
-import com.petros.bookstore.dto.UserProfileResponseDto;
-import com.petros.bookstore.dto.UserProfileUpdateRequest;
-import com.petros.bookstore.exception.ResourceGoneException;
-import com.petros.bookstore.exception.ResourceNotFoundException;
-import com.petros.bookstore.mapper.UserMapper;
+import static com.petros.bookstore.model.enums.Role.USER;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import com.petros.bookstore.dto.UserDTO.UserAdminUpdateRequestDto;
+import com.petros.bookstore.dto.UserDTO.UserProfileResponseDto;
+import com.petros.bookstore.dto.UserDTO.UserProfileUpdateRequestDto;
+import com.petros.bookstore.exception.customException.ResourceGoneException;
+import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.model.User;
 import com.petros.bookstore.model.enums.Role;
 import com.petros.bookstore.repository.UserRepository;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
 import org.springframework.data.domain.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.List;
-import java.util.Optional;
-
-import static com.petros.bookstore.model.enums.Role.USER;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
 class UserServiceTest {
@@ -58,14 +56,13 @@ class UserServiceTest {
     void testGetUserByUsernameGone() {
         when(userRepository.findByUsername("john_doe")).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> userService.getUserByUsername("john_doe"))
-                .isInstanceOf(ResourceGoneException.class)
+        assertThatThrownBy(() -> userService.getUserByUsername("john_doe")).isInstanceOf(ResourceGoneException.class)
                 .hasMessage("The user account has been deleted or inactivated");
     }
 
     @Test
     void testUpdateUserProfile() {
-        UserProfileUpdateRequest updateRequest = new UserProfileUpdateRequest("Jane", null, null, "newpass");
+        UserProfileUpdateRequestDto updateRequest = new UserProfileUpdateRequestDto("Jane", null, null, "newpass");
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(passwordEncoder.encode("newpass")).thenReturn("encoded_pass");
@@ -84,9 +81,9 @@ class UserServiceTest {
     void testUpdateUserProfileUserNotFound() {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> userService.updateUserProfile(1L, new UserProfileUpdateRequest()))
-                .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage("User with ID 1 not found.");
+        assertThatThrownBy(
+                () -> userService.updateUserProfile(1L, new UserProfileUpdateRequestDto(null, null, null, null)))
+                .isInstanceOf(ResourceNotFoundException.class).hasMessage("User with ID 1 not found.");
     }
 
     @Test
@@ -127,14 +124,13 @@ class UserServiceTest {
     void testFindUserByIdNotFound() {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> userService.findUserById(1L))
-                .isInstanceOf(ResourceNotFoundException.class)
+        assertThatThrownBy(() -> userService.findUserById(1L)).isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("User with ID 1 not found.");
     }
 
     @Test
     void testUpdateUserById() {
-        UserAdminUpdateRequest updateRequest = new UserAdminUpdateRequest("Updated", null, Role.ADMIN);
+        UserAdminUpdateRequestDto updateRequest = new UserAdminUpdateRequestDto("Updated", null, Role.ADMIN);
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(user);
@@ -151,9 +147,8 @@ class UserServiceTest {
     void testUpdateUserByIdNotFound() {
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> userService.updateUserById(1L, new UserAdminUpdateRequest()))
-                .isInstanceOf(ResourceNotFoundException.class)
-                .hasMessage("User with ID 1 not found.");
+        assertThatThrownBy(() -> userService.updateUserById(1L, new UserAdminUpdateRequestDto(null, null, null)))
+                .isInstanceOf(ResourceNotFoundException.class).hasMessage("User with ID 1 not found.");
     }
 
     @Test
@@ -170,8 +165,7 @@ class UserServiceTest {
     void testDeleteUserByIdNotFound() {
         when(userRepository.existsById(1L)).thenReturn(false);
 
-        assertThatThrownBy(() -> userService.deleteUserById(1L))
-                .isInstanceOf(ResourceNotFoundException.class)
+        assertThatThrownBy(() -> userService.deleteUserById(1L)).isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("User with ID 1 not found.");
     }
 }

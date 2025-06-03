@@ -1,17 +1,25 @@
 package com.petros.bookstore.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.TestSecurityConfig;
-import com.petros.bookstore.dto.BookRequest;
-import com.petros.bookstore.dto.BookResponse;
-import com.petros.bookstore.dto.BookUpdateRequest;
-import com.petros.bookstore.exception.ResourceNotFoundException;
+import com.petros.bookstore.dto.BookDTO.BookRequestDto;
+import com.petros.bookstore.dto.BookDTO.BookResponseDto;
+import com.petros.bookstore.dto.BookDTO.BookUpdateRequestDto;
+import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.model.enums.Genre;
 import com.petros.bookstore.repository.BookRepository;
 import com.petros.bookstore.service.BookService;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -20,21 +28,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-
-@WebMvcTest(BookController.class)
+@WebMvcTest(BookUserController.class)
 @Import(TestSecurityConfig.class)
 @ActiveProfiles("test")
 class BookControllerTest {
@@ -72,62 +69,52 @@ class BookControllerTest {
     @Test
     @DisplayName("GET /books - search by title and genre - books found")
     void testSearchBooksFound() throws Exception {
-        BookResponse book1 = new BookResponse(1L, "Title 1", "Author 1", "Description", 12.99, 10, Genre.SCIENCE_FICTION);
-        BookResponse book2 = new BookResponse(2L, "Title 2", "Author 2", "Description", 15.99, 5, Genre.FANTASY);
-        List<BookResponse> books = Arrays.asList(book1, book2);
-        Page<BookResponse> page = new PageImpl<>(books, PageRequest.of(0, 10), books.size());
+        BookResponseDto book1 = new BookResponseDto(1L, "Title 1", "Author 1", "Description", 12.99, 10,
+                Genre.SCIENCE_FICTION);
+        BookResponseDto book2 = new BookResponseDto(2L, "Title 2", "Author 2", "Description", 15.99, 5, Genre.FANTASY);
+        List<BookResponseDto> books = Arrays.asList(book1, book2);
+        Page<BookResponseDto> page = new PageImpl<>(books, PageRequest.of(0, 10), books.size());
 
         when(bookService.searchBooks(any(), any(), any(), any(), any(), any(), any())).thenReturn(page);
 
-        mockMvc.perform(get("/books")
-                        .param("title", "Title")
-                        .param("genre", "SCIENCE_FICTION")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id").value(1L))
-                .andExpect(jsonPath("$.content[1].id").value(2L));
+        mockMvc.perform(get("/books").param("title", "Title").param("genre", "SCIENCE_FICTION")
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(1L)).andExpect(jsonPath("$.content[1].id").value(2L));
     }
 
     @Test
     @DisplayName("GET /books - search by title and genre - no books found")
     void testSearchBooksNotFound() throws Exception {
-        Page<BookResponse> page = new PageImpl<>(List.of(), PageRequest.of(0, 10), 0);
+        Page<BookResponseDto> page = new PageImpl<>(List.of(), PageRequest.of(0, 10), 0);
         when(bookService.searchBooks(any(), any(), any(), any(), any(), any(), any())).thenReturn(page);
 
-        mockMvc.perform(get("/books")
-                        .param("title", "Nonexistent")
-                        .param("genre", "SCIENCE_FICTION")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+        mockMvc.perform(get("/books").param("title", "Nonexistent").param("genre", "SCIENCE_FICTION")
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isEmpty());
     }
 
     @Test
     @DisplayName("POST /books - success")
     void testAddBook() throws Exception {
-        BookRequest request = new BookRequest("Title", "Author", "Description", 12.99, 10, Genre.SCIENCE_FICTION);
-        BookResponse response = new BookResponse(1L, "Title", "Author", "Description", 12.99, 10, Genre.SCIENCE_FICTION);
+        BookRequestDto request = new BookRequestDto("Title", "Author", "Description", 12.99, 10, Genre.SCIENCE_FICTION);
+        BookResponseDto response = new BookResponseDto(1L, "Title", "Author", "Description", 12.99, 10,
+                Genre.SCIENCE_FICTION);
 
-        when(bookService.save(any(BookRequest.class))).thenReturn(response);
+        when(bookService.save(any(BookRequestDto.class))).thenReturn(response);
 
-        mockMvc.perform(post("/books")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
+        mockMvc.perform(post("/books").contentType(MediaType.APPLICATION_JSON).content(asJsonString(request)))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.title").value("Title"));
     }
 
     @Test
     @DisplayName("GET /books/{id} - found")
     void testGetBookById() throws Exception {
-        BookResponse response = new BookResponse(1L, "Title", "Author", "Desc", 10.99, 5, Genre.SCIENCE_FICTION);
+        BookResponseDto response = new BookResponseDto(1L, "Title", "Author", "Desc", 10.99, 5, Genre.SCIENCE_FICTION);
 
         when(bookService.findBookById(1L)).thenReturn(response);
 
-        mockMvc.perform(get("/books/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L));
+        mockMvc.perform(get("/books/1")).andExpect(status().isOk()).andExpect(jsonPath("$.id").value(1L));
     }
 
     @Test
@@ -135,28 +122,25 @@ class BookControllerTest {
     void testGetBookNotFound() throws Exception {
         Long invalidBookId = 999L;
 
-        when(bookService.findBookById(invalidBookId)).thenThrow(new ResourceNotFoundException("Book with ID " + invalidBookId + " not found"));
+        when(bookService.findBookById(invalidBookId))
+                .thenThrow(new ResourceNotFoundException("Book with ID " + invalidBookId + " not found"));
 
-        mockMvc.perform(get("/books/{bookId}", invalidBookId))
-                .andExpect(status().isNotFound())
+        mockMvc.perform(get("/books/{bookId}", invalidBookId)).andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Book with ID " + invalidBookId + " not found"));
     }
 
     @Test
     @DisplayName("PUT /books/{id} - update")
     void testUpdateBook() throws Exception {
-        BookUpdateRequest updateRequest = new BookUpdateRequest();
-        updateRequest.setTitle("Updated Title");
+        BookUpdateRequestDto updateRequest = new BookUpdateRequestDto("Updated Title", null, null, null, null, null);
 
-        BookResponse updatedResponse = new BookResponse(1L, "Updated Title", "Author", "Desc", 10.99, 5, Genre.SCIENCE_FICTION);
+        BookResponseDto updatedResponse = new BookResponseDto(1L, "Updated Title", "Author", "Desc", 10.99, 5,
+                Genre.SCIENCE_FICTION);
 
-        when(bookService.updateBook(Mockito.eq(1L), any(BookUpdateRequest.class))).thenReturn(updatedResponse);
+        when(bookService.updateBook(Mockito.eq(1L), any(BookUpdateRequestDto.class))).thenReturn(updatedResponse);
 
-        mockMvc.perform(put("/books/1")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(asJsonString(updateRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value("Updated Title"));
+        mockMvc.perform(put("/books/1").contentType(MediaType.APPLICATION_JSON).content(asJsonString(updateRequest)))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.title").value("Updated Title"));
     }
 
     @Test
@@ -164,8 +148,7 @@ class BookControllerTest {
     void testDeleteBook() throws Exception {
         when(bookService.deleteBookById(1L)).thenReturn(true);
 
-        mockMvc.perform(delete("/books/1"))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(delete("/books/1")).andExpect(status().isNoContent());
     }
 
     @Test
@@ -173,7 +156,6 @@ class BookControllerTest {
     void testDeleteBookNotFound() throws Exception {
         when(bookService.deleteBookById(99L)).thenReturn(false);
 
-        mockMvc.perform(delete("/books/99"))
-                .andExpect(status().isNoContent());
+        mockMvc.perform(delete("/books/99")).andExpect(status().isNoContent());
     }
 }

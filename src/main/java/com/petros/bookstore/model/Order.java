@@ -1,13 +1,15 @@
 package com.petros.bookstore.model;
 
+import com.petros.bookstore.model.enums.Status;
 import jakarta.persistence.*;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import com.petros.bookstore.model.enums.Status;
-
-import java.sql.Timestamp;
 
 @Entity
 @Getter
@@ -24,12 +26,16 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String status;
+    private Status status;
 
     @Column(nullable = false)
-    private float total_price;
+    private Double total_price;
 
     @Column(nullable = false)
     private Timestamp order_date;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order_Item> orderItems = new ArrayList<>();
 }

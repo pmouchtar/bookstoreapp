@@ -1,18 +1,23 @@
 package com.petros.bookstore.service;
 
-import com.petros.bookstore.dto.CartItemRequest;
-import com.petros.bookstore.dto.CartItemResponse;
-import com.petros.bookstore.dto.CartItemUpdateRequest;
-import com.petros.bookstore.exception.ResourceNotFoundException;
+import com.petros.bookstore.dto.CartItemDTO.CartItemRequestDto;
+import com.petros.bookstore.dto.CartItemDTO.CartItemResponseDto;
+import com.petros.bookstore.dto.CartItemDTO.CartItemUpdateRequestDto;
+import com.petros.bookstore.exception.customException.ResourceNotFoundException;
+import com.petros.bookstore.mapper.CartItemMapper;
 import com.petros.bookstore.model.*;
 import com.petros.bookstore.repository.*;
-import com.petros.bookstore.mapper.CartItemMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+/**
+ * Service class responsible for managing the shopping cart functionality
+ * including adding items, retrieving cart contents, updating item quantities,
+ * and removing items.
+ */
 @Service
 @RequiredArgsConstructor
 public class ShoppingCartService {
@@ -22,42 +27,62 @@ public class ShoppingCartService {
     private final BookRepository bookRepo;
     private final UserRepository userRepo;
 
+    /**
+     * Adds a book to the user's shopping cart. If the cart or the item doesn't
+     * exist, it will be created. If the item already exists in the cart, its
+     * quantity is updated.
+     *
+     * @param userId
+     *            ID of the user
+     * @param request
+     *            DTO containing the book ID and desired quantity
+     * @return DTO representing the added or updated cart item
+     * @throws ResourceNotFoundException
+     *             if user or book is not found
+     */
     @Transactional
-    public CartItemResponse addToCart(Long userId, CartItemRequest request) {
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    public CartItemResponseDto addToCart(Long userId, CartItemRequestDto request) {
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Book book = bookRepo.findById(request.getBookId())
+        Book book = bookRepo.findById(request.bookId())
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
 
-        Shopping_Cart cart = cartRepo.findByUser(user)
-                .orElseGet(() -> {  //if, for some reason, user's cart doesn't exist
-                    Shopping_Cart c = new Shopping_Cart();
-                    c.setUser(user);
-                    return cartRepo.save(c);
-                });
+        Shopping_Cart cart = cartRepo.findByUser(user).orElseGet(() -> {
+            Shopping_Cart c = new Shopping_Cart();
+            c.setUser(user);
+            return cartRepo.save(c);
+        });
 
         Cart_Item item = itemRepo.findByShoppingCartAndBook(cart, book).orElse(null);
         if (item == null) {
             item = new Cart_Item();
             item.setShoppingCart(cart);
             item.setBook(book);
-            item.setQuantity(request.getQuantity());
+            item.setQuantity(request.quantity());
         } else {
-            item.setQuantity(item.getQuantity() + request.getQuantity());
+            item.setQuantity(item.getQuantity() + request.quantity());
         }
 
         Cart_Item saved = itemRepo.save(item);
         return CartItemMapper.toDto(saved);
     }
 
+    /**
+     * Retrieves a paginated list of items in the user's shopping cart.
+     *
+     * @param userId
+     *            ID of the user
+     * @param pageable
+     *            pagination information
+     * @return a page of cart item DTOs
+     * @throws ResourceNotFoundException
+     *             if user is not found
+     */
     @Transactional
-    public Page<CartItemResponse> getCartItems(Long userId, Pageable pageable) {
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    public Page<CartItemResponseDto> getCartItems(Long userId, Pageable pageable) {
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        Shopping_Cart cart = cartRepo.findByUser(user)
-                .orElse(null);
+        Shopping_Cart cart = cartRepo.findByUser(user).orElse(null);
 
         if (cart == null) {
             return Page.empty(pageable);
@@ -66,23 +91,47 @@ public class ShoppingCartService {
         return itemRepo.findByShoppingCart(cart, pageable).map(CartItemMapper::toDto);
     }
 
+    /**
+     * Retrieves a single cart item by its ID, ensuring it belongs to the specified
+     * user.
+     *
+     * @param itemId
+     *            ID of the cart item
+     * @param userId
+     *            ID of the user
+     * @return DTO of the found cart item
+     * @throws ResourceNotFoundException
+     *             if the item is not found or does not belong to the user
+     */
     @Transactional
-    public CartItemResponse findItemById(Long itemId, Long userId) {
-        Cart_Item item = itemRepo.findById(itemId)
-                .filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
+    public CartItemResponseDto findItemById(Long itemId, Long userId) {
+        Cart_Item item = itemRepo.findById(itemId).filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
                 .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
 
         return CartItemMapper.toDto(item);
     }
 
+    /**
+     * Updates the quantity of a cart item. If the new quantity is 0, the item is
+     * removed from the cart.
+     *
+     * @param itemId
+     *            ID of the cart item to update
+     * @param request
+     *            DTO containing the new quantity
+     * @param userId
+     *            ID of the user
+     * @return DTO of the updated cart item, or null if the item was deleted
+     * @throws ResourceNotFoundException
+     *             if the item is not found or does not belong to the user
+     */
     @Transactional
-    public CartItemResponse updateCartItem(Long itemId, CartItemUpdateRequest request, Long userId) {
-        Cart_Item item = itemRepo.findById(itemId)
-                .filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
+    public CartItemResponseDto updateCartItem(Long itemId, CartItemUpdateRequestDto request, Long userId) {
+        Cart_Item item = itemRepo.findById(itemId).filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
                 .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
 
-        int newQty = request.getQuantity();
-        if (newQty <= 0) {
+        int newQty = request.quantity();
+        if (newQty == 0) {
             itemRepo.delete(item);
             return null;
         }
@@ -91,10 +140,19 @@ public class ShoppingCartService {
         return CartItemMapper.toDto(saved);
     }
 
+    /**
+     * Removes a cart item from the user's shopping cart.
+     *
+     * @param userId
+     *            ID of the user
+     * @param itemId
+     *            ID of the cart item to remove
+     * @throws ResourceNotFoundException
+     *             if the item is not found or does not belong to the user
+     */
     @Transactional
     public void removeFromCart(Long userId, Long itemId) {
-        Cart_Item item = itemRepo.findById(itemId)
-                .filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
+        Cart_Item item = itemRepo.findById(itemId).filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
                 .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
         itemRepo.delete(item);
     }

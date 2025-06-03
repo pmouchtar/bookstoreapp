@@ -1,13 +1,8 @@
 package com.petros.bookstore.model;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import com.petros.bookstore.model.enums.Genre;
-
-import java.math.BigDecimal;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Getter

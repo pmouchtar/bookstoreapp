@@ -1,12 +1,12 @@
 package com.petros.bookstore.mapper;
 
-import com.petros.bookstore.dto.RegistrationRequestDto;
-import com.petros.bookstore.dto.RegistrationResponseDto;
+import com.petros.bookstore.dto.RegistrationDTO.RegistrationRequestDto;
+import com.petros.bookstore.dto.RegistrationDTO.RegistrationResponseDto;
 import com.petros.bookstore.model.User;
 import org.springframework.stereotype.Component;
 
 @Component
-public class UserRegistrationMapper {
+public final class UserRegistrationMapper {
 
     public User toEntity(RegistrationRequestDto registrationRequestDto) {
         final var user = new User();
@@ -19,11 +19,8 @@ public class UserRegistrationMapper {
         return user;
     }
 
-    public RegistrationResponseDto toRegistrationResponseDto(
-            final User user) {
+    public RegistrationResponseDto toRegistrationResponseDto(final User user) {
 
-        return new RegistrationResponseDto(
-                user.getUsername(), user.getFirstName(), user.getLastName(), user.getRole());
+        return new RegistrationResponseDto(user.getUsername(), user.getFirstName(), user.getLastName(), user.getRole());
     }
-
 }

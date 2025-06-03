@@ -1,20 +1,19 @@
 package com.petros.bookstore.model;
 
 import jakarta.persistence.*;
+import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.time.Instant;
-
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "favourite_books",uniqueConstraints = @UniqueConstraint(columnNames = {"book_id", "user_id"}))
+@Table(name = "favourite_books", uniqueConstraints = @UniqueConstraint(columnNames = {"book_id", "user_id"}))
 public class Favourite_Book {
 
     @Id
@@ -31,5 +30,4 @@ public class Favourite_Book {
 
     @CreationTimestamp
     private Instant createdAt;
-
 }
