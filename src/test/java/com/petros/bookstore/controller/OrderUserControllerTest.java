@@ -6,8 +6,10 @@ import com.petros.bookstore.config.TestSecurityConfig;
 import com.petros.bookstore.config.TestServiceConfig;
 import com.petros.bookstore.dto.OrderDTO.OrderResponseDto;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
-import com.petros.bookstore.model.enums.Status;
+import com.petros.bookstore.enums.Status;
 import com.petros.bookstore.service.OrderService;
+import com.petros.bookstore.utils.AuthUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +47,15 @@ class OrderUserControllerTest {
     ObjectMapper mapper;
 
     @Autowired
+    AuthUtils authUtils;
+
+    @Autowired
     OrderService orderService;
+
+    @BeforeEach
+    void setup() {
+        Mockito.when(authUtils.extractUserId()).thenReturn(USER_ID);
+    }
 
     @Test
     void placeOrder_success() throws Exception {

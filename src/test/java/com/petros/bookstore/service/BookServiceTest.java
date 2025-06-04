@@ -8,7 +8,7 @@ import com.petros.bookstore.dto.BookDTO.BookResponseDto;
 import com.petros.bookstore.dto.BookDTO.BookUpdateRequestDto;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.model.Book;
-import com.petros.bookstore.model.enums.Genre;
+import com.petros.bookstore.enums.Genre;
 import com.petros.bookstore.repository.BookRepository;
 import java.util.List;
 import java.util.Optional;

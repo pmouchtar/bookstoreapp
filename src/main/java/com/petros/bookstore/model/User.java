@@ -1,6 +1,6 @@
 package com.petros.bookstore.model;
 
-import com.petros.bookstore.model.enums.Role;
+import com.petros.bookstore.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 

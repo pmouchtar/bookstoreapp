@@ -1,6 +1,6 @@
 package com.petros.bookstore.model;
 
-import com.petros.bookstore.model.enums.Status;
+import com.petros.bookstore.enums.Status;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;

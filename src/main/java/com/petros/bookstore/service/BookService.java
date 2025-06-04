@@ -6,7 +6,7 @@ import com.petros.bookstore.dto.BookDTO.BookUpdateRequestDto;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.mapper.BookMapper;
 import com.petros.bookstore.model.Book;
-import com.petros.bookstore.model.enums.Genre;
+import com.petros.bookstore.enums.Genre;
 import com.petros.bookstore.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

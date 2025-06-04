@@ -7,11 +7,18 @@ import com.petros.bookstore.config.TestServiceConfig;
 import com.petros.bookstore.dto.FavouriteBookDTO.FavouriteBookRequestDto;
 import com.petros.bookstore.dto.FavouriteBookDTO.FavouriteBookResponseDto;
 import com.petros.bookstore.exception.customException.ResourceAlreadyExistsException;
+import com.petros.bookstore.repository.BookRepository;
+import com.petros.bookstore.repository.FavouriteBookRepository;
+import com.petros.bookstore.service.BookService;
 import com.petros.bookstore.service.FavouriteBookService;
+import com.petros.bookstore.utils.AuthUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -32,8 +39,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(FavouriteBookUserController.class)
-@Import({TestServiceConfig.class, TestSecurityConfig.class, TestDummyJwtFilter.class})
+@WebMvcTest(controllers = FavouriteBookUserController.class)
+@Import({TestSecurityConfig.class, TestServiceConfig.class, TestDummyJwtFilter.class})
 @ActiveProfiles("test")
 class FavouriteBookUserControllerTest {
 
@@ -44,10 +51,17 @@ class FavouriteBookUserControllerTest {
     private FavouriteBookService favouriteService;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private AuthUtils authUtils;
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private static final String BASE_URL = "/users/me/favourite-books";
     private static final String HEADER = "X-USER-ID";
+
+    @BeforeEach
+    void setup() {
+        Mockito.when(authUtils.extractUserId()).thenReturn(123L);
+    }
 
     @Test
     void testAddFavouriteBook() throws Exception {

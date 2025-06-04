@@ -1,6 +1,6 @@
 package com.petros.bookstore.dto.BookDTO;
 
-import com.petros.bookstore.model.enums.Genre;
+import com.petros.bookstore.enums.Genre;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;

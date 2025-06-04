@@ -1,6 +1,6 @@
 package com.petros.bookstore.service;
 
-import static com.petros.bookstore.model.enums.Role.USER;
+import static com.petros.bookstore.enums.Role.USER;
 
 import com.petros.bookstore.dto.AuthDTO.AuthenticationRequestDto;
 import com.petros.bookstore.dto.AuthDTO.AuthenticationResponseDto;

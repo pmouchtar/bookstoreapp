@@ -1,7 +1,7 @@
 package com.petros.bookstore.repository;
 
 import com.petros.bookstore.model.Book;
-import com.petros.bookstore.model.enums.Genre;
+import com.petros.bookstore.enums.Genre;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

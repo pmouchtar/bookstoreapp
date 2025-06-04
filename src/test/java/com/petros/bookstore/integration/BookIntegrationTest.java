@@ -6,7 +6,7 @@ import com.petros.bookstore.dto.BookDTO.BookRequestDto;
 import com.petros.bookstore.dto.BookDTO.BookResponseDto;
 import com.petros.bookstore.dto.BookDTO.BookUpdateRequestDto;
 import com.petros.bookstore.dto.PaginationDTO.PaginatedResponseDto;
-import com.petros.bookstore.model.enums.Genre;
+import com.petros.bookstore.enums.Genre;
 import com.petros.bookstore.repository.BookRepository;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

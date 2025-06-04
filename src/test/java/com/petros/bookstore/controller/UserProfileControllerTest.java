@@ -8,8 +8,10 @@ import com.petros.bookstore.dto.UserDTO.UserProfileResponseDto;
 import com.petros.bookstore.dto.UserDTO.UserProfileUpdateRequestDto;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.model.User;
-import com.petros.bookstore.model.enums.Role;
+import com.petros.bookstore.enums.Role;
 import com.petros.bookstore.service.UserService;
+import com.petros.bookstore.utils.AuthUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,10 +38,20 @@ class UserProfileControllerTest {
 
     @Autowired
     MockMvc mockMvc;
+
     @Autowired
     ObjectMapper mapper;
+
+    @Autowired
+    AuthUtils authUtils;
+
     @Autowired
     UserService userService; // mock
+
+    @BeforeEach
+    void setup() {
+        Mockito.when(authUtils.extractUserId()).thenReturn(USER_ID);
+    }
 
     @Test
     void getUserProfile_success() throws Exception {

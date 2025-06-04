@@ -60,7 +60,7 @@ public class BookAdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{bookId}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long bookId) {
-        boolean deleted = bookService.deleteBookById(bookId);
+        bookService.deleteBookById(bookId);
         return ResponseEntity.noContent().build();
     }
 }

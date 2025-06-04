@@ -43,9 +43,11 @@ public class UserAdminController {
             @RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName,
             Pageable pageable) {
 
-        Page<UserProfileResponseDto> result = (username != null || firstName != null || lastName != null)
-                ? userService.searchUsers(username, firstName, lastName, pageable)
-                : userService.findAll(pageable);
+        Page<UserProfileResponseDto> result = userService.searchUsers(username, firstName, lastName, pageable);
+
+//        Page<UserProfileResponseDto> result = (username != null || firstName != null || lastName != null)
+//                ? userService.searchUsers(username, firstName, lastName, pageable)
+//                : userService.findAll(pageable);
 
         return ResponseEntity.ok(result);
     }

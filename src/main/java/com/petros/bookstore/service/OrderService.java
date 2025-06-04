@@ -5,7 +5,7 @@ import com.petros.bookstore.dto.OrderDTO.OrderStatusUpdateRequestDto;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.mapper.OrderMapper;
 import com.petros.bookstore.model.*;
-import com.petros.bookstore.model.enums.Status;
+import com.petros.bookstore.enums.Status;
 import com.petros.bookstore.repository.*;
 import jakarta.transaction.Transactional;
 import java.sql.Timestamp;

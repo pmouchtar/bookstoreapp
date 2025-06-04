@@ -7,7 +7,7 @@ import com.petros.bookstore.exception.customException.ResourceGoneException;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.mapper.UserMapper;
 import com.petros.bookstore.model.User;
-import com.petros.bookstore.model.enums.Role;
+import com.petros.bookstore.enums.Role;
 import com.petros.bookstore.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -87,17 +87,6 @@ public class UserService {
     public Page<UserProfileResponseDto> searchUsers(String username, String firstName, String lastName,
             Pageable pageable) {
         return userRepository.searchUsers(username, firstName, lastName, pageable).map(UserMapper::toUserProfileDto);
-    }
-
-    /**
-     * Retrieves all users with pagination.
-     *
-     * @param pageable
-     *            the pagination and sorting information
-     * @return a page of {@link UserProfileResponseDto}
-     */
-    public Page<UserProfileResponseDto> findAll(Pageable pageable) {
-        return userRepository.findAll(pageable).map(UserMapper::toUserProfileDto);
     }
 
     /**

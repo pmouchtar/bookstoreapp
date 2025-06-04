@@ -1,6 +1,6 @@
 package com.petros.bookstore.dto.UserDTO;
 
-import com.petros.bookstore.model.enums.Role;
+import com.petros.bookstore.enums.Role;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 

@@ -7,7 +7,7 @@ import com.petros.bookstore.config.TestServiceConfig;
 import com.petros.bookstore.dto.CartItemDTO.CartItemResponseDto;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.model.Book;
-import com.petros.bookstore.model.enums.Genre;
+import com.petros.bookstore.enums.Genre;
 import com.petros.bookstore.service.ShoppingCartService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

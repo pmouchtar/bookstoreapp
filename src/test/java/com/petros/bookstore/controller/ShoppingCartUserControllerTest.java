@@ -9,8 +9,10 @@ import com.petros.bookstore.dto.CartItemDTO.CartItemResponseDto;
 import com.petros.bookstore.dto.CartItemDTO.CartItemUpdateRequestDto;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.model.Book;
-import com.petros.bookstore.model.enums.Genre;
+import com.petros.bookstore.enums.Genre;
 import com.petros.bookstore.service.ShoppingCartService;
+import com.petros.bookstore.utils.AuthUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,10 +48,17 @@ class ShoppingCartUserControllerTest {
     ObjectMapper mapper;
 
     @Autowired
+    AuthUtils authUtils;
+
+    @Autowired
     ShoppingCartService shoppingCartService; // mocked bean
 
     private final Book book = new Book("title", "author", "description", 45.99, 5, Genre.SCIENCE_FICTION);
 
+    @BeforeEach
+    void setup() {
+        Mockito.when(authUtils.extractUserId()).thenReturn(USER_ID);
+    }
     @Test
     void addItemToCart_success() throws Exception {
         CartItemRequestDto req = new CartItemRequestDto(42L, 3);

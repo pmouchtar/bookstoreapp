@@ -8,7 +8,7 @@ import com.petros.bookstore.dto.OrderDTO.OrderItemResponseDto;
 import com.petros.bookstore.dto.OrderDTO.OrderResponseDto;
 import com.petros.bookstore.dto.OrderDTO.OrderStatusUpdateRequestDto;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
-import com.petros.bookstore.model.enums.Status;
+import com.petros.bookstore.enums.Status;
 import com.petros.bookstore.service.OrderService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

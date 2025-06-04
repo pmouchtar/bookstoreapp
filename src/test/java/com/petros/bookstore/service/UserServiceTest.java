@@ -1,6 +1,6 @@
 package com.petros.bookstore.service;
 
-import static com.petros.bookstore.model.enums.Role.USER;
+import static com.petros.bookstore.enums.Role.USER;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -10,7 +10,7 @@ import com.petros.bookstore.dto.UserDTO.UserProfileUpdateRequestDto;
 import com.petros.bookstore.exception.customException.ResourceGoneException;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.model.User;
-import com.petros.bookstore.model.enums.Role;
+import com.petros.bookstore.enums.Role;
 import com.petros.bookstore.repository.UserRepository;
 import java.util.List;
 import java.util.Optional;
@@ -57,7 +57,7 @@ class UserServiceTest {
         when(userRepository.findByUsername("john_doe")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> userService.getUserByUsername("john_doe")).isInstanceOf(ResourceGoneException.class)
-                .hasMessage("The user account has been deleted or inactivated");
+                .hasMessage("The user account has been deleted");
     }
 
     @Test
@@ -100,12 +100,12 @@ class UserServiceTest {
     @Test
     void testFindAll() {
         Page<User> page = new PageImpl<>(List.of(user));
-        when(userRepository.findAll(any(Pageable.class))).thenReturn(page);
+        when(userRepository.searchUsers(any(), any(), any(), any())).thenReturn(page);
 
-        Page<UserProfileResponseDto> result = userService.findAll(PageRequest.of(0, 10));
+        Page<UserProfileResponseDto> result = userService.searchUsers(null, null, null, PageRequest.of(0, 10));
 
         assertThat(result).hasSize(1);
-        verify(userRepository).findAll(any(Pageable.class));
+        verify(userRepository).searchUsers(null, null, null, PageRequest.of(0, 10));
     }
 
     @Test
