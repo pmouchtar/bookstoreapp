@@ -2,10 +2,10 @@ package com.petros.bookstore.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.AbstractPostgresContainerTest;
-import com.petros.bookstore.dto.BookDTO.BookRequestDto;
-import com.petros.bookstore.dto.BookDTO.BookResponseDto;
-import com.petros.bookstore.dto.BookDTO.BookUpdateRequestDto;
-import com.petros.bookstore.dto.PaginationDTO.PaginatedResponseDto;
+import com.petros.bookstore.dto.bookdto.BookRequestDto;
+import com.petros.bookstore.dto.bookdto.BookResponseDto;
+import com.petros.bookstore.dto.bookdto.BookUpdateRequestDto;
+import com.petros.bookstore.dto.paginationdto.PaginatedResponseDto;
 import com.petros.bookstore.enums.Genre;
 import com.petros.bookstore.repository.BookRepository;
 import org.junit.jupiter.api.Assertions;

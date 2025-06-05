@@ -1,9 +1,9 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.AuthDTO.AuthenticationRequestDto;
-import com.petros.bookstore.dto.AuthDTO.AuthenticationResponseDto;
-import com.petros.bookstore.dto.RegistrationDTO.RegistrationRequestDto;
-import com.petros.bookstore.dto.RegistrationDTO.RegistrationResponseDto;
+import com.petros.bookstore.dto.authdto.AuthenticationRequestDto;
+import com.petros.bookstore.dto.authdto.AuthenticationResponseDto;
+import com.petros.bookstore.dto.registrationdto.RegistrationRequestDto;
+import com.petros.bookstore.dto.registrationdto.RegistrationResponseDto;
 import com.petros.bookstore.mapper.UserRegistrationMapper;
 import com.petros.bookstore.service.AuthenticationService;
 import jakarta.validation.Valid;

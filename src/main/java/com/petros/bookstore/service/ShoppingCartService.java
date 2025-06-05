@@ -1,8 +1,8 @@
 package com.petros.bookstore.service;
 
-import com.petros.bookstore.dto.CartItemDTO.CartItemRequestDto;
-import com.petros.bookstore.dto.CartItemDTO.CartItemResponseDto;
-import com.petros.bookstore.dto.CartItemDTO.CartItemUpdateRequestDto;
+import com.petros.bookstore.dto.cartitemdto.CartItemRequestDto;
+import com.petros.bookstore.dto.cartitemdto.CartItemResponseDto;
+import com.petros.bookstore.dto.cartitemdto.CartItemUpdateRequestDto;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.mapper.CartItemMapper;
 import com.petros.bookstore.model.*;

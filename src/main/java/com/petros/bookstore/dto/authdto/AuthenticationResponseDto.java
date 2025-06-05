@@ -1,4 +1,4 @@
-package com.petros.bookstore.dto.AuthDTO;
+package com.petros.bookstore.dto.authdto;
 
 public record AuthenticationResponseDto(String token) {
 }

@@ -1,7 +1,7 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.UserDTO.UserProfileResponseDto;
-import com.petros.bookstore.dto.UserDTO.UserProfileUpdateRequestDto;
+import com.petros.bookstore.dto.userdto.UserProfileResponseDto;
+import com.petros.bookstore.dto.userdto.UserProfileUpdateRequestDto;
 import com.petros.bookstore.mapper.UserMapper;
 import com.petros.bookstore.service.UserService;
 import com.petros.bookstore.utils.AuthUtils;

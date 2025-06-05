@@ -1,4 +1,4 @@
-package com.petros.bookstore.dto.RegistrationDTO;
+package com.petros.bookstore.dto.registrationdto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;

@@ -3,9 +3,9 @@ package com.petros.bookstore.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.petros.bookstore.dto.BookDTO.BookRequestDto;
-import com.petros.bookstore.dto.BookDTO.BookResponseDto;
-import com.petros.bookstore.dto.BookDTO.BookUpdateRequestDto;
+import com.petros.bookstore.dto.bookdto.BookRequestDto;
+import com.petros.bookstore.dto.bookdto.BookResponseDto;
+import com.petros.bookstore.dto.bookdto.BookUpdateRequestDto;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.model.Book;
 import com.petros.bookstore.enums.Genre;

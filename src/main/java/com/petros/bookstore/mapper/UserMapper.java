@@ -1,6 +1,6 @@
 package com.petros.bookstore.mapper;
 
-import com.petros.bookstore.dto.UserDTO.UserProfileResponseDto;
+import com.petros.bookstore.dto.userdto.UserProfileResponseDto;
 import com.petros.bookstore.model.User;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package com.petros.bookstore.dto.PaginationDTO;
+package com.petros.bookstore.dto.paginationdto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;

@@ -1,8 +1,8 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.BookDTO.BookRequestDto;
-import com.petros.bookstore.dto.BookDTO.BookResponseDto;
-import com.petros.bookstore.dto.BookDTO.BookUpdateRequestDto;
+import com.petros.bookstore.dto.bookdto.BookRequestDto;
+import com.petros.bookstore.dto.bookdto.BookResponseDto;
+import com.petros.bookstore.dto.bookdto.BookUpdateRequestDto;
 import com.petros.bookstore.service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.TestDummyJwtFilter;
 import com.petros.bookstore.config.TestSecurityConfig;
 import com.petros.bookstore.config.TestServiceConfig;
-import com.petros.bookstore.dto.OrderDTO.OrderResponseDto;
+import com.petros.bookstore.dto.orderdto.OrderResponseDto;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.enums.Status;
 import com.petros.bookstore.service.OrderService;

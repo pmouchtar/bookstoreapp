@@ -1,4 +1,4 @@
-package com.petros.bookstore.dto.BookDTO;
+package com.petros.bookstore.dto.bookdto;
 
 import com.petros.bookstore.enums.Genre;
 import jakarta.validation.constraints.Min;

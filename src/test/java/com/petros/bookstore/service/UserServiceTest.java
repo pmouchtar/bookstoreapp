@@ -4,9 +4,9 @@ import static com.petros.bookstore.enums.Role.USER;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.petros.bookstore.dto.UserDTO.UserAdminUpdateRequestDto;
-import com.petros.bookstore.dto.UserDTO.UserProfileResponseDto;
-import com.petros.bookstore.dto.UserDTO.UserProfileUpdateRequestDto;
+import com.petros.bookstore.dto.userdto.UserAdminUpdateRequestDto;
+import com.petros.bookstore.dto.userdto.UserProfileResponseDto;
+import com.petros.bookstore.dto.userdto.UserProfileUpdateRequestDto;
 import com.petros.bookstore.exception.customException.ResourceGoneException;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.model.User;

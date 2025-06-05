@@ -1,7 +1,7 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.FavouriteBookDTO.FavouriteBookRequestDto;
-import com.petros.bookstore.dto.FavouriteBookDTO.FavouriteBookResponseDto;
+import com.petros.bookstore.dto.favouritebookdto.FavouriteBookRequestDto;
+import com.petros.bookstore.dto.favouritebookdto.FavouriteBookResponseDto;
 import com.petros.bookstore.service.FavouriteBookService;
 import com.petros.bookstore.utils.AuthUtils;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

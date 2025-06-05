@@ -1,7 +1,7 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.UserDTO.UserAdminUpdateRequestDto;
-import com.petros.bookstore.dto.UserDTO.UserProfileResponseDto;
+import com.petros.bookstore.dto.userdto.UserAdminUpdateRequestDto;
+import com.petros.bookstore.dto.userdto.UserProfileResponseDto;
 import com.petros.bookstore.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;

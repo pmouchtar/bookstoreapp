@@ -1,4 +1,4 @@
-package com.petros.bookstore.dto.FavouriteBookDTO;
+package com.petros.bookstore.dto.favouritebookdto;
 
 import jakarta.validation.constraints.NotNull;
 

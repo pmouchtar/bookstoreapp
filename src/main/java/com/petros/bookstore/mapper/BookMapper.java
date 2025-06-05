@@ -1,7 +1,7 @@
 package com.petros.bookstore.mapper;
 
-import com.petros.bookstore.dto.BookDTO.BookRequestDto;
-import com.petros.bookstore.dto.BookDTO.BookResponseDto;
+import com.petros.bookstore.dto.bookdto.BookRequestDto;
+import com.petros.bookstore.dto.bookdto.BookResponseDto;
 import com.petros.bookstore.model.Book;
 
 public final class BookMapper {

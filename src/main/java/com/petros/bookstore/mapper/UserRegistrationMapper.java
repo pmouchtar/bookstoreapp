@@ -1,7 +1,7 @@
 package com.petros.bookstore.mapper;
 
-import com.petros.bookstore.dto.RegistrationDTO.RegistrationRequestDto;
-import com.petros.bookstore.dto.RegistrationDTO.RegistrationResponseDto;
+import com.petros.bookstore.dto.registrationdto.RegistrationRequestDto;
+import com.petros.bookstore.dto.registrationdto.RegistrationResponseDto;
 import com.petros.bookstore.model.User;
 import org.springframework.stereotype.Component;
 

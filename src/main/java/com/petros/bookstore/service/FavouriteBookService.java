@@ -1,7 +1,7 @@
 package com.petros.bookstore.service;
 
-import com.petros.bookstore.dto.FavouriteBookDTO.FavouriteBookRequestDto;
-import com.petros.bookstore.dto.FavouriteBookDTO.FavouriteBookResponseDto;
+import com.petros.bookstore.dto.favouritebookdto.FavouriteBookRequestDto;
+import com.petros.bookstore.dto.favouritebookdto.FavouriteBookResponseDto;
 import com.petros.bookstore.exception.customException.ResourceAlreadyExistsException;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.mapper.FavouriteBookMapper;
@@ -18,14 +18,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
- * Service class responsible for managing users' favourite books.
- * Provides functionality for adding, retrieving, and removing favourite books
- * for a given user.
+ * Service class responsible for managing users' favourite books. Provides
+ * functionality for adding, retrieving, and removing favourite books for a
+ * given user.
  */
 @Service
 @RequiredArgsConstructor
 public class FavouriteBookService {
-
     private final FavouriteBookRepository favouriteRepo;
     private final UserRepository userRepo;
     private final BookRepository bookRepository;

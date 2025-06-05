@@ -7,7 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.TestSecurityConfig;
-import com.petros.bookstore.dto.BookDTO.BookResponseDto;
+import com.petros.bookstore.dto.bookdto.BookResponseDto;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.enums.Genre;
 import com.petros.bookstore.repository.BookRepository;

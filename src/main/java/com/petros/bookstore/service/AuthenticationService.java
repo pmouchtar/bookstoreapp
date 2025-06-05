@@ -2,8 +2,8 @@ package com.petros.bookstore.service;
 
 import static com.petros.bookstore.enums.Role.USER;
 
-import com.petros.bookstore.dto.AuthDTO.AuthenticationRequestDto;
-import com.petros.bookstore.dto.AuthDTO.AuthenticationResponseDto;
+import com.petros.bookstore.dto.authdto.AuthenticationRequestDto;
+import com.petros.bookstore.dto.authdto.AuthenticationResponseDto;
 import com.petros.bookstore.model.ShoppingCart;
 import com.petros.bookstore.model.User;
 import com.petros.bookstore.repository.ShoppingCartRepository;
@@ -18,8 +18,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Service class responsible for handling user authentication and registration
- * logic.
- * It integrates with Spring Security to authenticate users using JWT and
+ * logic. It integrates with Spring Security to authenticate users using JWT and
  * manages the creation of new users along with their shopping carts.
  */
 @Service

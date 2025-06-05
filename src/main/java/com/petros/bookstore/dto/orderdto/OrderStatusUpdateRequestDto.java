@@ -1,4 +1,4 @@
-package com.petros.bookstore.dto.OrderDTO;
+package com.petros.bookstore.dto.orderdto;
 
 import com.petros.bookstore.enums.Status;
 import jakarta.validation.constraints.NotNull;

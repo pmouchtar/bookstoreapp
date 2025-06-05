@@ -1,4 +1,4 @@
-package com.petros.bookstore.dto.UserDTO;
+package com.petros.bookstore.dto.userdto;
 
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;

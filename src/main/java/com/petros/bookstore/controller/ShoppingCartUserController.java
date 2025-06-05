@@ -1,8 +1,8 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.CartItemDTO.CartItemRequestDto;
-import com.petros.bookstore.dto.CartItemDTO.CartItemResponseDto;
-import com.petros.bookstore.dto.CartItemDTO.CartItemUpdateRequestDto;
+import com.petros.bookstore.dto.cartitemdto.CartItemRequestDto;
+import com.petros.bookstore.dto.cartitemdto.CartItemResponseDto;
+import com.petros.bookstore.dto.cartitemdto.CartItemUpdateRequestDto;
 import com.petros.bookstore.service.ShoppingCartService;
 import com.petros.bookstore.utils.AuthUtils;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

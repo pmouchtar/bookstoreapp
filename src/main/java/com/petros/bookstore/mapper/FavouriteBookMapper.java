@@ -1,6 +1,6 @@
 package com.petros.bookstore.mapper;
 
-import com.petros.bookstore.dto.FavouriteBookDTO.FavouriteBookResponseDto;
+import com.petros.bookstore.dto.favouritebookdto.FavouriteBookResponseDto;
 import com.petros.bookstore.model.FavouriteBook;
 
 public final class FavouriteBookMapper {

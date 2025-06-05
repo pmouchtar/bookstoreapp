@@ -1,6 +1,6 @@
 package com.petros.bookstore.mapper;
 
-import com.petros.bookstore.dto.CartItemDTO.CartItemResponseDto;
+import com.petros.bookstore.dto.cartitemdto.CartItemResponseDto;
 import com.petros.bookstore.model.CartItem;
 
 public final class CartItemMapper {

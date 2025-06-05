@@ -29,8 +29,8 @@ public class JwtService {
     private final JwtEncoder jwtEncoder;
 
     /**
-     * Generates a signed JWT token for the user with the given username.
-     * The token includes the following claims:
+     * Generates a signed JWT token for the user with the given username. The token
+     * includes the following claims:
      * <ul>
      * <li><b>sub</b>: the username</li>
      * <li><b>iss</b>: the configured issuer</li>
@@ -48,13 +48,10 @@ public class JwtService {
         User user = userService.getUserByUsername(username);
         Long userId = user.getId();
 
-        final var claimsSet = JwtClaimsSet
-                .builder()
-                .subject(username)
-                .issuer(issuer)
-                .expiresAt(Instant.now().plus(ttl))
+        final var claimsSet = JwtClaimsSet.builder().subject(username).issuer(issuer).expiresAt(Instant.now().plus(ttl))
                 .claim("userId", userId).claim("roles", //
-                        List.of("ROLE_" + user.getRole().name())).build();
+                        List.of("ROLE_" + user.getRole().name()))
+                .build();
 
         return jwtEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
     }

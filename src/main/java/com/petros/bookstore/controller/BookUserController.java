@@ -1,6 +1,6 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.BookDTO.BookResponseDto;
+import com.petros.bookstore.dto.bookdto.BookResponseDto;
 import com.petros.bookstore.exception.customException.InvalidPriceRangeException;
 import com.petros.bookstore.enums.Genre;
 import com.petros.bookstore.service.BookService;

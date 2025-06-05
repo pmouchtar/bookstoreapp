@@ -1,6 +1,6 @@
 package com.petros.bookstore.mapper;
 
-import com.petros.bookstore.dto.OrderDTO.OrderItemResponseDto;
+import com.petros.bookstore.dto.orderdto.OrderItemResponseDto;
 import com.petros.bookstore.model.OrderItem;
 
 public final class OrderItemMapper {

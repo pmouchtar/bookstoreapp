@@ -226,8 +226,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.AbstractPostgresContainerTest;
-import com.petros.bookstore.dto.FavouriteBookDTO.FavouriteBookRequestDto;
-import com.petros.bookstore.dto.FavouriteBookDTO.FavouriteBookResponseDto;
+import com.petros.bookstore.dto.favouritebookdto.FavouriteBookRequestDto;
+import com.petros.bookstore.dto.favouritebookdto.FavouriteBookResponseDto;
 import com.petros.bookstore.model.Book;
 import com.petros.bookstore.model.User;
 import com.petros.bookstore.enums.Genre;

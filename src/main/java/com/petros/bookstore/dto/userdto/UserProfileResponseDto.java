@@ -1,4 +1,4 @@
-package com.petros.bookstore.dto.UserDTO;
+package com.petros.bookstore.dto.userdto;
 
 import com.petros.bookstore.enums.Role;
 

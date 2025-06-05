@@ -1,4 +1,4 @@
-package com.petros.bookstore.dto.AuthDTO;
+package com.petros.bookstore.dto.authdto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

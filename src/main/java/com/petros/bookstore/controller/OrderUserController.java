@@ -1,6 +1,6 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.OrderDTO.OrderResponseDto;
+import com.petros.bookstore.dto.orderdto.OrderResponseDto;
 import com.petros.bookstore.service.OrderService;
 import com.petros.bookstore.utils.AuthUtils;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

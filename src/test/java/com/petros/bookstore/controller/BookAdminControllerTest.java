@@ -2,9 +2,9 @@ package com.petros.bookstore.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.TestSecurityConfig;
-import com.petros.bookstore.dto.BookDTO.BookRequestDto;
-import com.petros.bookstore.dto.BookDTO.BookResponseDto;
-import com.petros.bookstore.dto.BookDTO.BookUpdateRequestDto;
+import com.petros.bookstore.dto.bookdto.BookRequestDto;
+import com.petros.bookstore.dto.bookdto.BookResponseDto;
+import com.petros.bookstore.dto.bookdto.BookUpdateRequestDto;
 import com.petros.bookstore.enums.Genre;
 import com.petros.bookstore.repository.BookRepository;
 import com.petros.bookstore.service.BookService;

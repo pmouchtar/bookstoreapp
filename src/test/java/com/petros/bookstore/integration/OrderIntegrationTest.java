@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.AbstractPostgresContainerTest;
-import com.petros.bookstore.dto.OrderDTO.OrderResponseDto;
-import com.petros.bookstore.dto.OrderDTO.OrderStatusUpdateRequestDto;
+import com.petros.bookstore.dto.orderdto.OrderResponseDto;
+import com.petros.bookstore.dto.orderdto.OrderStatusUpdateRequestDto;
 import com.petros.bookstore.model.*;
 import com.petros.bookstore.enums.Genre;
 import com.petros.bookstore.enums.Role;

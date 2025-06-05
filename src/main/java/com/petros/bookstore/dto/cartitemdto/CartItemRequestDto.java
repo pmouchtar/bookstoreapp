@@ -1,4 +1,4 @@
-package com.petros.bookstore.dto.CartItemDTO;
+package com.petros.bookstore.dto.cartitemdto;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

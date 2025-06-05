@@ -1,7 +1,7 @@
 package com.petros.bookstore.mapper;
 
-import com.petros.bookstore.dto.OrderDTO.OrderItemResponseDto;
-import com.petros.bookstore.dto.OrderDTO.OrderResponseDto;
+import com.petros.bookstore.dto.orderdto.OrderItemResponseDto;
+import com.petros.bookstore.dto.orderdto.OrderResponseDto;
 import com.petros.bookstore.model.Order;
 import java.util.List;
 

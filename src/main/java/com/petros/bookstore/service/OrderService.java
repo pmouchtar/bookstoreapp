@@ -1,7 +1,7 @@
 package com.petros.bookstore.service;
 
-import com.petros.bookstore.dto.OrderDTO.OrderResponseDto;
-import com.petros.bookstore.dto.OrderDTO.OrderStatusUpdateRequestDto;
+import com.petros.bookstore.dto.orderdto.OrderResponseDto;
+import com.petros.bookstore.dto.orderdto.OrderStatusUpdateRequestDto;
 import com.petros.bookstore.enums.Status;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.mapper.OrderMapper;
@@ -20,9 +20,8 @@ import org.springframework.stereotype.Service;
 
 /**
  * Service responsible for handling operations related to placing and managing
- * orders.
- * Includes functionality for placing orders, retrieving orders by user or
- * globally (admin), and updating order status.
+ * orders. Includes functionality for placing orders, retrieving orders by user
+ * or globally (admin), and updating order status.
  */
 @Service
 @RequiredArgsConstructor

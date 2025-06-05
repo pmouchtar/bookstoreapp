@@ -1,6 +1,6 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.FavouriteBookDTO.FavouriteBookResponseDto;
+import com.petros.bookstore.dto.favouritebookdto.FavouriteBookResponseDto;
 import com.petros.bookstore.service.FavouriteBookService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
