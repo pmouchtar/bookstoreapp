@@ -9,6 +9,7 @@ import com.petros.bookstore.model.*;
 import com.petros.bookstore.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -41,7 +42,7 @@ public class ShoppingCartService {
      *             if user or book is not found
      */
     @Transactional
-    public CartItemResponseDto addToCart(Long userId, CartItemRequestDto request) {
+    public CartItemResponseDto addToCart(Long userId, CartItemRequestDto request) throws BadRequestException {
         User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException(//
                 "User not found"));
 
@@ -59,11 +60,25 @@ public class ShoppingCartService {
             item = new CartItem();
             item.setShoppingCart(cart);
             item.setBook(book);
-            item.setQuantity(request.quantity());
+            if (request.quantity() <= book.getAvailability()) {
+                item.setQuantity(request.quantity());
+                book.setAvailability(book.getAvailability() - request.quantity());
+            } else {
+                throw new BadRequestException("Insufficient stock. Requested quantity (" //
+                        + request.quantity() + ") exceeds available stock (" //
+                        + book.getAvailability() + ")");
+            }
         } else {
-            item.setQuantity(item.getQuantity() + request.quantity());
+            if (request.quantity() <= book.getAvailability()) {
+                item.setQuantity(item.getQuantity() + request.quantity());
+                book.setAvailability(book.getAvailability() - request.quantity());
+            } else {
+                throw new BadRequestException("Insufficient stock. Requested quantity (" //
+                        + request.quantity() + ") exceeds available stock (" //
+                        + book.getAvailability() + ")");
+            }
         }
-
+        bookRepo.save(book);
         CartItem saved = itemRepo.save(item);
         return CartItemMapper.toDto(saved);
     }
@@ -130,10 +145,24 @@ public class ShoppingCartService {
      */
     @Transactional
     public CartItemResponseDto updateCartItem(//
-            Long itemId, CartItemUpdateRequestDto request, Long userId) {
+            Long itemId, CartItemUpdateRequestDto request, Long userId) throws BadRequestException {
         CartItem item = itemRepo.findById(itemId).filter(//
                 i -> i.getShoppingCart().getUser().getId().equals(userId))
                 .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
+
+        Book book = item.getBook();
+        int quantityDiff = request.quantity() - item.getQuantity();
+
+        if (quantityDiff <= book.getAvailability()) {
+            item.setQuantity(request.quantity());
+            book.setAvailability(book.getAvailability() - quantityDiff);
+        } else {
+            throw new BadRequestException("Insufficient stock. Requested quantity (+" //
+                    + quantityDiff + ") exceeds available stock (" //
+                    + book.getAvailability() + ")");
+        }
+
+        bookRepo.save(book);
 
         int newQty = request.quantity();
         if (newQty == 0) {
@@ -160,6 +189,9 @@ public class ShoppingCartService {
         CartItem item = itemRepo.findById(itemId).filter(//
                 i -> i.getShoppingCart().getUser().getId().equals(userId))
                 .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
+        Book book = item.getBook();
+        book.setAvailability(book.getAvailability() + item.getQuantity());
+        bookRepo.save(book);
         itemRepo.delete(item);
     }
 }

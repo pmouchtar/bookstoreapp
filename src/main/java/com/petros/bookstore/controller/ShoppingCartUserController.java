@@ -8,6 +8,7 @@ import com.petros.bookstore.utils.AuthUtils;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -44,7 +45,7 @@ public class ShoppingCartUserController {
     @PostMapping()
     @SecurityRequirement(name = "bearerAuth")
     public ResponseEntity<CartItemResponseDto> addItemToCart(//
-            @Valid @RequestBody CartItemRequestDto request) {
+            @Valid @RequestBody CartItemRequestDto request) throws BadRequestException {
         userId = authUtils.extractUserId();
         CartItemResponseDto response = shoppingCartService.addToCart(userId, request);
         return ResponseEntity.ok(response);
@@ -89,7 +90,7 @@ public class ShoppingCartUserController {
      */
     @PutMapping("/{itemId}")
     public ResponseEntity<CartItemResponseDto> updateCartItem(@PathVariable Long itemId,
-            @Valid @RequestBody CartItemUpdateRequestDto request) {
+            @Valid @RequestBody CartItemUpdateRequestDto request) throws BadRequestException {
         userId = authUtils.extractUserId();
         CartItemResponseDto response = shoppingCartService.updateCartItem(itemId, request, userId);
         return ResponseEntity.ok(response);
