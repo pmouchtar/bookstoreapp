@@ -15,8 +15,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * REST controller for managing books in the bookstore. Provides endpoints to
- * create, retrieve, update, delete, and search books.
+ * REST controller for viewing books in the bookstore. Provides endpoints to
+ * retrieve/search books.
  */
 @Validated
 @RestController
@@ -47,27 +47,30 @@ public class BookUserController {
      * @return a page of books matching the filters
      */
     @GetMapping()
-    public Page<BookResponseDto> getAllBooks(@RequestParam(required = false) String title,
-            @RequestParam(required = false) String author, @RequestParam(required = false) @Min(0) Integer availability,
-            @RequestParam(required = false) Genre genre,
-            @RequestParam(required = false) @DecimalMin("0.0") @Digits(integer = 5, fraction = 2, message = "decimals up to 2 digits") Double minPrice,
-            @RequestParam(required = false) @DecimalMin("0.0") @Digits(integer = 5, fraction = 2, message = "decimals up to 2 digits") Double maxPrice,
+    public Page<BookResponseDto> getAllBooks(//
+            @RequestParam(required = false) final String title, //
+            @RequestParam(required = false) final String author, //
+            @RequestParam(required = false) @Min(0) final Integer availability, //
+            @RequestParam(required = false) final Genre genre, //
+            @RequestParam(required = false) @DecimalMin("0.0") //
+            @Digits(integer = 5, fraction = 2, message = "decimals up to 2 digits") //
+            final Double minPrice, //
+            @RequestParam(required = false) @DecimalMin("0.0") //
+            @Digits(integer = 5, fraction = 2, message = "decimals up to 2 digits") //
+            final Double maxPrice, //
             Pageable pageable) {
 
         if ((minPrice == null) != (maxPrice == null)) {
-            throw new InvalidPriceRangeException("Both minPrice and maxPrice should be provided together.");
+            throw new InvalidPriceRangeException(//
+                    "Both minPrice and maxPrice should be provided together.");
         }
 
         if (minPrice != null && minPrice > maxPrice) {
-            throw new IllegalArgumentException("minPrice cannot be greater than maxPrice");
+            throw new IllegalArgumentException(//
+                    "minPrice cannot be greater than maxPrice");
         }
-
-        if (title != null || author != null || availability != null || genre != null
-                || (minPrice != null & maxPrice != null)) {
-            return bookService.searchBooks(title, author, availability, genre, minPrice, maxPrice, pageable);
-        } else {
-            return bookService.findAll(pageable);
-        }
+        return bookService.searchBooks(//
+                title, author, availability, genre, minPrice, maxPrice, pageable);
     }
 
     /**

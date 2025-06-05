@@ -21,6 +21,7 @@ public final class UserRegistrationMapper {
 
     public RegistrationResponseDto toRegistrationResponseDto(final User user) {
 
-        return new RegistrationResponseDto(user.getUsername(), user.getFirstName(), user.getLastName(), user.getRole());
+        return new RegistrationResponseDto(//
+                user.getUsername(), user.getFirstName(), user.getLastName(), user.getRole());
     }
 }

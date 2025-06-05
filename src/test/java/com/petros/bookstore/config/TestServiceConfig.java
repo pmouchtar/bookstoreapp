@@ -11,10 +11,14 @@ import org.springframework.context.annotation.Bean;
 public class TestServiceConfig {
 
     @Bean
-    public AuthenticationService authenticationService() {return Mockito.mock(AuthenticationService.class);}
+    public AuthenticationService authenticationService() {
+        return Mockito.mock(AuthenticationService.class);
+    }
 
     @Bean
-    public AuthUtils authUtils() {return Mockito.mock(AuthUtils.class);}
+    public AuthUtils authUtils() {
+        return Mockito.mock(AuthUtils.class);
+    }
 
     @Bean
     public FavouriteBookService favouriteBookService() {

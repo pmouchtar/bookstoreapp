@@ -11,6 +11,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST controller for managing books in the bookstore. Provides endpoints to
+ * create, update and delete books.
+ */
 @Validated
 @RestController
 @RequestMapping("/books")

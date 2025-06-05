@@ -3,10 +3,10 @@ package com.petros.bookstore.service;
 import com.petros.bookstore.dto.BookDTO.BookRequestDto;
 import com.petros.bookstore.dto.BookDTO.BookResponseDto;
 import com.petros.bookstore.dto.BookDTO.BookUpdateRequestDto;
+import com.petros.bookstore.enums.Genre;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.mapper.BookMapper;
 import com.petros.bookstore.model.Book;
-import com.petros.bookstore.enums.Genre;
 import com.petros.bookstore.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -57,7 +57,8 @@ public class BookService {
      */
     public BookResponseDto findBookById(Long id) {
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Book with ID " + id + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException(//
+                        "Book with ID " + id + " not found."));
         return BookMapper.toResponse(book);
     }
 
@@ -74,7 +75,8 @@ public class BookService {
      */
     public BookResponseDto updateBook(Long id, BookUpdateRequestDto request) {
         Book book = bookRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Book with ID " + id + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException(//
+                        "Book with ID " + id + " not found."));
 
         if (request.title() != null)
             book.setTitle(request.title());
@@ -129,9 +131,11 @@ public class BookService {
      *            pagination information
      * @return a page of book responses matching the filters
      */
-    public Page<BookResponseDto> searchBooks(String title, String author, Integer availability, Genre genre,
+    public Page<BookResponseDto> searchBooks(//
+            String title, String author, Integer availability, Genre genre, //
             Double minPrice, Double maxPrice, Pageable pageable) {
-        return bookRepository.searchBooks(title, author, genre, availability, minPrice, maxPrice, pageable)
+        return bookRepository.searchBooks(//
+                title, author, genre, availability, minPrice, maxPrice, pageable)
                 .map(BookMapper::toResponse);
     }
 }

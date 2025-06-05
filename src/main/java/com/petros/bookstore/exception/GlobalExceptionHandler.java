@@ -26,7 +26,8 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
+    public ResponseEntity<Map<String, String>> handleValidationErrors(//
+            MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
 
         ex.getBindingResult().getFieldErrors()
@@ -51,11 +52,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleAll(Exception ex) {
-        return new ResponseEntity<>("Something went wrong: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("Something went wrong: " + ex.getMessage(), //
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(InvalidPriceRangeException.class)
-    public ResponseEntity<Map<String, String>> handleInvalidPriceRange(InvalidPriceRangeException ex) {
+    public ResponseEntity<Map<String, String>> handleInvalidPriceRange(//
+            InvalidPriceRangeException ex) {
         return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
     }
 
@@ -70,8 +73,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, String>> handleBadRequestBody(HttpMessageNotReadableException ex) {
-        return ResponseEntity.badRequest().body(Map.of("message", "Malformed JSON request or invalid data format"));
+    public ResponseEntity<Map<String, String>> handleBadRequestBody(//
+            HttpMessageNotReadableException ex) {
+        return ResponseEntity.badRequest().body(Map.of(//
+                "message", "Malformed JSON request or invalid data format"));
     }
 
     @ExceptionHandler(ValidationException.class)
@@ -80,13 +85,16 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<Map<String, String>> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+    public ResponseEntity<Map<String, String>> handleTypeMismatch(//
+            MethodArgumentTypeMismatchException ex) {
         String paramName = ex.getName();
         String invalidValue = ex.getValue() != null ? ex.getValue().toString() : "null";
-        String expectedType = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "unknown";
+        String expectedType = ex.getRequiredType() != null //
+                ? ex.getRequiredType().getSimpleName()
+                : "unknown";
 
-        String message = String.format("Invalid value '%s' for parameter '%s'. Expected type: %s.", invalidValue,
-                paramName, expectedType);
+        String message = String.format(//
+                "Invalid value '%s' for parameter '%s'. Expected type: %s.", invalidValue, paramName, expectedType);
 
         return ResponseEntity.badRequest().body(Map.of("message", message));
     }
@@ -115,7 +123,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(AuthorizationDeniedException.class)
-    public ResponseEntity<Object> handleAuthorizationDeniedException(AuthorizationDeniedException ex) {
+    public ResponseEntity<Object> handleAuthorizationDeniedException(//
+            AuthorizationDeniedException ex) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("error", "Forbidden");
         body.put("message", ex.getMessage());
@@ -124,7 +133,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResourceAlreadyExistsException.class)
-    public ResponseEntity<Map<String, String>> handleResourceAlreadyExists(ResourceAlreadyExistsException ex) {
+    public ResponseEntity<Map<String, String>> handleResourceAlreadyExists(//
+            ResourceAlreadyExistsException ex) {
         Map<String, String> error = new HashMap<>();
         error.put("message", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);

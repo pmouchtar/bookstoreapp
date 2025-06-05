@@ -43,7 +43,8 @@ public class ShoppingCartUserController {
      */
     @PostMapping()
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<CartItemResponseDto> addItemToCart(@Valid @RequestBody CartItemRequestDto request) {
+    public ResponseEntity<CartItemResponseDto> addItemToCart(//
+            @Valid @RequestBody CartItemRequestDto request) {
         userId = authUtils.extractUserId();
         CartItemResponseDto response = shoppingCartService.addToCart(userId, request);
         return ResponseEntity.ok(response);

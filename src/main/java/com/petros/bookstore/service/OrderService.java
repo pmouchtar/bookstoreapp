@@ -2,10 +2,10 @@ package com.petros.bookstore.service;
 
 import com.petros.bookstore.dto.OrderDTO.OrderResponseDto;
 import com.petros.bookstore.dto.OrderDTO.OrderStatusUpdateRequestDto;
+import com.petros.bookstore.enums.Status;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.mapper.OrderMapper;
 import com.petros.bookstore.model.*;
-import com.petros.bookstore.enums.Status;
 import com.petros.bookstore.repository.*;
 import jakarta.transaction.Transactional;
 import java.sql.Timestamp;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 /**
  * Service responsible for handling operations related to placing and managing
  * orders.
- * <p>
  * Includes functionality for placing orders, retrieving orders by user or
  * globally (admin), and updating order status.
  */
@@ -49,11 +48,13 @@ public class OrderService {
      */
     @Transactional
     public OrderResponseDto placeOrder(Long userId, Pageable pageable) throws BadRequestException {
-        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException(//
+                "User not found"));
 
-        Shopping_Cart cart = cartRepo.findByUser(user).orElseThrow(() -> new BadRequestException("No cart"));
+        ShoppingCart cart = cartRepo.findByUser(user).orElseThrow(() -> new BadRequestException(//
+                "No cart"));
 
-        Page<Cart_Item> cartItems = cartItemRepo.findByShoppingCart(cart, pageable);
+        Page<CartItem> cartItems = cartItemRepo.findByShoppingCart(cart, pageable);
         if (cartItems.isEmpty()) {
             throw new BadRequestException("Cart is empty");
         }
@@ -65,12 +66,12 @@ public class OrderService {
         order.setTotal_price(0.0);
 
         order = orderRepo.save(order);
-        List<Order_Item> orderItems = new ArrayList<>();
+        List<OrderItem> orderItems = new ArrayList<>();
 
         double total = 0.0;
 
-        for (Cart_Item cartItem : cartItems) {
-            Order_Item oi = new Order_Item();
+        for (CartItem cartItem : cartItems) {
+            OrderItem oi = new OrderItem();
             oi.setOrder(order);
             oi.setBook(cartItem.getBook());
             oi.setQuantity(cartItem.getQuantity());
@@ -99,7 +100,8 @@ public class OrderService {
      */
     @Transactional
     public Page<OrderResponseDto> getOrdersForUser(Long userId, Pageable pageable) {
-        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException(//
+                "User not found"));
 
         return orderRepo.findByUser(user, pageable).map(OrderMapper::toDto);
     }
@@ -115,7 +117,8 @@ public class OrderService {
      */
     @Transactional
     public OrderResponseDto getOrderForUser(Long orderId, Long userId) {
-        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException(//
+                "User not found"));
 
         Order order = orderRepo.findByIdAndUser(orderId, user)
                 .orElseThrow(() -> new ResourceNotFoundException("Order not found"));
@@ -134,7 +137,8 @@ public class OrderService {
      */
     @Transactional
     public OrderResponseDto updateOrderStatus(Long orderId, OrderStatusUpdateRequestDto request) {
-        Order order = orderRepo.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+        Order order = orderRepo.findById(orderId).orElseThrow(() -> new ResourceNotFoundException(//
+                "Order not found"));
 
         order.setStatus(request.status());
         Order saved = orderRepo.save(order);
@@ -161,7 +165,8 @@ public class OrderService {
      * @return the corresponding order as a DTO
      */
     public OrderResponseDto getOrderById(Long orderId) {
-        Order order = orderRepo.findById(orderId).orElseThrow(() -> new ResourceNotFoundException("Order not found"));
+        Order order = orderRepo.findById(orderId).orElseThrow(() -> new ResourceNotFoundException(//
+                "Order not found"));
 
         return OrderMapper.toDto(order);
     }

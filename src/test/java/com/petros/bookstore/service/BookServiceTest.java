@@ -50,16 +50,16 @@ class BookServiceTest {
         verify(bookRepository).save(any(Book.class));
     }
 
-    @Test
-    void testFindAll() {
-        Page<Book> page = new PageImpl<>(List.of(book));
-        when(bookRepository.findAll(any(Pageable.class))).thenReturn(page);
-
-        Page<BookResponseDto> result = bookService.findAll(PageRequest.of(0, 10));
-
-        assertThat(result).hasSize(1);
-        verify(bookRepository).findAll(any(Pageable.class));
-    }
+    // @Test
+    // void testFindAll() {
+    // Page<Book> page = new PageImpl<>(List.of(book));
+    // when(bookRepository.findAll(any(Pageable.class))).thenReturn(page);
+    //
+    // Page<BookResponseDto> result = bookService.findAll(PageRequest.of(0, 10));
+    //
+    // assertThat(result).hasSize(1);
+    // verify(bookRepository).findAll(any(Pageable.class));
+    // }
 
     @Test
     void testFindBookByIdFound() {

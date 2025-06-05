@@ -37,5 +37,5 @@ public class Order {
     private Timestamp order_date;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Order_Item> orderItems = new ArrayList<>();
+    private List<OrderItem> orderItems = new ArrayList<>();
 }

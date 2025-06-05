@@ -25,7 +25,8 @@ public class AuthUtils {
      *             if there is no authentication in context
      */
     public Long extractUserId() {
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        final Authentication authentication = //
+                SecurityContextHolder.getContext().getAuthentication();
         return ((Jwt) authentication.getPrincipal()).getClaim("userId");
     }
 }

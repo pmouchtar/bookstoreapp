@@ -34,7 +34,9 @@ public class Book {
     @Column(nullable = false)
     private Genre genre;
 
-    public Book(String title, String author, String description, Double price, int availability, Genre genre) {
+    public Book(//
+            String title, String author, String description, //
+            Double price, int availability, Genre genre) {
         this.title = title;
         this.author = author;
         this.description = description;

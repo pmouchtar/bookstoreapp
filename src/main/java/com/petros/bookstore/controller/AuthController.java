@@ -42,14 +42,15 @@ public class AuthController {
     /**
      * Registers a new user after validating registration data.
      *
-     * @param registrationDTO
+     * @param registrationDto
      *            the registration request DTO
      * @return the registration response DTO with created user info
      */
     @PostMapping("/register")
     public ResponseEntity<RegistrationResponseDto> registerUser(
-            @Valid @RequestBody final RegistrationRequestDto registrationDTO) {
-        var registeredUser = authenticationService.registerUser(userRegistrationMapper.toEntity(registrationDTO));
+            @Valid @RequestBody final RegistrationRequestDto registrationDto) {
+        var registeredUser = authenticationService.registerUser(//
+                userRegistrationMapper.toEntity(registrationDto));
         return ResponseEntity.ok(userRegistrationMapper.toRegistrationResponseDto(registeredUser));
     }
 }

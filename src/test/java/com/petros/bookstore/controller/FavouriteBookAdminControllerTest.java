@@ -44,7 +44,6 @@ class FavouriteBookAdminControllerTest {
     private static final String ADMIN_HEADER = "X-USER-ID";
     private static final String BASE_URL = "/users/1/favourite-books";
 
-
     @Test
     void testGetUserFavouriteBooks_success() throws Exception {
         List<FavouriteBookResponseDto> list = List.of(new FavouriteBookResponseDto(1L, 101L, Instant.now()),

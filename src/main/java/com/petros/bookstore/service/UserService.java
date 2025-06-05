@@ -3,11 +3,11 @@ package com.petros.bookstore.service;
 import com.petros.bookstore.dto.UserDTO.UserAdminUpdateRequestDto;
 import com.petros.bookstore.dto.UserDTO.UserProfileResponseDto;
 import com.petros.bookstore.dto.UserDTO.UserProfileUpdateRequestDto;
+import com.petros.bookstore.enums.Role;
 import com.petros.bookstore.exception.customException.ResourceGoneException;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.mapper.UserMapper;
 import com.petros.bookstore.model.User;
-import com.petros.bookstore.enums.Role;
 import com.petros.bookstore.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -53,7 +53,8 @@ public class UserService {
      */
     public User updateUserProfile(final Long userId, UserProfileUpdateRequestDto updateRequest) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User with ID " + userId + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException(//
+                        "User with ID " + userId + " not found."));
 
         if (updateRequest.firstName() != null) {
             user.setFirstName(updateRequest.firstName());
@@ -84,8 +85,8 @@ public class UserService {
      *            the pagination and sorting information
      * @return a page of {@link UserProfileResponseDto} matching the criteria
      */
-    public Page<UserProfileResponseDto> searchUsers(String username, String firstName, String lastName,
-            Pageable pageable) {
+    public Page<UserProfileResponseDto> searchUsers(//
+            String username, String firstName, String lastName, Pageable pageable) {
         return userRepository.searchUsers(username, firstName, lastName, pageable).map(UserMapper::toUserProfileDto);
     }
 
@@ -100,7 +101,8 @@ public class UserService {
      */
     public UserProfileResponseDto findUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User with ID " + id + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException(//
+                        "User with ID " + id + " not found."));
         return UserMapper.toUserProfileDto(user);
     }
 
@@ -117,7 +119,8 @@ public class UserService {
      */
     public UserProfileResponseDto updateUserById(Long id, UserAdminUpdateRequestDto request) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User with ID " + id + " not found."));
+                .orElseThrow(() -> new ResourceNotFoundException(//
+                        "User with ID " + id + " not found."));
 
         if (request.firstName() != null)
             user.setFirstName(request.firstName());

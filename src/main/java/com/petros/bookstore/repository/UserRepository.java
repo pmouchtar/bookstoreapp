@@ -15,8 +15,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByUsername(String username);
 
-    @Query("SELECT u FROM User u WHERE " + "(:username IS NULL OR u.username ILIKE %:username%) AND "
-            + "(:firstName IS NULL OR u.firstName ILIKE %:firstName%) AND "
+    @Query("SELECT u FROM User u WHERE "//
+            + "(:username IS NULL OR u.username ILIKE %:username%) AND "//
+            + "(:firstName IS NULL OR u.firstName ILIKE %:firstName%) AND "//
             + "(:lastName IS NULL OR u.lastName ILIKE %:lastName%)")
     Page<User> searchUsers(@Param("username") String username, @Param("firstName") String firstName,
             @Param("lastName") String lastName, Pageable pageable);

@@ -90,11 +90,11 @@ class OrderIntegrationTest extends AbstractPostgresContainerTest {
         book.setGenre(Genre.SCIENCE_FICTION);
         bookId = bookRepository.save(book).getId();
 
-        Shopping_Cart cart = new Shopping_Cart();
+        ShoppingCart cart = new ShoppingCart();
         cart.setUser(user);
         shoppingCartRepository.save(cart);
 
-        Cart_Item item = new Cart_Item();
+        CartItem item = new CartItem();
         item.setBook(book);
         item.setShoppingCart(cart);
         item.setQuantity(2);

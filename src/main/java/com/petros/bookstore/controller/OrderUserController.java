@@ -39,7 +39,8 @@ public class OrderUserController {
      */
     @PostMapping
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<OrderResponseDto> placeOrder(Pageable pageable) throws BadRequestException {
+    public ResponseEntity<OrderResponseDto> placeOrder(//
+            Pageable pageable) throws BadRequestException {
 
         userId = authUtils.extractUserId();
         OrderResponseDto response = orderService.placeOrder(userId, pageable);

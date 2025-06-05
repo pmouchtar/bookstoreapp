@@ -52,7 +52,8 @@ public class ShoppingCartAdminController {
      */
     @GetMapping("{itemId}")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<CartItemResponseDto> getBook(@PathVariable Long userId, @PathVariable Long itemId) {
+    public ResponseEntity<CartItemResponseDto> getBook(//
+            @PathVariable Long userId, @PathVariable Long itemId) {
 
         CartItemResponseDto response = shoppingCartService.findItemById(itemId, userId);
         return ResponseEntity.ok(response);
