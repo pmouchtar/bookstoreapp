@@ -8,6 +8,7 @@ A Spring Boot RESTful API for managing books, users, shopping carts, orders, and
 - Spring Boot
 - Spring Data JPA
 - JWT Authentication
+- OpenSSL and RSA256 encryption
 - PostgreSQL
 - Flyway (Database Migration)
 - Maven
