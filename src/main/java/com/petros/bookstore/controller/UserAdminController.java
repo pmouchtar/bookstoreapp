@@ -1,7 +1,7 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.UserDTO.UserAdminUpdateRequestDto;
-import com.petros.bookstore.dto.UserDTO.UserProfileResponseDto;
+import com.petros.bookstore.dto.userdto.UserAdminUpdateRequestDto;
+import com.petros.bookstore.dto.userdto.UserProfileResponseDto;
 import com.petros.bookstore.service.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -39,13 +39,14 @@ public class UserAdminController {
      * @return paginated list of user profiles
      */
     @GetMapping
-    public ResponseEntity<Page<UserProfileResponseDto>> getAllUsers(@RequestParam(required = false) String username,
-            @RequestParam(required = false) String firstName, @RequestParam(required = false) String lastName,
+    public ResponseEntity<Page<UserProfileResponseDto>> getAllUsers(//
+            @RequestParam(required = false) String username, //
+            @RequestParam(required = false) String firstName, //
+            @RequestParam(required = false) String lastName, //
             Pageable pageable) {
 
-        Page<UserProfileResponseDto> result = (username != null || firstName != null || lastName != null)
-                ? userService.searchUsers(username, firstName, lastName, pageable)
-                : userService.findAll(pageable);
+        Page<UserProfileResponseDto> result = userService.searchUsers(//
+                username, firstName, lastName, pageable);
 
         return ResponseEntity.ok(result);
     }

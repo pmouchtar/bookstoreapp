@@ -4,10 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.TestDummyJwtFilter;
 import com.petros.bookstore.config.TestSecurityConfig;
 import com.petros.bookstore.config.TestServiceConfig;
-import com.petros.bookstore.dto.FavouriteBookDTO.FavouriteBookRequestDto;
-import com.petros.bookstore.dto.FavouriteBookDTO.FavouriteBookResponseDto;
+import com.petros.bookstore.dto.favouritebookdto.FavouriteBookRequestDto;
+import com.petros.bookstore.dto.favouritebookdto.FavouriteBookResponseDto;
 import com.petros.bookstore.exception.customException.ResourceAlreadyExistsException;
 import com.petros.bookstore.service.FavouriteBookService;
+import com.petros.bookstore.utils.AuthUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +34,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(FavouriteBookUserController.class)
-@Import({TestServiceConfig.class, TestSecurityConfig.class, TestDummyJwtFilter.class})
+@WebMvcTest(controllers = FavouriteBookUserController.class)
+@Import({TestSecurityConfig.class, TestServiceConfig.class, TestDummyJwtFilter.class})
 @ActiveProfiles("test")
 class FavouriteBookUserControllerTest {
 
@@ -44,10 +46,17 @@ class FavouriteBookUserControllerTest {
     private FavouriteBookService favouriteService;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    private AuthUtils authUtils;
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     private static final String BASE_URL = "/users/me/favourite-books";
     private static final String HEADER = "X-USER-ID";
+
+    @BeforeEach
+    void setup() {
+        Mockito.when(authUtils.extractUserId()).thenReturn(123L);
+    }
 
     @Test
     void testAddFavouriteBook() throws Exception {

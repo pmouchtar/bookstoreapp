@@ -3,13 +3,12 @@ package com.petros.bookstore.controller;
 import com.petros.bookstore.config.TestDummyJwtFilter;
 import com.petros.bookstore.config.TestSecurityConfig;
 import com.petros.bookstore.config.TestServiceConfig;
-import com.petros.bookstore.dto.UserDTO.UserAdminUpdateRequestDto;
-import com.petros.bookstore.dto.UserDTO.UserProfileResponseDto;
-import com.petros.bookstore.model.enums.Role;
+import com.petros.bookstore.dto.userdto.UserAdminUpdateRequestDto;
+import com.petros.bookstore.dto.userdto.UserProfileResponseDto;
+import com.petros.bookstore.enums.Role;
 import com.petros.bookstore.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -52,7 +51,7 @@ class UserAdminControllerTest {
     @Test
     @WithMockUser(roles = "ADMIN")
     void getAllUsers_shouldReturnPageOfUsers() throws Exception {
-        when(userService.findAll(any(Pageable.class)))
+        when(userService.searchUsers(null, null, null, PageRequest.of(0, 10)))
                 .thenReturn(new PageImpl<>(List.of(userDto), PageRequest.of(0, 10), 1));
 
         mockMvc.perform(get("/users").param("page", "0").param("size", "10")).andExpect(status().isOk())

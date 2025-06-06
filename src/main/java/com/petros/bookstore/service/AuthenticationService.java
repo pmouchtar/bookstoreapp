@@ -1,10 +1,10 @@
 package com.petros.bookstore.service;
 
-import static com.petros.bookstore.model.enums.Role.USER;
+import static com.petros.bookstore.enums.Role.USER;
 
-import com.petros.bookstore.dto.AuthDTO.AuthenticationRequestDto;
-import com.petros.bookstore.dto.AuthDTO.AuthenticationResponseDto;
-import com.petros.bookstore.model.Shopping_Cart;
+import com.petros.bookstore.dto.authdto.AuthenticationRequestDto;
+import com.petros.bookstore.dto.authdto.AuthenticationResponseDto;
+import com.petros.bookstore.model.ShoppingCart;
 import com.petros.bookstore.model.User;
 import com.petros.bookstore.repository.ShoppingCartRepository;
 import com.petros.bookstore.repository.UserRepository;
@@ -18,9 +18,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * Service class responsible for handling user authentication and registration
- * logic.
- * <p>
- * It integrates with Spring Security to authenticate users using JWT and
+ * logic. It integrates with Spring Security to authenticate users using JWT and
  * manages the creation of new users along with their shopping carts.
  */
 @Service
@@ -45,8 +43,8 @@ public class AuthenticationService {
      *             if the credentials are invalid.
      */
     public AuthenticationResponseDto authenticate(final AuthenticationRequestDto request) {
-        final var authToken = UsernamePasswordAuthenticationToken.unauthenticated(request.username(),
-                request.password());
+        final var authToken = UsernamePasswordAuthenticationToken.unauthenticated(//
+                request.username(), request.password());
 
         authenticationManager.authenticate(authToken); // will throw if invalid
 
@@ -56,7 +54,6 @@ public class AuthenticationService {
 
     /**
      * Registers a new user with role USER and creates an associated shopping cart.
-     * <p>
      * This method also encodes the password and checks for username uniqueness.
      *
      * @param request
@@ -81,7 +78,7 @@ public class AuthenticationService {
         User savedUser = userRepository.save(user);
 
         // Create and link a shopping cart to the newly registered user
-        Shopping_Cart shoppingCart = new Shopping_Cart();
+        ShoppingCart shoppingCart = new ShoppingCart();
         shoppingCart.setUser(savedUser);
         shoppingCartRepository.save(shoppingCart);
 

@@ -4,13 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.AbstractPostgresContainerTest;
-import com.petros.bookstore.dto.CartItemDTO.CartItemRequestDto;
-import com.petros.bookstore.dto.CartItemDTO.CartItemResponseDto;
-import com.petros.bookstore.dto.CartItemDTO.CartItemUpdateRequestDto;
+import com.petros.bookstore.dto.cartitemdto.CartItemRequestDto;
+import com.petros.bookstore.dto.cartitemdto.CartItemResponseDto;
+import com.petros.bookstore.dto.cartitemdto.CartItemUpdateRequestDto;
 import com.petros.bookstore.model.Book;
 import com.petros.bookstore.model.User;
-import com.petros.bookstore.model.enums.Genre;
-import com.petros.bookstore.model.enums.Role;
+import com.petros.bookstore.enums.Genre;
+import com.petros.bookstore.enums.Role;
 import com.petros.bookstore.repository.BookRepository;
 import com.petros.bookstore.repository.UserRepository;
 import java.util.List;

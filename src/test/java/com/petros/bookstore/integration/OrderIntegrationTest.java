@@ -4,12 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.AbstractPostgresContainerTest;
-import com.petros.bookstore.dto.OrderDTO.OrderResponseDto;
-import com.petros.bookstore.dto.OrderDTO.OrderStatusUpdateRequestDto;
+import com.petros.bookstore.dto.orderdto.OrderResponseDto;
+import com.petros.bookstore.dto.orderdto.OrderStatusUpdateRequestDto;
 import com.petros.bookstore.model.*;
-import com.petros.bookstore.model.enums.Genre;
-import com.petros.bookstore.model.enums.Role;
-import com.petros.bookstore.model.enums.Status;
+import com.petros.bookstore.enums.Genre;
+import com.petros.bookstore.enums.Role;
+import com.petros.bookstore.enums.Status;
 import com.petros.bookstore.repository.*;
 import java.util.List;
 import java.util.Map;
@@ -90,11 +90,11 @@ class OrderIntegrationTest extends AbstractPostgresContainerTest {
         book.setGenre(Genre.SCIENCE_FICTION);
         bookId = bookRepository.save(book).getId();
 
-        Shopping_Cart cart = new Shopping_Cart();
+        ShoppingCart cart = new ShoppingCart();
         cart.setUser(user);
         shoppingCartRepository.save(cart);
 
-        Cart_Item item = new Cart_Item();
+        CartItem item = new CartItem();
         item.setBook(book);
         item.setShoppingCart(cart);
         item.setQuantity(2);

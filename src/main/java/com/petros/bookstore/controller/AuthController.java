@@ -1,9 +1,9 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.AuthDTO.AuthenticationRequestDto;
-import com.petros.bookstore.dto.AuthDTO.AuthenticationResponseDto;
-import com.petros.bookstore.dto.RegistrationDTO.RegistrationRequestDto;
-import com.petros.bookstore.dto.RegistrationDTO.RegistrationResponseDto;
+import com.petros.bookstore.dto.authdto.AuthenticationRequestDto;
+import com.petros.bookstore.dto.authdto.AuthenticationResponseDto;
+import com.petros.bookstore.dto.registrationdto.RegistrationRequestDto;
+import com.petros.bookstore.dto.registrationdto.RegistrationResponseDto;
 import com.petros.bookstore.mapper.UserRegistrationMapper;
 import com.petros.bookstore.service.AuthenticationService;
 import jakarta.validation.Valid;
@@ -42,14 +42,15 @@ public class AuthController {
     /**
      * Registers a new user after validating registration data.
      *
-     * @param registrationDTO
+     * @param registrationDto
      *            the registration request DTO
      * @return the registration response DTO with created user info
      */
     @PostMapping("/register")
     public ResponseEntity<RegistrationResponseDto> registerUser(
-            @Valid @RequestBody final RegistrationRequestDto registrationDTO) {
-        var registeredUser = authenticationService.registerUser(userRegistrationMapper.toEntity(registrationDTO));
+            @Valid @RequestBody final RegistrationRequestDto registrationDto) {
+        var registeredUser = authenticationService.registerUser(//
+                userRegistrationMapper.toEntity(registrationDto));
         return ResponseEntity.ok(userRegistrationMapper.toRegistrationResponseDto(registeredUser));
     }
 }

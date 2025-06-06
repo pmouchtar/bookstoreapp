@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petros.bookstore.config.TestDummyJwtFilter;
 import com.petros.bookstore.config.TestSecurityConfig;
 import com.petros.bookstore.config.TestServiceConfig;
-import com.petros.bookstore.dto.FavouriteBookDTO.FavouriteBookResponseDto;
+import com.petros.bookstore.dto.favouritebookdto.FavouriteBookResponseDto;
 import com.petros.bookstore.service.FavouriteBookService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -43,10 +42,6 @@ class FavouriteBookAdminControllerTest {
 
     private static final String ADMIN_HEADER = "X-USER-ID";
     private static final String BASE_URL = "/users/1/favourite-books";
-
-    // @BeforeEach
-    // void setup() {
-    // }
 
     @Test
     void testGetUserFavouriteBooks_success() throws Exception {

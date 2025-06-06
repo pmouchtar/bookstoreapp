@@ -1,6 +1,6 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.FavouriteBookDTO.FavouriteBookResponseDto;
+import com.petros.bookstore.dto.favouritebookdto.FavouriteBookResponseDto;
 import com.petros.bookstore.service.FavouriteBookService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/users/{userId}/favourite-books")
 @PreAuthorize("hasAnyRole('ADMIN')")
 public class FavouriteBookAdminController {
-
     @Autowired
     private FavouriteBookService favouriteService;
-
     /**
      * Retrieves a paginated list of favourite books for a specific user.
      *
@@ -34,9 +32,11 @@ public class FavouriteBookAdminController {
      *            pagination and sorting information
      * @return a page of FavouriteBookResponseDto objects
      */
+
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping()
-    public Page<FavouriteBookResponseDto> getUserFavouriteBooks(@PathVariable Long userId, Pageable pageable) {
+    public Page<FavouriteBookResponseDto> getUserFavouriteBooks(//
+            @PathVariable Long userId, Pageable pageable) {
         return favouriteService.getFavourites(userId, pageable);
     }
 }

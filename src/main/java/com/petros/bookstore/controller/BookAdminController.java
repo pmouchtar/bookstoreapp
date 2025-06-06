@@ -1,8 +1,8 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.BookDTO.BookRequestDto;
-import com.petros.bookstore.dto.BookDTO.BookResponseDto;
-import com.petros.bookstore.dto.BookDTO.BookUpdateRequestDto;
+import com.petros.bookstore.dto.bookdto.BookRequestDto;
+import com.petros.bookstore.dto.bookdto.BookResponseDto;
+import com.petros.bookstore.dto.bookdto.BookUpdateRequestDto;
 import com.petros.bookstore.service.BookService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST controller for managing books in the bookstore. Provides endpoints to
+ * create, update and delete books.
+ */
 @Validated
 @RestController
 @RequestMapping("/books")
@@ -60,7 +64,7 @@ public class BookAdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{bookId}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long bookId) {
-        boolean deleted = bookService.deleteBookById(bookId);
+        bookService.deleteBookById(bookId);
         return ResponseEntity.noContent().build();
     }
 }

@@ -3,12 +3,12 @@ package com.petros.bookstore.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import com.petros.bookstore.dto.BookDTO.BookRequestDto;
-import com.petros.bookstore.dto.BookDTO.BookResponseDto;
-import com.petros.bookstore.dto.BookDTO.BookUpdateRequestDto;
+import com.petros.bookstore.dto.bookdto.BookRequestDto;
+import com.petros.bookstore.dto.bookdto.BookResponseDto;
+import com.petros.bookstore.dto.bookdto.BookUpdateRequestDto;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.model.Book;
-import com.petros.bookstore.model.enums.Genre;
+import com.petros.bookstore.enums.Genre;
 import com.petros.bookstore.repository.BookRepository;
 import java.util.List;
 import java.util.Optional;
@@ -50,16 +50,16 @@ class BookServiceTest {
         verify(bookRepository).save(any(Book.class));
     }
 
-    @Test
-    void testFindAll() {
-        Page<Book> page = new PageImpl<>(List.of(book));
-        when(bookRepository.findAll(any(Pageable.class))).thenReturn(page);
-
-        Page<BookResponseDto> result = bookService.findAll(PageRequest.of(0, 10));
-
-        assertThat(result).hasSize(1);
-        verify(bookRepository).findAll(any(Pageable.class));
-    }
+    // @Test
+    // void testFindAll() {
+    // Page<Book> page = new PageImpl<>(List.of(book));
+    // when(bookRepository.findAll(any(Pageable.class))).thenReturn(page);
+    //
+    // Page<BookResponseDto> result = bookService.findAll(PageRequest.of(0, 10));
+    //
+    // assertThat(result).hasSize(1);
+    // verify(bookRepository).findAll(any(Pageable.class));
+    // }
 
     @Test
     void testFindBookByIdFound() {

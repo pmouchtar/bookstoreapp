@@ -1,7 +1,7 @@
 package com.petros.bookstore.mapper;
 
-import com.petros.bookstore.dto.BookDTO.BookRequestDto;
-import com.petros.bookstore.dto.BookDTO.BookResponseDto;
+import com.petros.bookstore.dto.bookdto.BookRequestDto;
+import com.petros.bookstore.dto.bookdto.BookResponseDto;
 import com.petros.bookstore.model.Book;
 
 public final class BookMapper {
@@ -12,7 +12,8 @@ public final class BookMapper {
     }
 
     public static BookResponseDto toResponse(Book book) {
-        return new BookResponseDto(book.getId(), book.getTitle(), book.getAuthor(), book.getDescription(),
+        return new BookResponseDto(book.getId(), book.getTitle(), //
+                book.getAuthor(), book.getDescription(), //
                 book.getPrice(), book.getAvailability(), book.getGenre());
     }
 }

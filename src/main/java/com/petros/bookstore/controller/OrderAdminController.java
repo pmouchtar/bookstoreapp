@@ -1,7 +1,7 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.OrderDTO.OrderResponseDto;
-import com.petros.bookstore.dto.OrderDTO.OrderStatusUpdateRequestDto;
+import com.petros.bookstore.dto.orderdto.OrderResponseDto;
+import com.petros.bookstore.dto.orderdto.OrderStatusUpdateRequestDto;
 import com.petros.bookstore.service.OrderService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;

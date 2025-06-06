@@ -1,12 +1,12 @@
 package com.petros.bookstore.service;
 
-import com.petros.bookstore.dto.FavouriteBookDTO.FavouriteBookRequestDto;
-import com.petros.bookstore.dto.FavouriteBookDTO.FavouriteBookResponseDto;
+import com.petros.bookstore.dto.favouritebookdto.FavouriteBookRequestDto;
+import com.petros.bookstore.dto.favouritebookdto.FavouriteBookResponseDto;
 import com.petros.bookstore.exception.customException.ResourceAlreadyExistsException;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.mapper.FavouriteBookMapper;
 import com.petros.bookstore.model.Book;
-import com.petros.bookstore.model.Favourite_Book;
+import com.petros.bookstore.model.FavouriteBook;
 import com.petros.bookstore.model.User;
 import com.petros.bookstore.repository.BookRepository;
 import com.petros.bookstore.repository.FavouriteBookRepository;
@@ -18,15 +18,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
- * Service class responsible for managing users' favourite books.
- * <p>
- * Provides functionality for adding, retrieving, and removing favourite books
- * for a given user.
+ * Service class responsible for managing users' favourite books. Provides
+ * functionality for adding, retrieving, and removing favourite books for a
+ * given user.
  */
 @Service
 @RequiredArgsConstructor
 public class FavouriteBookService {
-
     private final FavouriteBookRepository favouriteRepo;
     private final UserRepository userRepo;
     private final BookRepository bookRepository;
@@ -46,7 +44,8 @@ public class FavouriteBookService {
      */
     @Transactional
     public FavouriteBookResponseDto addToFavourites(Long userId, FavouriteBookRequestDto request) {
-        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException(//
+                "User not found"));
 
         Book book = bookRepository.findById(request.bookId())
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
@@ -55,11 +54,11 @@ public class FavouriteBookService {
             throw new ResourceAlreadyExistsException("Book already in favourites");
         });
 
-        Favourite_Book favourite = new Favourite_Book();
+        FavouriteBook favourite = new FavouriteBook();
         favourite.setUser(user);
         favourite.setBook(book);
 
-        Favourite_Book saved = favouriteRepo.save(favourite);
+        FavouriteBook saved = favouriteRepo.save(favourite);
         return FavouriteBookMapper.toDto(saved);
     }
 
@@ -76,7 +75,8 @@ public class FavouriteBookService {
      */
     @Transactional
     public Page<FavouriteBookResponseDto> getFavourites(Long userId, Pageable pageable) {
-        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException(//
+                "User not found"));
 
         return favouriteRepo.findByUser(user, pageable).map(FavouriteBookMapper::toDto);
     }
@@ -93,7 +93,8 @@ public class FavouriteBookService {
      */
     @Transactional
     public void removeFromFavourites(Long userId, Long bookId) {
-        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException(//
+                "User not found"));
 
         boolean exists = favouriteRepo.findByUserAndBook_Id(user, bookId).isPresent();
         if (!exists) {

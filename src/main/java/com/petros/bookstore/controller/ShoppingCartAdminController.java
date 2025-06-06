@@ -1,6 +1,6 @@
 package com.petros.bookstore.controller;
 
-import com.petros.bookstore.dto.CartItemDTO.CartItemResponseDto;
+import com.petros.bookstore.dto.cartitemdto.CartItemResponseDto;
 import com.petros.bookstore.service.ShoppingCartService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,8 @@ public class ShoppingCartAdminController {
      */
     @GetMapping("{itemId}")
     @SecurityRequirement(name = "bearerAuth")
-    public ResponseEntity<CartItemResponseDto> getBook(@PathVariable Long userId, @PathVariable Long itemId) {
+    public ResponseEntity<CartItemResponseDto> getBook(//
+            @PathVariable Long userId, @PathVariable Long itemId) {
 
         CartItemResponseDto response = shoppingCartService.findItemById(itemId, userId);
         return ResponseEntity.ok(response);

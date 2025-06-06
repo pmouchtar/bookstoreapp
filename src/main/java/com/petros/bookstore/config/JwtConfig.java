@@ -37,7 +37,10 @@ public class JwtConfig {
     @Bean
     public RSAPublicKey publicKey() throws Exception {
         try (var is = publicKeyResource.getInputStream()) {
-            String key = new String(is.readAllBytes(), StandardCharsets.UTF_8).replace("-----BEGIN PUBLIC KEY-----", "")
+            String key = new String(//
+                    is.readAllBytes(), //
+                    StandardCharsets.UTF_8)//
+                    .replace("-----BEGIN PUBLIC KEY-----", "")//
                     .replace("-----END PUBLIC KEY-----", "").replaceAll("\\s+", "");
 
             byte[] decoded = Base64.getDecoder().decode(key);
@@ -51,7 +54,8 @@ public class JwtConfig {
     public RSAPrivateKey privateKey() throws Exception {
         try (var is = privateKeyResource.getInputStream()) {
             String key = new String(is.readAllBytes(), StandardCharsets.UTF_8)
-                    .replace("-----BEGIN PRIVATE KEY-----", "").replace("-----END PRIVATE KEY-----", "")
+                    .replace("-----BEGIN PRIVATE KEY-----", "")//
+                    .replace("-----END PRIVATE KEY-----", "")//
                     .replaceAll("\\s+", "");
 
             byte[] decoded = Base64.getDecoder().decode(key);
@@ -68,13 +72,13 @@ public class JwtConfig {
     }
 
     @Bean
-    public JwtDecoder jwtDecoder(RSAPublicKey publicKey) {
+    public JwtDecoder jwtDecoder(RSAPublicKey publicKey) { //
         return NimbusJwtDecoder.withPublicKey(publicKey).build();
     }
 
     @Bean
-    public JwtService jwtService(UserService userService, @Value("${spring.application.name}") String appName,
-            JwtEncoder jwtEncoder) {
+    public JwtService jwtService(UserService userService, //
+            @Value("${spring.application.name}") String appName, JwtEncoder jwtEncoder) {
         return new JwtService(userService, appName, ttl, jwtEncoder);
     }
 }

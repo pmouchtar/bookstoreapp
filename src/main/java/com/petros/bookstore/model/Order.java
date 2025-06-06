@@ -1,6 +1,6 @@
 package com.petros.bookstore.model;
 
-import com.petros.bookstore.model.enums.Status;
+import com.petros.bookstore.enums.Status;
 import jakarta.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -37,5 +37,5 @@ public class Order {
     private Timestamp order_date;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Order_Item> orderItems = new ArrayList<>();
+    private List<OrderItem> orderItems = new ArrayList<>();
 }

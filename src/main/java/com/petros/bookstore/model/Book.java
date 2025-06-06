@@ -1,6 +1,6 @@
 package com.petros.bookstore.model;
 
-import com.petros.bookstore.model.enums.Genre;
+import com.petros.bookstore.enums.Genre;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,7 +34,9 @@ public class Book {
     @Column(nullable = false)
     private Genre genre;
 
-    public Book(String title, String author, String description, Double price, int availability, Genre genre) {
+    public Book(//
+            String title, String author, String description, //
+            Double price, int availability, Genre genre) {
         this.title = title;
         this.author = author;
         this.description = description;

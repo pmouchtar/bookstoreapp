@@ -1,14 +1,15 @@
 package com.petros.bookstore.service;
 
-import com.petros.bookstore.dto.CartItemDTO.CartItemRequestDto;
-import com.petros.bookstore.dto.CartItemDTO.CartItemResponseDto;
-import com.petros.bookstore.dto.CartItemDTO.CartItemUpdateRequestDto;
+import com.petros.bookstore.dto.cartitemdto.CartItemRequestDto;
+import com.petros.bookstore.dto.cartitemdto.CartItemResponseDto;
+import com.petros.bookstore.dto.cartitemdto.CartItemUpdateRequestDto;
 import com.petros.bookstore.exception.customException.ResourceNotFoundException;
 import com.petros.bookstore.mapper.CartItemMapper;
 import com.petros.bookstore.model.*;
 import com.petros.bookstore.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -41,29 +42,44 @@ public class ShoppingCartService {
      *             if user or book is not found
      */
     @Transactional
-    public CartItemResponseDto addToCart(Long userId, CartItemRequestDto request) {
-        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    public CartItemResponseDto addToCart(Long userId, CartItemRequestDto request) throws BadRequestException {
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException(//
+                "User not found"));
 
         Book book = bookRepo.findById(request.bookId())
                 .orElseThrow(() -> new ResourceNotFoundException("Book not found"));
 
-        Shopping_Cart cart = cartRepo.findByUser(user).orElseGet(() -> {
-            Shopping_Cart c = new Shopping_Cart();
+        ShoppingCart cart = cartRepo.findByUser(user).orElseGet(() -> {
+            ShoppingCart c = new ShoppingCart();
             c.setUser(user);
             return cartRepo.save(c);
         });
 
-        Cart_Item item = itemRepo.findByShoppingCartAndBook(cart, book).orElse(null);
+        CartItem item = itemRepo.findByShoppingCartAndBook(cart, book).orElse(null);
         if (item == null) {
-            item = new Cart_Item();
+            item = new CartItem();
             item.setShoppingCart(cart);
             item.setBook(book);
-            item.setQuantity(request.quantity());
+            if (request.quantity() <= book.getAvailability()) {
+                item.setQuantity(request.quantity());
+                book.setAvailability(book.getAvailability() - request.quantity());
+            } else {
+                throw new BadRequestException("Insufficient stock. Requested quantity (" //
+                        + request.quantity() + ") exceeds available stock (" //
+                        + book.getAvailability() + ")");
+            }
         } else {
-            item.setQuantity(item.getQuantity() + request.quantity());
+            if (request.quantity() <= book.getAvailability()) {
+                item.setQuantity(item.getQuantity() + request.quantity());
+                book.setAvailability(book.getAvailability() - request.quantity());
+            } else {
+                throw new BadRequestException("Insufficient stock. Requested quantity (" //
+                        + request.quantity() + ") exceeds available stock (" //
+                        + book.getAvailability() + ")");
+            }
         }
-
-        Cart_Item saved = itemRepo.save(item);
+        bookRepo.save(book);
+        CartItem saved = itemRepo.save(item);
         return CartItemMapper.toDto(saved);
     }
 
@@ -80,9 +96,10 @@ public class ShoppingCartService {
      */
     @Transactional
     public Page<CartItemResponseDto> getCartItems(Long userId, Pageable pageable) {
-        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException(//
+                "User not found"));
 
-        Shopping_Cart cart = cartRepo.findByUser(user).orElse(null);
+        ShoppingCart cart = cartRepo.findByUser(user).orElse(null);
 
         if (cart == null) {
             return Page.empty(pageable);
@@ -105,7 +122,8 @@ public class ShoppingCartService {
      */
     @Transactional
     public CartItemResponseDto findItemById(Long itemId, Long userId) {
-        Cart_Item item = itemRepo.findById(itemId).filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
+        CartItem item = itemRepo.findById(itemId).filter(//
+                i -> i.getShoppingCart().getUser().getId().equals(userId))
                 .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
 
         return CartItemMapper.toDto(item);
@@ -126,9 +144,25 @@ public class ShoppingCartService {
      *             if the item is not found or does not belong to the user
      */
     @Transactional
-    public CartItemResponseDto updateCartItem(Long itemId, CartItemUpdateRequestDto request, Long userId) {
-        Cart_Item item = itemRepo.findById(itemId).filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
+    public CartItemResponseDto updateCartItem(//
+            Long itemId, CartItemUpdateRequestDto request, Long userId) throws BadRequestException {
+        CartItem item = itemRepo.findById(itemId).filter(//
+                i -> i.getShoppingCart().getUser().getId().equals(userId))
                 .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
+
+        Book book = item.getBook();
+        int quantityDiff = request.quantity() - item.getQuantity();
+
+        if (quantityDiff <= book.getAvailability()) {
+            item.setQuantity(request.quantity());
+            book.setAvailability(book.getAvailability() - quantityDiff);
+        } else {
+            throw new BadRequestException("Insufficient stock. Requested quantity (+" //
+                    + quantityDiff + ") exceeds available stock (" //
+                    + book.getAvailability() + ")");
+        }
+
+        bookRepo.save(book);
 
         int newQty = request.quantity();
         if (newQty == 0) {
@@ -136,7 +170,7 @@ public class ShoppingCartService {
             return null;
         }
         item.setQuantity(newQty);
-        Cart_Item saved = itemRepo.save(item);
+        CartItem saved = itemRepo.save(item);
         return CartItemMapper.toDto(saved);
     }
 
@@ -152,8 +186,12 @@ public class ShoppingCartService {
      */
     @Transactional
     public void removeFromCart(Long userId, Long itemId) {
-        Cart_Item item = itemRepo.findById(itemId).filter(i -> i.getShoppingCart().getUser().getId().equals(userId))
+        CartItem item = itemRepo.findById(itemId).filter(//
+                i -> i.getShoppingCart().getUser().getId().equals(userId))
                 .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
+        Book book = item.getBook();
+        book.setAvailability(book.getAvailability() + item.getQuantity());
+        bookRepo.save(book);
         itemRepo.delete(item);
     }
 }
