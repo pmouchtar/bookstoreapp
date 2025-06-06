@@ -1,12 +1,8 @@
 package com.petros.bookstore.model;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.petros.bookstore.enums.Genre;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import com.petros.bookstore.model.enums.Genre;
+import lombok.*;
 
 @Entity
 @Getter
@@ -29,7 +25,7 @@ public class Book {
     private String description;
 
     @Column(nullable = false)
-    private float price;
+    private Double price;
 
     @Column(nullable = false)
     private int availability;
@@ -38,7 +34,9 @@ public class Book {
     @Column(nullable = false)
     private Genre genre;
 
-    public Book(String title, String author, String description, float price, int availability, Genre genre) {
+    public Book(//
+            String title, String author, String description, //
+            Double price, int availability, Genre genre) {
         this.title = title;
         this.author = author;
         this.description = description;
