@@ -7,6 +7,7 @@ A Spring Boot RESTful API for managing books, users, shopping carts, orders, and
 - Java 17+
 - Spring Boot
 - Spring Data JPA
+- JWT Authentication
 - PostgreSQL
 - Flyway (Database Migration)
 - Maven
@@ -16,6 +17,18 @@ A Spring Boot RESTful API for managing books, users, shopping carts, orders, and
 - Swagger UI (API Documentation)
 - Lombok
 
+## Features
+- dto's
+- mappers
+- controller/service/repository architecture
+- pagination
+- filtering
+- jwt authentication and spring security
+- role-based access
+- exception handling
+- javadoc
+- checkstyle
+- spotless formatter
 
 ## 1. Clone the Repository
 
